@@ -1,15 +1,18 @@
 const express = require('express');
+const db = require('../db/connection');
 
 class Server {
   constructor() {
     this.app = express();
-    this.port = process.env.PORT;
+    this.port = process.env.PORT || 8080;
 
     this.paths = {
       auth: '/api/auth',
+      user: '/api/users',
     };
 
-    /** TODO: DB connection  */
+    /** DB connection  */
+    this.dbConnection();
 
     this.middlewares();
 
@@ -18,7 +21,12 @@ class Server {
   }
 
   async dbConnection() {
-    /** TODO: DB connection */
+    try {
+      await db.authenticate();
+      console.log('DB online');
+    } catch (error) {
+      throw new Error( error );
+    }
   }
 
   middlewares() {
@@ -28,6 +36,7 @@ class Server {
 
   routes() {
     // this.app.use( this.paths.auth, );
+    this.app.use( this.paths.user, require('../routes/users') );
   }
 
   listen() {
