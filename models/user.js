@@ -2,16 +2,35 @@ const { DataTypes } = require('sequelize');
 const db = require('../db/connection');
 const Employee = require('./employee');
 
+const status = ['actived', 'disabled', 'waiting activation'];
+
 const User = db.define( 'User', {
   username: {
     type: DataTypes.STRING,
+    notNull: {
+      msg: "Usernae can't be null"
+    },
   },
   password: {
     type: DataTypes.STRING,
-    scopes: false || [] // Don't EVER include
+    allowNull: false,
+    customNull( value ) {
+      if( !value ) {
+        throw new Error('Need to provide a password');
+      }
+    },
+    notNull: {
+      msg: "Password can't be null"
+    },
   },
   status: {
-    type: DataTypes.STRING,
+    type: DataTypes.ENUM( status ),
+    validate: {
+      isIn: {
+        args: [ status ],
+        msg: 'Current user status is not valid'
+      }
+    }
   },
   id_employee: {
     type: DataTypes.INTEGER,

@@ -34,7 +34,6 @@ const createUser = async ( req = request, res = response ) => {
   res.json({
     user,
   });
-
 }
 
 module.exports = {

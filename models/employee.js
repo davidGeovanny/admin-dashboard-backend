@@ -1,18 +1,72 @@
 const { DataTypes } = require('sequelize');
 const db = require('../db/connection');
 
+const genders = ['male', 'female', 'undefined'];
+
 const Employee = db.define( 'Employee', {
   name: {
     type: DataTypes.STRING,
+    // allowNull: false,
+    // validate: {
+    //   customNull( value ) {
+    //     if( !value ) {
+    //       throw new Error('Need to provide a valid name');
+    //     }
+    //   },
+    //   notNull: {
+    //     msg: "Name can't be null"
+    //   },
+    // }
   },
   first_lastname: {
     type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      customNull( value ) {
+        if( !value ) {
+          throw new Error('Need to provide a valid first_lastname');
+        }
+      },
+      notNull: {
+        msg: "first_lastname can't be null"
+      },
+    }
   },
   second_lastname: {
     type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      customNull( value ) {
+        if( !value ) {
+          throw new Error('Need to provide a valid second_lastname');
+        }
+      },
+      notNull: {
+        msg: "second_lastname can't be null"
+      },
+    }
   },
   gender: {
+    type: DataTypes.ENUM( genders ),
+    allowNull: false,
+    validate: {
+      isIn: {
+        args:[ genders ],
+        msg: 'Gender not valid. Valid values: ' + genders.join(' | ')
+      },
+    }
+  },
+  email: {
     type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      isEmail: {
+        msg: 'Email not valid'
+      },
+      notNull: {
+        msg: "Email can't be null"
+      },
+    }
   },
 }, {
   createdAt: 'created_at',

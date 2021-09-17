@@ -35,7 +35,7 @@ class Server {
   }
 
   routes() {
-    // this.app.use( this.paths.auth, );
+    this.app.use( this.paths.auth, require('../routes/auth') );
     this.app.use( this.paths.user, require('../routes/users') );
   }
 
