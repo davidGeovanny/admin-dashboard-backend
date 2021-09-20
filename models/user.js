@@ -1,14 +1,20 @@
-const { DataTypes } = require('sequelize');
 const db = require('../db/connection');
+const { DataTypes } = require('sequelize');
+const bcrypt = require('bcryptjs');
 const Employee = require('./employee');
+const { userStatus } = require('../data/static-data');
+const Profile = require('./profile');
+const Profile_User = require('./profile_user');
 
-const status = ['actived', 'disabled', 'waiting activation'];
-
-const User = db.define( 'User', {
+const User = db.define('User', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+  },
   username: {
     type: DataTypes.STRING,
     notNull: {
-      msg: "Usernae can't be null"
+      msg: "Username can't be null"
     },
   },
   password: {
@@ -24,10 +30,10 @@ const User = db.define( 'User', {
     },
   },
   status: {
-    type: DataTypes.ENUM( status ),
+    type: DataTypes.ENUM( userStatus ),
     validate: {
       isIn: {
-        args: [ status ],
+        args: [ userStatus ],
         msg: 'Current user status is not valid'
       }
     }
@@ -56,6 +62,19 @@ User.addScope('defaultScope', {
 User.belongsTo( Employee, {
   as        : 'employee',
   foreignKey: 'id_employee',
+});
+
+User.belongsToMany( Profile, {
+  through: Profile_User,
+  foreignKey: 'id_user',
+  as: 'profiles'
+});
+
+User.beforeCreate( async ( user ) => {
+  /** Encrypt password */
+  const salt = bcrypt.genSaltSync();
+  const passHash = bcrypt.hashSync( user.password, salt );
+  user.password = passHash;
 });
 
 module.exports = User;

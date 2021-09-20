@@ -7,6 +7,7 @@ const getUsers = async ( req = request, res = response ) => {
   const users = await User.findAll();
 
   res.json({
+    ok: true,
     users
   });
 }
@@ -29,6 +30,7 @@ const createUser = async ( req = request, res = response ) => {
   await user.save();
 
   res.json({
+    ok: true,
     user,
   });
 

@@ -7,8 +7,9 @@ class Server {
     this.port = process.env.PORT || 8080;
 
     this.paths = {
-      auth: '/api/auth',
-      user: '/api/users',
+      auth    : '/api/auth',
+      user    : '/api/users',
+      profile : '/api/profiles',
     };
 
     /** DB connection  */
@@ -24,7 +25,7 @@ class Server {
     try {
       await db.authenticate();
       console.log('DB online');
-    } catch (error) {
+    } catch ( error ) {
       throw new Error( error );
     }
   }
@@ -35,8 +36,9 @@ class Server {
   }
 
   routes() {
-    this.app.use( this.paths.auth, require('../routes/auth') );
-    this.app.use( this.paths.user, require('../routes/users') );
+    this.app.use( this.paths.auth,    require('../routes/auth') );
+    this.app.use( this.paths.user,    require('../routes/users') );
+    this.app.use( this.paths.profile, require('../routes/profiles') );
   }
 
   listen() {

@@ -1,5 +1,4 @@
 const { request, response } = require('express');
-const bcrypt = require('bcryptjs');
 const Employee = require('../models/employee');
 const User = require('../models/user');
 
@@ -10,18 +9,8 @@ const register = async ( req = request, res = response ) => {
     second_lastname,
     gender,
     email,
-    password,
+    password = '',
   } = req.body;
-
-  // if( !password ) {
-  //   return res.status(400).json({
-  //     ok: false,
-  //     msg: 'Ha ocurrido un error',
-  //     errors: {
-
-  //     }
-  //   });
-  // }
   
   try {
     /** Create employee */
@@ -29,14 +18,11 @@ const register = async ( req = request, res = response ) => {
     await employee.save();
 
     if( employee ) {
-      /** Encrypt password */
-      const salt = bcrypt.genSaltSync();
-      const passHash = bcrypt.hashSync( password, salt );
-      const username = ( first_lastname.substring(0, 2) + second_lastname.substring(0, 2) + name.substring(0, 2) ).toLowerCase();
+      const username = ( first_lastname.substring(0, 2) + second_lastname.substring(0, 2) + name.split(' ')[0] ).toLowerCase();
 
       const user = new User({
         username,
-        password: passHash,
+        password,
         status: 'waiting activation',
         id_employee: employee.id
       });
@@ -45,6 +31,7 @@ const register = async ( req = request, res = response ) => {
 
       if( user ) {
         res.json({
+          ok: true,
           employee,
           user
         });

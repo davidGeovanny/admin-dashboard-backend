@@ -1,22 +1,21 @@
-const { DataTypes } = require('sequelize');
 const db = require('../db/connection');
+const { DataTypes } = require('sequelize');
+const { userGenders } = require('../data/static-data');
 
-const genders = ['male', 'female', 'undefined'];
-
-const Employee = db.define( 'Employee', {
+const Employee = db.define('Employee', {
   name: {
     type: DataTypes.STRING,
-    // allowNull: false,
-    // validate: {
-    //   customNull( value ) {
-    //     if( !value ) {
-    //       throw new Error('Need to provide a valid name');
-    //     }
-    //   },
-    //   notNull: {
-    //     msg: "Name can't be null"
-    //   },
-    // }
+    allowNull: false,
+    validate: {
+      customNull( value ) {
+        if( !value ) {
+          throw new Error('Need to provide a valid name');
+        }
+      },
+      notNull: {
+        msg: "Name can't be null"
+      },
+    }
   },
   first_lastname: {
     type: DataTypes.STRING,
@@ -47,12 +46,12 @@ const Employee = db.define( 'Employee', {
     }
   },
   gender: {
-    type: DataTypes.ENUM( genders ),
+    type: DataTypes.ENUM( userGenders ),
     allowNull: false,
     validate: {
       isIn: {
-        args:[ genders ],
-        msg: 'Gender not valid. Valid values: ' + genders.join(' | ')
+        args:[ userGenders ],
+        msg: 'Gender not valid. Valid values: ' + userGenders.join(' | ')
       },
     }
   },

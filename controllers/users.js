@@ -1,5 +1,6 @@
 const { response, request } = require('express');
-const bcryptjs = require('bcryptjs');
+const { Op } = require('sequelize');
+const Profile = require('../models/profile');
 
 const User = require('../models/user');
 
@@ -11,6 +12,7 @@ const getUsers = async ( req = request, res = response ) => {
   });
 
   res.json({
+    ok: true,
     users
   });
 }
@@ -18,22 +20,40 @@ const getUsers = async ( req = request, res = response ) => {
 const createUser = async ( req = request, res = response ) => {
   const { username, password, id_employee } = req.body;
 
-  // Encrypt password
-  const salt = bcryptjs.genSaltSync();
-  const passEncrypt = bcryptjs.hashSync( password, salt )
+  try {
+    const user = new User({ 
+      username, 
+      status: 'activated', 
+      id_employee, 
+      password, 
+    });
+  
+    await user.save();
 
-  const user = new User({ 
-    username, 
-    status: 'activated', 
-    id_employee, 
-    password: passEncrypt, 
-  });
+    const defaultProfile = new Profile.findOne({
+      where: {
+        id: {
+          [ Op.eq ] : 5
+        }
+      }
+    });
 
-  await user.save();
+    if( defaultProfile ) {
+      await user.addProfile( defaultProfile )
+    }
 
-  res.json({
-    user,
-  });
+  
+    res.json({
+      ok: true,
+      user,
+    });
+  } catch ( err ) {
+    res.status(400).json({
+      ok: false,
+      msg: 'Ha ocurrido un error',
+      errors: err
+    });
+  }
 }
 
 module.exports = {
