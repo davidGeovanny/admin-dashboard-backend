@@ -15,7 +15,7 @@ const getUsers = async ( req = request, res = response ) => {
   } catch ( err ) {
     res.status(400).json({
       ok: false,
-      msg: 'Ha ocurrido un error',
+      msg: 'An error has ocurred',
       errors: err
     });
   }
@@ -47,9 +47,9 @@ const createUser = async ( req = request, res = response ) => {
       user,
     });
   } catch ( err ) {
-    res.status(500).json({
+    res.status(400).json({
       ok: false,
-      msg: 'Ha ocurrido un error',
+      msg: 'An error has ocurred',
       errors: err
     });
   }

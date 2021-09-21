@@ -7,7 +7,7 @@ const checkValidityFields = ( req, res = response, next ) => {
   if( !errors.isEmpty() ) {
     return res.status(400).json({
       ok: false,
-      msg: 'Ha ocurrido un error',
+      msg: 'An error has ocurred',
       errors: {
         name: 'ValidationFieldError',
         errors

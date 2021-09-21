@@ -14,7 +14,7 @@ const getProfiles = async ( req = request, res = response ) => {
   } catch ( err ) {
     res.status(400).json({
       ok: false,
-      msg: 'Ha ocurrido un error',
+      msg: 'An error has ocurred',
       errors: err
     });
   }
@@ -48,7 +48,7 @@ const getSpecificProfile = async ( req = request, res = response ) => {
   } catch ( err ) {
     res.status(400).json({
       ok: false,
-      msg: 'Ha ocurrido un error',
+      msg: 'An error has ocurred',
       errors: err
     });
   }
@@ -69,14 +69,14 @@ const createProfile = async ( req = request, res = response ) => {
     } else {
       res.status(400).json({
         ok: false,
-        msg: 'Ha ocurrido un error',
+        msg: 'An error has ocurred',
         errors: {}
       });
     }
   } catch ( err ) {
     res.status(400).json({
       ok: false,
-      msg: 'Ha ocurrido un error',
+      msg: 'An error has ocurred',
       errors: err
     });
   }

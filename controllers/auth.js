@@ -1,7 +1,10 @@
 const { request, response } = require('express');
+const { Op } = require('sequelize');
+const bcrypt = require('bcryptjs');
 
 const Employee = require('../models/employee');
 const User = require('../models/user');
+const { generateJWT } = require('../helpers/generate-jwt');
 
 const register = async ( req = request, res = response ) => {
   const { 
@@ -39,7 +42,7 @@ const register = async ( req = request, res = response ) => {
       } else {
         res.status(400).json({
           ok: false,
-          msg: 'Ha ocurrido un error',
+          msg: 'An error has ocurred while creating the user',
           errors: {}
         });
       }
@@ -47,14 +50,66 @@ const register = async ( req = request, res = response ) => {
     } else {
       res.status(400).json({
         ok: false,
-        msg: 'Ha ocurrido un error',
+        msg: 'An error has ocurred',
         errors: {}
       });
     }
   } catch ( err ) {
     res.status(400).json({
       ok: false,
-      msg: 'Ha ocurrido un error',
+      msg: 'An error has ocurred',
+      errors: err
+    });
+  }
+}
+
+const login = async ( req = request, res = response ) => {
+  const { username, password } = req.body;
+
+  try {
+    const user = await User.scope('loginScope').findOne({
+      where: {
+        username: {
+          [ Op.eq ] : username
+        }
+      }
+    });
+
+    if( !user ) {
+      return res.status(404).json({
+        ok: false,
+        msg: 'Credentials are not correct - username',
+        errors: {}
+      });
+    }
+
+    console.log(user)
+
+    console.log( password )
+    console.log( user.password )
+
+    const validPassword = bcrypt.compareSync( password, user.password );
+
+    if( !validPassword ) {
+      return res.status(400).json({
+        ok: false,
+        msg: 'Credentials are not correct - password',
+        errors: {}
+      });
+    }
+
+    /** Generate token */
+    const token = await generateJWT( user.id );
+
+    res.json({
+      ok: true,
+      user,
+      token,
+    });
+  } catch ( err ) {
+    res.status(400).json({
+      ok: false,
+      msg: 'An error has ocurred',
       errors: err
     });
   }
@@ -62,4 +117,5 @@ const register = async ( req = request, res = response ) => {
 
 module.exports = {
   register,
+  login,
 };

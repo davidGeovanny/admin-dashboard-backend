@@ -6,14 +6,19 @@ const {
   checkPasswordsMatch,
   checkEmployeeExists,
   checkUserAvailable,
+  validateJWT,
 } = require('../middlewares');
 
 const { getUsers, createUser } = require('../controllers/users');
 
 const router = Router();
 
-router.get('/', getUsers);
+router.get('/', [
+  validateJWT
+], getUsers);
+
 router.post('/',[
+  validateJWT,
   check('username', 'Need to provide an username').notEmpty(),
   check('username').custom( checkUserAvailable ),
   check('password').notEmpty(),

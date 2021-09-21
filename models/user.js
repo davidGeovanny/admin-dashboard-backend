@@ -1,4 +1,4 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes, Op } = require('sequelize');
 const { userStatus } = require('../data/static-data');
 const db = require('../db/connection');
 const bcrypt = require('bcryptjs');
@@ -58,6 +58,15 @@ User.belongsTo( Employee, {
 User.addScope('defaultScope', {
   attributes: {
     exclude: ['password', 'id_employee', 'deleted_at']
+  }
+});
+
+User.addScope('loginScope', {
+  attributes: {
+    exclude: ['id_employee', 'created_at', 'updated_at', 'deleted_at']
+  },
+  where: {
+    status: userStatus[0]
   }
 });
 

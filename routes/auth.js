@@ -3,7 +3,7 @@ const { check } = require('express-validator');
 
 const { checkValidityFields, checkEmailAvailable, checkPasswordsMatch } = require('../middlewares');
 
-const { register } = require('../controllers/auth');
+const { register, login } = require('../controllers/auth');
 const { userGenders } = require('../data/static-data');
 
 const router = Router();
@@ -20,5 +20,9 @@ router.post('/register', [
   check('password_confirmation').custom( checkPasswordsMatch ),
   checkValidityFields
 ], register);
+
+router.post('/login', [
+
+], login);
 
 module.exports = router;
