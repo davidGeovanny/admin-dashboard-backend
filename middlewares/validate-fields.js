@@ -1,11 +1,11 @@
 const { request } = require('express');
 const { Op } = require('sequelize');
+
 const Employee = require('../models/employee');
 const Profile = require('../models/profile');
 const User = require('../models/user');
 
 const checkEmailAvailable = async ( email = '' ) => {
-  
   const employees = await Employee.findAll({
     where: {
       email: {
@@ -34,7 +34,6 @@ const checkUserAvailable = async ( username = '' ) => {
 }
 
 const checkProfileAvailable = async ( profile = '' ) => {
-
   if( profile.toLowerCase() === 'administrador' || profile.toLowerCase() === 'superadmin' ) {
     throw new Error('Profile name is not valid');
   }
@@ -53,7 +52,6 @@ const checkProfileAvailable = async ( profile = '' ) => {
 }
 
 const checkEmployeeExists = async ( id_employee = '' ) => {
-
   if( !Number( id_employee ) ) {
     throw new Error('The employee selected not exist');
   }

@@ -1,19 +1,13 @@
+const db = require('../db/connection')
 const { DataTypes } = require('sequelize');
-const db = require('../db/connection');
+
 const { profileStatus } = require('../data/static-data');
-const User = require('./user');
-const Profile_User = require('./profile_user');
 
 const Profile = db.define('Profile', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  },
   profile: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
+    type      : DataTypes.STRING,
+    allowNull : false,
+    validate  : {
       customNull( value ) {
         if( !value ) {
           throw new Error('Need to provide a valid first_lastname');
@@ -24,8 +18,12 @@ const Profile = db.define('Profile', {
       },
     }
   },
+  default: {
+    type        : DataTypes.BOOLEAN,
+    defaultValue: 0,
+  },
   status: {
-    type: DataTypes.ENUM( profileStatus ),
+    type    : DataTypes.ENUM( profileStatus ),
     validate: {
       isIn: {
         args: [ profileStatus ],
@@ -34,11 +32,11 @@ const Profile = db.define('Profile', {
     }
   },
 }, {
-  createdAt: 'created_at',
-  updatedAt: 'updated_at',
-  deletedAt: 'deleted_at',
-  paranoid: true,
   timestamps: true,
+  createdAt : 'created_at',
+  updatedAt : 'updated_at',
+  deletedAt : 'deleted_at',
+  paranoid  : true,
 });
 
 Profile.addScope('defaultScope', {
@@ -46,16 +44,5 @@ Profile.addScope('defaultScope', {
     exclude: ['deleted_at']
   }
 });
-
-Profile.belongsToMany( User, {
-  through: Profile_User,
-  foreignKey: 'profile_id',
-  as: 'users'
-});
-
-// Profile.belongsToMany( User, {
-//   through: Profile_User,
-//   foreignKey: 'id_profile',
-// });
 
 module.exports = Profile;

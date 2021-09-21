@@ -1,42 +1,37 @@
 const { response, request } = require('express');
-const bcryptjs = require('bcryptjs');
 
-const User = require('../models/user');
+const Employee = require('../models/employee');
 
-const getUsers = async ( req = request, res = response ) => {
-  const users = await User.findAll();
+const getEmployees = async ( req = request, res = response ) => {
+  const employees = await Employee.findAll();
 
   res.json({
     ok: true,
-    users
+    employees
   });
 }
 
-const createUser = async ( req = request, res = response ) => {
-  const { name, first_lastname, second_lastname, gender, password } = req.body;
+const createEmployee = async ( req = request, res = response ) => {
+  const { name, first_lastname, second_lastname, gender, email } = req.body;
 
-  // Encrypt password
-  const salt = bcryptjs.genSaltSync();
-  const passEncrypt = bcryptjs.hashSync( password, salt )
-
-  const user = new User({ 
+  const employee = new Employee({ 
     name, 
     first_lastname, 
     second_lastname, 
     gender, 
-    password: passEncrypt, 
+    email, 
   });
 
-  await user.save();
+  await employee.save();
 
-  res.json({
+  res.status(201).json({
     ok: true,
-    user,
+    employee,
   });
 
 }
 
 module.exports = {
-  getUsers,
-  createUser,
+  getEmployees,
+  createEmployee,
 };

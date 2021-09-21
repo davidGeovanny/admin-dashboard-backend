@@ -1,4 +1,5 @@
 const { request, response } = require('express');
+
 const Employee = require('../models/employee');
 const User = require('../models/user');
 
@@ -30,7 +31,7 @@ const register = async ( req = request, res = response ) => {
       await user.save();
 
       if( user ) {
-        res.json({
+        res.status(201).json({
           ok: true,
           employee,
           user

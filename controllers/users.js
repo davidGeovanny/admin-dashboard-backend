@@ -1,20 +1,24 @@
 const { response, request } = require('express');
 const { Op } = require('sequelize');
-const Profile = require('../models/profile');
 
+const Profile = require('../models/profile');
 const User = require('../models/user');
 
 const getUsers = async ( req = request, res = response ) => {
-  const users = await User.findAll({
-    include: [
-      'employee'
-    ],
-  });
-
-  res.json({
-    ok: true,
-    users
-  });
+  try {
+    const users = await User.findAll();
+  
+    res.json({
+      ok: true,
+      users
+    });
+  } catch ( err ) {
+    res.status(400).json({
+      ok: false,
+      msg: 'Ha ocurrido un error',
+      errors: err
+    });
+  }
 }
 
 const createUser = async ( req = request, res = response ) => {
@@ -30,25 +34,20 @@ const createUser = async ( req = request, res = response ) => {
   
     await user.save();
 
-    const defaultProfile = new Profile.findOne({
-      where: {
-        id: {
-          [ Op.eq ] : 5
-        }
-      }
+    const defaultProfile = await Profile.findOne({
+      where: { default: { [ Op.eq ] : 1 } }
     });
 
     if( defaultProfile ) {
       await user.addProfile( defaultProfile )
     }
 
-  
     res.json({
       ok: true,
       user,
     });
   } catch ( err ) {
-    res.status(400).json({
+    res.status(500).json({
       ok: false,
       msg: 'Ha ocurrido un error',
       errors: err

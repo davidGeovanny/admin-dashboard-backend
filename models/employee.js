@@ -1,12 +1,13 @@
 const db = require('../db/connection');
 const { DataTypes } = require('sequelize');
+
 const { userGenders } = require('../data/static-data');
 
 const Employee = db.define('Employee', {
   name: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
+    type      : DataTypes.STRING,
+    allowNull : false,
+    validate  : {
       customNull( value ) {
         if( !value ) {
           throw new Error('Need to provide a valid name');
@@ -18,9 +19,9 @@ const Employee = db.define('Employee', {
     }
   },
   first_lastname: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
+    type      : DataTypes.STRING,
+    allowNull : false,
+    validate  : {
       customNull( value ) {
         if( !value ) {
           throw new Error('Need to provide a valid first_lastname');
@@ -32,9 +33,9 @@ const Employee = db.define('Employee', {
     }
   },
   second_lastname: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
+    type      : DataTypes.STRING,
+    allowNull : false,
+    validate  : {
       customNull( value ) {
         if( !value ) {
           throw new Error('Need to provide a valid second_lastname');
@@ -46,9 +47,9 @@ const Employee = db.define('Employee', {
     }
   },
   gender: {
-    type: DataTypes.ENUM( userGenders ),
-    allowNull: false,
-    validate: {
+    type      : DataTypes.ENUM( userGenders ),
+    allowNull : false,
+    validate  : {
       isIn: {
         args:[ userGenders ],
         msg: 'Gender not valid. Valid values: ' + userGenders.join(' | ')
@@ -56,9 +57,9 @@ const Employee = db.define('Employee', {
     }
   },
   email: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
+    type      : DataTypes.STRING,
+    allowNull : false,
+    validate  : {
       isEmail: {
         msg: 'Email not valid'
       },
@@ -68,10 +69,10 @@ const Employee = db.define('Employee', {
     }
   },
 }, {
-  createdAt: 'created_at',
-  updatedAt: 'updated_at',
-  deletedAt: 'deleted_at',
-  paranoid: true,
+  createdAt : 'created_at',
+  updatedAt : 'updated_at',
+  deletedAt : 'deleted_at',
+  paranoid  : true,
   timestamps: true,
 });
 

@@ -1,17 +1,16 @@
-const { Op } = require('sequelize');
 const { request, response } = require('express');
+const { Op } = require('sequelize');
+
 const Profile = require('../models/profile');
 
 const getProfiles = async ( req = request, res = response ) => {
   try {
-
     const profiles = await Profile.findAll();
 
     res.json({
       ok: true,
       profiles
     });
-    
   } catch ( err ) {
     res.status(400).json({
       ok: false,
@@ -23,7 +22,6 @@ const getProfiles = async ( req = request, res = response ) => {
 
 const getSpecificProfile = async ( req = request, res = response ) => {
   try {
-
     const { id } = req.params;
     console.log({id})
 
@@ -47,8 +45,6 @@ const getSpecificProfile = async ( req = request, res = response ) => {
         errors: {}
       });
     }
-
-    
   } catch ( err ) {
     res.status(400).json({
       ok: false,
@@ -59,7 +55,6 @@ const getSpecificProfile = async ( req = request, res = response ) => {
 }
 
 const createProfile = async ( req = request, res = response ) => {
-
   const { profile: profileReq } = req.body;
 
   try {

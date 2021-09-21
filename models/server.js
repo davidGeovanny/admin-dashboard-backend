@@ -1,6 +1,9 @@
 const express = require('express');
 const db = require('../db/connection');
 
+/** Associate models */
+require('./index');
+
 class Server {
   constructor() {
     this.app = express();
@@ -10,6 +13,7 @@ class Server {
       auth    : '/api/auth',
       user    : '/api/users',
       profile : '/api/profiles',
+      employee: '/api/employees',
     };
 
     /** DB connection  */
@@ -36,9 +40,10 @@ class Server {
   }
 
   routes() {
-    this.app.use( this.paths.auth,    require('../routes/auth') );
-    this.app.use( this.paths.user,    require('../routes/users') );
-    this.app.use( this.paths.profile, require('../routes/profiles') );
+    this.app.use( this.paths.auth,      require('../routes/auth') );
+    this.app.use( this.paths.user,      require('../routes/users') );
+    this.app.use( this.paths.profile,   require('../routes/profiles') );
+    this.app.use( this.paths.employee,  require('../routes/employees') );
   }
 
   listen() {

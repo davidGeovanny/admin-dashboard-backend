@@ -1,8 +1,9 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
+
+const { checkValidityFields, checkProfileAvailable } = require('../middlewares');
+
 const { createProfile, getProfiles, getSpecificProfile } = require('../controllers/profiles');
-const { checkValidityFields } = require('../middlewares/check-validity-fields');
-const { checkProfileAvailable } = require('../middlewares/validate-fields');
 
 const router = Router();
 

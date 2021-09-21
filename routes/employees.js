@@ -1,14 +1,16 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
 
-const { checkValidityFields, checkEmailAvailable, checkPasswordsMatch } = require('../middlewares');
+const { checkValidityFields, checkEmailAvailable } = require('../middlewares');
 
-const { register } = require('../controllers/auth');
+const { getEmployees, createEmployee } = require('../controllers/employees');
 const { userGenders } = require('../data/static-data');
 
 const router = Router();
 
-router.post('/register', [
+router.get('/', getEmployees);
+
+router.post('/', [
   check('name', 'Need to provide your name').notEmpty(),
   check('first_lastname', 'Need to provide your first_lastname').notEmpty(),
   check('second_lastname', 'Need to provide your second_lastname').notEmpty(),
@@ -16,9 +18,7 @@ router.post('/register', [
   check('email', 'Need to provide an email').notEmpty(),
   check('email', 'Email provided is not valid').isEmail(),
   check('email').custom( checkEmailAvailable ),
-  check('password').notEmpty(),
-  check('password_confirmation').custom( checkPasswordsMatch ),
   checkValidityFields
-], register);
+], createEmployee);
 
 module.exports = router;
