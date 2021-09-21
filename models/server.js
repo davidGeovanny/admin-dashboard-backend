@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const db = require('../db/connection');
 
 /** Associate models */
@@ -35,6 +36,9 @@ class Server {
   }
 
   middlewares() {
+    /** CORS */
+    this.app.use( cors() );
+
     /** Read and parse body */
     this.app.use( express.json() );
   }
