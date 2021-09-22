@@ -83,11 +83,6 @@ const login = async ( req = request, res = response ) => {
       });
     }
 
-    console.log(user)
-
-    console.log( password )
-    console.log( user.password )
-
     const validPassword = bcrypt.compareSync( password, user.password );
 
     if( !validPassword ) {
@@ -103,7 +98,10 @@ const login = async ( req = request, res = response ) => {
 
     res.json({
       ok: true,
-      user,
+      user: {
+        id      : user.id,
+        username: user.username,
+      },
       token,
     });
   } catch ( err ) {
@@ -115,7 +113,18 @@ const login = async ( req = request, res = response ) => {
   }
 }
 
+const validateUserToken = async ( req = request, res = response ) => {
+  const token = await generateJWT( req.user.id );
+
+  res.json({
+    ok: true,
+    user: req.user,
+    token,
+  });
+}
+
 module.exports = {
   register,
   login,
+  validateUserToken,
 };

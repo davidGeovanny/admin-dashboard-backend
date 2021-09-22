@@ -63,7 +63,16 @@ User.addScope('defaultScope', {
 
 User.addScope('loginScope', {
   attributes: {
-    exclude: ['id_employee', 'created_at', 'updated_at', 'deleted_at']
+    exclude: ['id_employee', 'status', 'created_at', 'updated_at', 'deleted_at']
+  },
+  where: {
+    status: userStatus[0]
+  }
+});
+
+User.addScope('tokenScope', {
+  attributes: {
+    exclude: ['id_employee', 'password', 'status', 'created_at', 'updated_at', 'deleted_at']
   },
   where: {
     status: userStatus[0]

@@ -1,9 +1,14 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
 
-const { checkValidityFields, checkEmailAvailable, checkPasswordsMatch } = require('../middlewares');
+const { 
+  checkValidityFields, 
+  checkEmailAvailable, 
+  checkPasswordsMatch, 
+  validateJWT,
+} = require('../middlewares');
 
-const { register, login } = require('../controllers/auth');
+const { register, login, validateUserToken } = require('../controllers/auth');
 const { userGenders } = require('../data/static-data');
 
 const router = Router();
@@ -16,13 +21,19 @@ router.post('/register', [
   check('email', 'Need to provide an email').notEmpty(),
   check('email', 'Email provided is not valid').isEmail(),
   check('email').custom( checkEmailAvailable ),
-  check('password').notEmpty(),
+  check('password', 'Need to provide a password').notEmpty(),
   check('password_confirmation').custom( checkPasswordsMatch ),
   checkValidityFields
 ], register);
 
 router.post('/login', [
-
+  check('username', 'Need to provide an username').notEmpty(),
+  check('password', 'Need to provide a password').notEmpty(),
+  checkValidityFields
 ], login);
+
+router.get('/', [
+  validateJWT,
+], validateUserToken);
 
 module.exports = router;

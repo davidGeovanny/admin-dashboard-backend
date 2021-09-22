@@ -53,7 +53,7 @@ const checkProfileAvailable = async ( profile = '' ) => {
 
 const checkEmployeeExists = async ( id_employee = '' ) => {
   if( !Number( id_employee ) ) {
-    throw new Error('The employee selected not exist');
+    throw new Error('The employee selected does not exist');
   }
 
   const employee = await Employee.findAll({
@@ -65,7 +65,7 @@ const checkEmployeeExists = async ( id_employee = '' ) => {
   });
 
   if( employee.length <= 0 ) {
-    throw new Error('The employee selected not exist');
+    throw new Error('The employee selected does not exist');
   }
 }
 

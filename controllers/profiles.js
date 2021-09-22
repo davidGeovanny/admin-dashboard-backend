@@ -23,7 +23,6 @@ const getProfiles = async ( req = request, res = response ) => {
 const getSpecificProfile = async ( req = request, res = response ) => {
   try {
     const { id } = req.params;
-    console.log({id})
 
     const profile = await Profile.findOne({
       where: {
@@ -41,7 +40,7 @@ const getSpecificProfile = async ( req = request, res = response ) => {
     } else {
       res.status(400).json({
         ok: false,
-        msg: 'The profile not exists',
+        msg: 'The profile does not exist',
         errors: {}
       });
     }

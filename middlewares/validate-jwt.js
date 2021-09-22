@@ -4,8 +4,6 @@ const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
 
-const { userStatus } = require('../data/static-data');
-
 const validateJWT = async ( req = request, res = response, next ) => {
   const token = req.header('x-token');
 
@@ -24,7 +22,7 @@ const validateJWT = async ( req = request, res = response, next ) => {
     const { id } = jwt.verify( token, process.env.SECRETORPRIVATEKEY );
 
     /** Read user token data  */
-    const user = await User.scope('loginScope').findOne({
+    const user = await User.scope('tokenScope').findOne({
       where: {
         id: {
           [ Op.eq ] : id
@@ -38,18 +36,7 @@ const validateJWT = async ( req = request, res = response, next ) => {
         msg: 'Token not valid',
         errors: {
           name: 'ValidationTokenError',
-          msg: 'Token not valid - user not exist'
-        }
-      });
-    }
-
-    if( user.status !== userStatus[0] ) {
-      return res.status(401).json({
-        ok: false,
-        msg: 'Token not valid',
-        errors: {
-          name: 'ValidationTokenError',
-          msg: 'Token not valid - user disabled'
+          msg: 'Token not valid - user does not exist'
         }
       });
     }
