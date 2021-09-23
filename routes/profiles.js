@@ -1,20 +1,33 @@
 const { Router } = require('express');
-const { check } = require('express-validator');
+const { check, param  } = require('express-validator');
 
-const { checkValidityFields, checkProfileAvailable } = require('../middlewares');
+const { checkValidityFields, validateJWT } = require('../middlewares');
 
-const { createProfile, getProfiles, getSpecificProfile } = require('../controllers/profiles');
+const { createProfile, getProfiles, updateProfile, deleteProfile } = require('../controllers/profiles');
+const { profilePutRules, profilePostRules } = require('../rules/profile-rules');
 
 const router = Router();
 
-router.get('/', getProfiles);
-
-router.get('/:id', getSpecificProfile);
+router.get('/', [
+  validateJWT
+], getProfiles);
 
 router.post('/', [
-  check('profile', 'Need to provide a name for the profile').notEmpty(),
-  check('profile').custom( checkProfileAvailable ),
+  validateJWT,
+  ...profilePostRules,
   checkValidityFields
 ], createProfile);
+
+router.put('/:id', [
+  validateJWT,
+  ...profilePutRules,
+  checkValidityFields
+], updateProfile);
+
+router.delete('/:id', [
+  validateJWT,
+  param('id', 'The profile does not exist').isNumeric(),
+  checkValidityFields
+], deleteProfile);
 
 module.exports = router;

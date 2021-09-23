@@ -33,16 +33,27 @@ const checkUserAvailable = async ( username = '' ) => {
   }
 }
 
-const checkProfileAvailable = async ( profile = '' ) => {
+const checkProfileAvailable = async ( profile = '', { req = request } ) => {
+  const { id = '' } = req.params;
+
   if( profile.toLowerCase() === 'administrador' || profile.toLowerCase() === 'superadmin' ) {
     throw new Error('Profile name is not valid');
   }
 
   const profiles = await Profile.findAll({
     where: {
-      profile: {
-        [ Op.eq ] : profile
-      },
+      [ Op.and ] : [
+        { 
+          profile: { 
+            [ Op.eq ] : profile 
+          } 
+        },
+        {
+          id: {
+            [ Op.ne ] : id
+          }
+        },
+      ]
     }
   });
 

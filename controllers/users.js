@@ -1,13 +1,12 @@
 const { response, request } = require('express');
 const { Op } = require('sequelize');
 
-const Profile = require('../models/profile');
-const User = require('../models/user');
+const { User, Profile } = require('../models');
 
 const getUsers = async ( req = request, res = response ) => {
   try {
     const users = await User.findAll();
-  
+    
     res.json({
       ok: true,
       users

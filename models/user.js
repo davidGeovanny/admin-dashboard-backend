@@ -1,8 +1,10 @@
-const { DataTypes, Op } = require('sequelize');
-const { userStatus } = require('../data/static-data');
 const db = require('../db/connection');
 const bcrypt = require('bcryptjs');
+const { DataTypes } = require('sequelize');
+
 const Employee = require('./employee');
+
+const { userStatus } = require('../data/static-data');
 
 const User = db.define('User', {
   username: {
@@ -72,14 +74,14 @@ User.addScope('loginScope', {
 
 User.addScope('tokenScope', {
   attributes: {
-    exclude: ['id_employee', 'password', 'status', 'created_at', 'updated_at', 'deleted_at']
+    exclude: ['id_employee', 'password', 'status', 'created_at', 'updated_at', 'deleted_at'],
   },
   where: {
     status: userStatus[0]
   }
 });
 
-User.beforeCreate( async ( user ) => {
+User.beforeCreate( ( user ) => {
   /** Encrypt password */
   const salt     = bcrypt.genSaltSync();
   const passHash = bcrypt.hashSync( user.password, salt );

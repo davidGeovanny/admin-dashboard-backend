@@ -1,8 +1,7 @@
 const { response, request } = require('express');
 const { Op } = require('sequelize');
 
-const Employee = require('../models/employee');
-const User = require('../models/user');
+const { Employee, User } = require('../models');
 
 const getEmployees = async ( req = request, res = response ) => {
   try {

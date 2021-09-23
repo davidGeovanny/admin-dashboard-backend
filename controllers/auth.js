@@ -2,8 +2,7 @@ const { request, response } = require('express');
 const { Op } = require('sequelize');
 const bcrypt = require('bcryptjs');
 
-const Employee = require('../models/employee');
-const User = require('../models/user');
+const { Employee, User } = require('../models');
 const { generateJWT } = require('../helpers/generate-jwt');
 
 const register = async ( req = request, res = response ) => {
@@ -18,26 +17,31 @@ const register = async ( req = request, res = response ) => {
   
   try {
     /** Create employee */
-    const employee = new Employee({ name, first_lastname, second_lastname, gender, email });
-    await employee.save();
+    const employee = await Employee.create({ name, first_lastname, second_lastname, gender, email });
 
     if( employee ) {
       const username = ( first_lastname.substring(0, 2) + second_lastname.substring(0, 2) + name.split(' ')[0] ).toLowerCase();
 
-      const user = new User({
+      const user = await User.create({
         username,
         password,
         status: 'waiting activation',
         id_employee: employee.id
       });
 
-      await user.save();
-
       if( user ) {
         res.status(201).json({
           ok: true,
-          employee,
-          user
+          employee: {
+            name,
+            first_lastname,
+            second_lastname,
+            gender,
+            email,
+          },
+          user: {
+            username: user.username,
+          }
         });
       } else {
         res.status(400).json({

@@ -14,7 +14,7 @@ const Profile = db.define('Profile', {
         }
       },
       notNull: {
-        msg: "first_lastname can't be null"
+        msg: "profile can't be null"
       },
     }
   },
