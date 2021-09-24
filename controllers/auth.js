@@ -1,9 +1,10 @@
 const { request, response } = require('express');
-const { Op } = require('sequelize');
-const bcrypt = require('bcryptjs');
+const { Op }  = require('sequelize');
+const bcrypt  = require('bcryptjs');
+const _       = require('underscore');
 
 const { Employee, User } = require('../models');
-const { generateJWT } = require('../helpers/generate-jwt');
+const { generateJWT }    = require('../helpers/generate-jwt');
 
 const register = async ( req = request, res = response ) => {
   const { 

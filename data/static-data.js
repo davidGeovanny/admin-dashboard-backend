@@ -1,7 +1,7 @@
 const userGenders = ['male', 'female', 'undefined'];
 const userStatus  = ['activated', 'disabled', 'waiting activation'];
 
-const profileStatus = ['actived', 'disabled'];
+const profileStatus = ['activated', 'disabled'];
 
 module.exports = {
   userGenders,

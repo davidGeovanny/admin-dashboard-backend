@@ -1,15 +1,22 @@
 const { Router } = require('express');
-const { check } = require('express-validator');
+const { param } = require('express-validator');
+
+const { checkValidityFields, validateJWT } = require('../middlewares');
+const { 
+  userPostRules, 
+  userPutRules, 
+  userPasswordRules, 
+  userAddProfileRules 
+} = require('../rules/user-rules');
 
 const { 
-  checkValidityFields,
-  checkPasswordsMatch,
-  checkEmployeeExists,
-  checkUserAvailable,
-  validateJWT,
-} = require('../middlewares');
-
-const { getUsers, createUser } = require('../controllers/users');
+  getUsers, 
+  createUser, 
+  updateUser, 
+  updateUserPassword, 
+  deleteUser,
+  userAddProfile
+} = require('../controllers/users');
 
 const router = Router();
 
@@ -19,12 +26,32 @@ router.get('/', [
 
 router.post('/',[
   validateJWT,
-  check('username', 'Need to provide an username').notEmpty(),
-  check('username').custom( checkUserAvailable ),
-  check('password').notEmpty(),
-  check('password_confirmation').custom( checkPasswordsMatch ),
-  check('id_employee').custom( checkEmployeeExists ),
+  ...userPostRules,
   checkValidityFields
 ], createUser);
+
+router.put('/:id', [
+  validateJWT,
+  ...userPutRules,
+  checkValidityFields
+], updateUser);
+
+router.put('/:id/change-password', [
+  validateJWT,
+  ...userPasswordRules,
+  checkValidityFields
+], updateUserPassword);
+// TODO:
+router.put('/:id/add-profile', [
+  validateJWT,
+  ...userAddProfileRules,
+  checkValidityFields
+], userAddProfile);
+
+router.delete('/:id', [
+  validateJWT,
+  param('id', 'The user does not exist').isNumeric(),
+  checkValidityFields
+], deleteUser);
 
 module.exports = router;

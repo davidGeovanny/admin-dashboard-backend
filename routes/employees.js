@@ -1,12 +1,8 @@
 const { Router } = require('express');
-const { check, param } = require('express-validator');
+const { param }  = require('express-validator');
 
-const { 
-  checkValidityFields, 
-  checkEmailAvailable, 
-  validateJWT,
-  validateQueryParams,
-} = require('../middlewares');
+const { checkValidityFields, validateJWT }    = require('../middlewares');
+const { employeePostRules, employeePutRules } = require('../rules/employee-rules');
 
 const { 
   getEmployees, 
@@ -14,30 +10,22 @@ const {
   updateEmployee, 
   deleteEmployee
 } = require('../controllers/employees');
-const { userGenders } = require('../data/static-data');
 
 const router = Router();
 
 router.get('/', [
-  validateJWT,
-  validateQueryParams
+  validateJWT
 ], getEmployees);
 
 router.post('/', [
   validateJWT,
-  check('name', 'Need to provide your name').notEmpty(),
-  check('first_lastname', 'Need to provide your first_lastname').notEmpty(),
-  check('second_lastname', 'Need to provide your second_lastname').notEmpty(),
-  check('gender', 'Gender not valid. Available values: ' + userGenders.join(', ')).isIn( userGenders ),
-  check('email', 'Need to provide an email').notEmpty(),
-  check('email', 'Email provided is not valid').isEmail(),
-  check('email').custom( checkEmailAvailable ),
+  ...employeePostRules,
   checkValidityFields
 ], createEmployee);
 
 router.put('/:id', [
   validateJWT,
-  param('id', 'The employee does not exist').isNumeric(),
+  ...employeePutRules,
   checkValidityFields
 ], updateEmployee);
 

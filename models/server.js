@@ -1,6 +1,6 @@
 const express = require('express');
-const cors = require('cors');
-const db = require('../db/connection');
+const cors    = require('cors');
+const db      = require('../db/connection');
 
 /** Associate models */
 require('./index');

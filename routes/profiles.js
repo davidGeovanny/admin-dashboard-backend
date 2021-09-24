@@ -1,10 +1,15 @@
 const { Router } = require('express');
-const { check, param  } = require('express-validator');
+const { param  } = require('express-validator');
 
-const { checkValidityFields, validateJWT } = require('../middlewares');
-
-const { createProfile, getProfiles, updateProfile, deleteProfile } = require('../controllers/profiles');
+const { checkValidityFields, validateJWT }  = require('../middlewares');
 const { profilePutRules, profilePostRules } = require('../rules/profile-rules');
+
+const { 
+  createProfile, 
+  getProfiles, 
+  updateProfile, 
+  deleteProfile 
+} = require('../controllers/profiles');
 
 const router = Router();
 

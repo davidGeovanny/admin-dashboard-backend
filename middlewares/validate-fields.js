@@ -1,9 +1,9 @@
 const { request } = require('express');
-const { Op } = require('sequelize');
+const { Op }      = require('sequelize');
 
 const Employee = require('../models/employee');
-const Profile = require('../models/profile');
-const User = require('../models/user');
+const Profile  = require('../models/profile');
+const User     = require('../models/user');
 
 const checkEmailAvailable = async ( email = '' ) => {
   const employees = await Employee.findAll({
@@ -19,12 +19,23 @@ const checkEmailAvailable = async ( email = '' ) => {
   }
 }
 
-const checkUserAvailable = async ( username = '' ) => {
+const checkUserAvailable = async ( username = '', { req = request } ) => {
+  const { id = '' } = req.params;
+
   const users = await User.findAll({
     where: {
-      username: {
-        [ Op.eq ] : username
-      },
+      [ Op.and ] :  [
+        {
+          username: {
+            [ Op.eq ] : username
+          }
+        },
+        {
+          id: {
+            [ Op.ne ] : id
+          }
+        },
+      ]
     }
   });
 
@@ -84,7 +95,7 @@ const checkPasswordsMatch = ( password_confirmation = '', { req = request } ) =>
   const { password } = req.body;
   
   if( password_confirmation !== password ) {
-    throw new Error('The passwords not match');
+    throw new Error('The passwords do not match');
   }
   
   return true;

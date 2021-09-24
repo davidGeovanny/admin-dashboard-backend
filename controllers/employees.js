@@ -1,5 +1,6 @@
 const { response, request } = require('express');
 const { Op } = require('sequelize');
+const _      = require('underscore');
 
 const { Employee, User } = require('../models');
 
@@ -21,18 +22,16 @@ const getEmployees = async ( req = request, res = response ) => {
 }
 
 const createEmployee = async ( req = request, res = response ) => {
-  const { name, first_lastname, second_lastname, gender, email } = req.body;
+  const employeeBody = _.pick( req.body, [
+    'name',
+    'first_lastname',
+    'second_lastname',
+    'gender',
+    'email',
+  ]);
 
   try {
-    const employee = new Employee({ 
-      name, 
-      first_lastname, 
-      second_lastname, 
-      gender, 
-      email, 
-    });
-  
-    await employee.save();
+    const employee = await Employee.create( employeeBody );
   
     res.status(201).json({
       ok: true,
@@ -50,7 +49,13 @@ const createEmployee = async ( req = request, res = response ) => {
 const updateEmployee = async ( req = request, res = response ) => {
   try {
     const { id } = req.params;
-    const { body } = req;
+    const employeeBody = _.pick( req.body, [
+      'name',
+      'first_lastname',
+      'second_lastname',
+      'gender',
+      'email',
+    ]);
 
     const employee = await Employee.findByPk( id );
 
@@ -62,7 +67,7 @@ const updateEmployee = async ( req = request, res = response ) => {
       });
     }
 
-    employee.update( body );
+    employee.update( employeeBody );
 
     res.json({
       ok: true,

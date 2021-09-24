@@ -1,9 +1,9 @@
 const db = require('../db/connection');
-const bcrypt = require('bcryptjs');
 const { DataTypes } = require('sequelize');
 
 const Employee = require('./employee');
 
+const { encryptPassword } = require('../helpers/encrypt-password');
 const { userStatus } = require('../data/static-data');
 
 const User = db.define('User', {
@@ -82,10 +82,11 @@ User.addScope('tokenScope', {
 });
 
 User.beforeCreate( ( user ) => {
-  /** Encrypt password */
-  const salt     = bcrypt.genSaltSync();
-  const passHash = bcrypt.hashSync( user.password, salt );
-  user.password  = passHash;
+  user.password = encryptPassword( user.password );
+});
+
+User.beforeUpdate( ( user ) => {
+  user.password = encryptPassword( user.password );
 });
 
 module.exports = User;

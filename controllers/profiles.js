@@ -1,8 +1,10 @@
 const { request, response } = require('express');
 const { Op } = require('sequelize');
-const _ = require('underscore');
+const _      = require('underscore');
 
-const { Profile, User } = require('../models');
+const { Profile } = require('../models');
+
+const { profileStatus } = require('../data/static-data');
 
 const getProfiles = async ( req = request, res = response ) => {
   try {
@@ -25,7 +27,7 @@ const createProfile = async ( req = request, res = response ) => {
   const profileBody = _.pick( req.body, ['profile'] );
 
   try {
-    const profile = await Profile.create( profileBody );
+    const profile = await Profile.create({ ...profileBody, status: profileStatus[0] });
     
     if( profile ) {
       res.status(201).json({
@@ -63,6 +65,7 @@ const updateProfile = async ( req = request, res = response ) => {
       });
     }
 
+    /** Avoid to remove the default profile */
     if( Object.hasOwnProperty.call( profileBody, 'default' ) ) {
       if( profile.default && !profileBody.default ) {
         return res.status(404).json({

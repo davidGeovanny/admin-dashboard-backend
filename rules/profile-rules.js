@@ -1,5 +1,7 @@
-const { check, param } = require('express-validator');
+const { check, param }          = require('express-validator');
 const { checkProfileAvailable } = require('../middlewares');
+
+const { profileStatus } = require('../data/static-data');
 
 /** Post Request */
 const profilePostRules = [
@@ -21,6 +23,8 @@ const profilePutRules = [
   /** Fields */
   check('profile')
     .optional()
+    .notEmpty()
+    .withMessage('Neet to provide a profile name')
     .isString()
     .withMessage('Need to provide a valid profile name')
     .custom( checkProfileAvailable ),
@@ -29,6 +33,10 @@ const profilePutRules = [
     .isBoolean()
     .withMessage('Error checking this profile as default')
     .toBoolean(),
+  check('status')
+    .optional()
+    .isIn( profileStatus )
+    .withMessage("Error changing profile status")
 ];
 
 module.exports = {
