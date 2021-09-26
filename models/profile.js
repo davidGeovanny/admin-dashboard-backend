@@ -45,4 +45,13 @@ Profile.addScope('defaultScope', {
   }
 });
 
+Profile.addScope('activeProfileScope', {
+  attributes: {
+    exclude: ['default', 'deleted_at'],
+  },
+  where: {
+    status: profileStatus[0]
+  }
+});
+
 module.exports = Profile;

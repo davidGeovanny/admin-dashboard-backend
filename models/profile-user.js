@@ -11,7 +11,7 @@ const ProfileUser = db.define('ProfileUser', {}, {
 User.belongsToMany( Profile, {
   through   : 'ProfileUser',
   foreignKey: 'id_user',
-  as        : 'profiles'
+  as        : 'profiles',
 });
 
 Profile.belongsToMany( User, {

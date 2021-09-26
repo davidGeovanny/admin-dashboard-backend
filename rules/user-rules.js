@@ -70,18 +70,24 @@ const userPasswordRules = [
     .custom( checkPasswordsMatch ),
 ];
 
-const userAddProfileRules = [
+const userAddRemoveProfileRules = [
   /** Params */
   param('id')
     .notEmpty()
     .withMessage('The username does not exist')
     .isNumeric()
     .withMessage('The username does not exist'),
+  /** Fields */
+  body('id_profile')
+    .notEmpty()
+    .withMessage('The profile does not exist')
+    .isNumeric()
+    .withMessage('The profile does not exist')
 ];
 
 module.exports = {
   userPostRules,
   userPutRules,
   userPasswordRules,
-  userAddProfileRules,
+  userAddRemoveProfileRules,
 };

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "0023c28d-b285-45a2-afaf-f6e8b0be8a41",
+		"_postman_id": "fe326d11-b75b-4593-a50a-d27de39a1060",
 		"name": "admin-dashboard",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -12,7 +12,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"David\",\r\n    \"first_lastname\": \"Carrillo\",\r\n    \"second_lastname\": \"Rosales\",\r\n    \"gender\": \"male\",\r\n    \"email\": \"david.geovanny.cr4@gmail.com\",\r\n    \"password\": \"123456\",\r\n    \"password_confirmation\": \"123456\"\r\n}",
+					"raw": "{\r\n    \"name\": \"David\",\r\n    \"first_lastname\": \"Carrillo\",\r\n    \"second_lastname\": \"Rosales\",\r\n    \"gender\": \"male\",\r\n    \"email\": \"david.geovanny.cr1@gmail.com\",\r\n    \"password\": \"123456\",\r\n    \"password_confirmation\": \"123456\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -249,6 +249,101 @@
 			"response": []
 		},
 		{
+			"name": "User add profile",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id_profile\": \"2\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/users/28/add-profile",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"28",
+						"add-profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User remove profile",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id_profile\": \"2\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/users/28/remove-profile",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"28",
+						"remove-profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete user",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/api/users/87",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"87"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Get profiles",
 			"request": {
 				"method": "GET",
@@ -285,7 +380,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"profile\": \"Commissions viewer_6\"\r\n}",
+					"raw": "{\r\n    \"profile\": \"Commissions viewer 2\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -445,7 +540,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"David\",\r\n    \"first_lastname\": \"Carrillo\",\r\n    \"second_lastname\": \"Rosales\",\r\n    \"gender\": \"male\",\r\n    \"email\": \"david.geovanny.cr7@gmail.com\"\r\n}",
+					"raw": "{\r\n    \"name\": \"David\",\r\n    \"first_lastname\": \"Carrillo\",\r\n    \"second_lastname\": \"Rosales\",\r\n    \"gender\": \"male\",\r\n    \"email\": \"david.geovanny.cr1@gmail.com\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -519,31 +614,6 @@
 						"api",
 						"employees",
 						"77"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Delete user",
-			"request": {
-				"method": "DELETE",
-				"header": [
-					{
-						"key": "x-token",
-						"value": "{{token}}",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{url}}/api/users/87",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"api",
-						"users",
-						"87"
 					]
 				}
 			},

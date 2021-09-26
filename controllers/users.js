@@ -3,7 +3,7 @@ const { Op } = require('sequelize');
 const bcrypt = require('bcryptjs');
 const _      = require('underscore');
 
-const { User, Profile } = require('../models');
+const { User, Profile, ProfileUser } = require('../models');
 
 const { userStatus } = require('../data/static-data');
 
@@ -67,7 +67,7 @@ const updateUser = async ( req = request, res = response ) => {
       });
     }
 
-    user.update( userBody );
+    await user.update( userBody );
 
     res.json({
       ok: true,
@@ -107,7 +107,7 @@ const updateUserPassword = async ( req = request, res = response ) => {
       });
     }
 
-    user.update( userBody );
+    await user.update( userBody );
 
     res.json({
       ok: true,
@@ -124,6 +124,7 @@ const updateUserPassword = async ( req = request, res = response ) => {
 
 const userAddProfile = async ( req = request, res = response ) => {
   const { id } = req.params;
+  const { id_profile } = req.body;
 
   try {
     const user = await User.findByPk( id );
@@ -135,6 +136,94 @@ const userAddProfile = async ( req = request, res = response ) => {
         errors: {}
       });
     }
+
+    const profile_user = await ProfileUser.findOne({
+      where: {
+        [ Op.and ] : [
+          {
+            id_user: { [ Op.eq ] : id }
+          },
+          {
+            id_profile: { [ Op.eq ] : id_profile }
+          },
+        ]
+      }
+    });
+
+    if( profile_user ) {
+      return res.json({
+        ok: true,
+        user
+      });
+    }
+    
+    const profile = await Profile.scope('activeProfileScope').findByPk( id_profile );
+    
+    if( !profile ) {
+      return res.status(404).json({
+        ok: false,
+        msg: "Can't add the selected profile. Check selected profile is activated",
+        errors: {}
+      });
+    }
+
+    await user.addProfile( id_profile );
+
+    res.json({
+      ok: true,
+      user,
+    });
+  } catch ( err ) {
+    res.status(400).json({
+      ok: false,
+      msg: 'An error has ocurred',
+      errors: err
+    });
+  }
+}
+
+const userRemoveProfile = async ( req = request, res = response ) => {
+  const { id } = req.params;
+  const { id_profile } = req.body;
+
+  try {
+    const user = await User.findByPk( id );
+
+    if( !user ) {
+      return res.status(404).json({
+        ok: false,
+        msg: 'The user does not exist',
+        errors: {}
+      });
+    }
+
+    const profile_user = await ProfileUser.findOne({
+      where: {
+        [ Op.and ] : [
+          {
+            id_user: { [ Op.eq ] : id }
+          },
+          {
+            id_profile: { [ Op.eq ] : id_profile }
+          },
+        ]
+      }
+    });
+
+    if( !profile_user ) {
+      return res.status(404).json({
+        ok: false,
+        msg: 'The user does not have the selected profile',
+        errors: {}
+      });
+    }
+
+    await profile_user.destroy();
+
+    res.json({
+      ok: true,
+      user,
+    });
   } catch ( err ) {
     res.status(400).json({
       ok: false,
@@ -158,7 +247,7 @@ const deleteUser = async ( req = request, res = response ) => {
       });
     }
 
-    user.destroy();
+    await user.destroy();
 
     res.json({
       ok: true,
@@ -180,4 +269,5 @@ module.exports = {
   updateUserPassword,
   deleteUser,
   userAddProfile,
+  userRemoveProfile,
 };

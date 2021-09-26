@@ -67,7 +67,7 @@ const updateEmployee = async ( req = request, res = response ) => {
       });
     }
 
-    employee.update( employeeBody );
+    await employee.update( employeeBody );
 
     res.json({
       ok: true,
@@ -96,7 +96,7 @@ const deleteEmployee = async ( req = request, res = response ) => {
       });
     }
 
-    employee.destroy();
+    await employee.destroy();
 
     await User.destroy({
       where: {

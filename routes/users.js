@@ -6,7 +6,7 @@ const {
   userPostRules, 
   userPutRules, 
   userPasswordRules, 
-  userAddProfileRules 
+  userAddRemoveProfileRules, 
 } = require('../rules/user-rules');
 
 const { 
@@ -15,7 +15,8 @@ const {
   updateUser, 
   updateUserPassword, 
   deleteUser,
-  userAddProfile
+  userAddProfile,
+  userRemoveProfile
 } = require('../controllers/users');
 
 const router = Router();
@@ -41,12 +42,18 @@ router.put('/:id/change-password', [
   ...userPasswordRules,
   checkValidityFields
 ], updateUserPassword);
-// TODO:
+
 router.put('/:id/add-profile', [
   validateJWT,
-  ...userAddProfileRules,
+  ...userAddRemoveProfileRules,
   checkValidityFields
 ], userAddProfile);
+
+router.put('/:id/remove-profile', [
+  validateJWT,
+  ...userAddRemoveProfileRules,
+  checkValidityFields
+], userRemoveProfile);
 
 router.delete('/:id', [
   validateJWT,

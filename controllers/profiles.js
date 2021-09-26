@@ -89,7 +89,7 @@ const updateProfile = async ( req = request, res = response ) => {
       );
     }
 
-    profile.update( profileBody );
+    await profile.update( profileBody );
 
     res.json({
       ok: true,
@@ -126,7 +126,7 @@ const deleteProfile = async ( req = request, res = response ) => {
       });
     }
 
-    profile.destroy();
+    await profile.destroy();
 
     res.json({
       ok: true,
