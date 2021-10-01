@@ -15,6 +15,7 @@ class Server {
       user    : '/api/users',
       profile : '/api/profiles',
       employee: '/api/employees',
+      sale    : '/api/sales',
     };
 
     /** DB connection  */
@@ -48,6 +49,7 @@ class Server {
     this.app.use( this.paths.user,      require('../routes/users') );
     this.app.use( this.paths.profile,   require('../routes/profiles') );
     this.app.use( this.paths.employee,  require('../routes/employees') );
+    this.app.use( this.paths.sale,      require('../routes/sales') );
   }
 
   listen() {
