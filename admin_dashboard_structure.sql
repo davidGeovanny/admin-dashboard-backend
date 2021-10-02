@@ -31,7 +31,7 @@ CREATE TABLE `employees` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=86 DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `profile_user` */
 
@@ -53,7 +53,35 @@ DROP TABLE IF EXISTS `profiles`;
 CREATE TABLE `profiles` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `profile` varchar(100) NOT NULL,
+  `default` tinyint(4) NOT NULL DEFAULT 0,
   `status` enum('activated','disabled') NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4;
+
+/*Table structure for table `sales` */
+
+DROP TABLE IF EXISTS `sales`;
+
+CREATE TABLE `sales` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `branch_company` varchar(75) NOT NULL,
+  `client` varchar(120) NOT NULL,
+  `delivery_point_key` varchar(15) NOT NULL,
+  `delivery_point` varchar(100) NOT NULL,
+  `route_name` varchar(50) NOT NULL,
+  `sales_folio` varchar(20) NOT NULL,
+  `date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `payment_method` enum('cash payment','credit payment') NOT NULL,
+  `product` varchar(200) NOT NULL,
+  `original_price` bigint(20) unsigned NOT NULL,
+  `quantity` mediumint(8) unsigned NOT NULL,
+  `type_modification` enum('discount','over price','without changes') NOT NULL,
+  `modified_price` bigint(20) unsigned NOT NULL,
+  `final_price` bigint(20) unsigned NOT NULL,
+  `bonification` tinyint(4) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `deleted_at` timestamp NULL DEFAULT NULL,
@@ -76,7 +104,7 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`),
   KEY `id_employee` (`id_employee`),
   CONSTRAINT `users_ibfk_1` FOREIGN KEY (`id_employee`) REFERENCES `employees` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=89 DEFAULT CHARSET=utf8mb4;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

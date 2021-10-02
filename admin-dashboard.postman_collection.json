@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "fe326d11-b75b-4593-a50a-d27de39a1060",
+		"_postman_id": "e13c9600-58c0-4276-82c4-c0dad85aab74",
 		"name": "admin-dashboard",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -614,6 +614,41 @@
 						"api",
 						"employees",
 						"77"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get sales (import data)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth",
+						"value": "6+oa9lqNGgXVq4fvrwFiZcXrSw==",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/api/sales/?initDate=2021-09-01&finalDate=2021-09-30",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"sales",
+						""
+					],
+					"query": [
+						{
+							"key": "initDate",
+							"value": "2021-09-01"
+						},
+						{
+							"key": "finalDate",
+							"value": "2021-09-30"
+						}
 					]
 				}
 			},
