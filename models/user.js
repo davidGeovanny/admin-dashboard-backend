@@ -9,9 +9,17 @@ const { userStatus } = require('../data/static-data');
 const User = db.define('User', {
   username: {
     type    : DataTypes.STRING,
-    notNull : {
-      msg: "Username can't be null"
-    },
+    allowNull: false,
+    validate: {
+      customNull( value ) {
+        if( !value ) {
+          throw new Error('Need to provide a username');
+        }
+      },
+      notNull : {
+        msg: "Username can't be null"
+      },
+    }
   },
   password: {
     type      : DataTypes.STRING,

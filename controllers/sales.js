@@ -1,10 +1,13 @@
 const { request, response } = require('express');
+
 const hieleraApi = require('../helpers/hielera-api');
+const { formatSequelizeError } = require('../helpers/format-sequelize-error');
 
 const getSales = async ( req = request, res = response ) => {
-
   try {
-    const resp = await hieleraApi.get('/sales/?initDate=2021-09-01&finalDate=2021-09-30');
+    const { initDate, finalDate } = req.query;
+
+    const resp = await hieleraApi.get(`/sales/?initDate=${ initDate }&finalDate=${ finalDate }`);
     
     if( !resp.data.ok ) {
       return res.status(400).json({
@@ -13,18 +16,16 @@ const getSales = async ( req = request, res = response ) => {
         errors: {}
       });
     }
-
-    
     
     res.json({
       ok: true,
-      sales: resp.data.sales
+      sales: resp.data.sales.slice(0, 100)
     });
   } catch ( err ) {
     res.status(400).json({
       ok: false,
       msg: 'An error has ocurred',
-      errors: err
+      errors: formatSequelizeError( err )
     });
   }
 }

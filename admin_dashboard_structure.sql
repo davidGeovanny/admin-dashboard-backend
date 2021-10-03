@@ -31,7 +31,7 @@ CREATE TABLE `employees` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=86 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=66 DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `profile_user` */
 
@@ -59,7 +59,7 @@ CREATE TABLE `profiles` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `sales` */
 
@@ -74,6 +74,7 @@ CREATE TABLE `sales` (
   `route_name` varchar(50) NOT NULL,
   `sales_folio` varchar(20) NOT NULL,
   `date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `hour` time DEFAULT NULL,
   `payment_method` enum('cash payment','credit payment') NOT NULL,
   `product` varchar(200) NOT NULL,
   `original_price` bigint(20) unsigned NOT NULL,
@@ -86,7 +87,7 @@ CREATE TABLE `sales` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=29624 DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `users` */
 
@@ -104,7 +105,7 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`),
   KEY `id_employee` (`id_employee`),
   CONSTRAINT `users_ibfk_1` FOREIGN KEY (`id_employee`) REFERENCES `employees` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=89 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

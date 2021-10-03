@@ -4,7 +4,9 @@ const bcrypt  = require('bcryptjs');
 const _       = require('underscore');
 
 const { Employee, User } = require('../models');
+
 const { generateJWT }    = require('../helpers/generate-jwt');
+const { formatSequelizeError } = require('../helpers/format-sequelize-error');
 
 const register = async ( req = request, res = response ) => {
   const { 
@@ -63,7 +65,7 @@ const register = async ( req = request, res = response ) => {
     res.status(400).json({
       ok: false,
       msg: 'An error has ocurred',
-      errors: err
+      errors: formatSequelizeError( err )
     });
   }
 }
@@ -113,7 +115,7 @@ const login = async ( req = request, res = response ) => {
     res.status(400).json({
       ok: false,
       msg: 'An error has ocurred',
-      errors: err
+      errors: formatSequelizeError( err )
     });
   }
 }

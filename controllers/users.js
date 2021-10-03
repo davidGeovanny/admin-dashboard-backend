@@ -6,6 +6,7 @@ const _      = require('underscore');
 const { User, Profile, ProfileUser } = require('../models');
 
 const { userStatus } = require('../data/static-data');
+const { formatSequelizeError } = require('../helpers/format-sequelize-error');
 
 const getUsers = async ( req = request, res = response ) => {
   try {
@@ -19,7 +20,7 @@ const getUsers = async ( req = request, res = response ) => {
     res.status(400).json({
       ok: false,
       msg: 'An error has ocurred',
-      errors: err
+      errors: formatSequelizeError( err )
     });
   }
 }
@@ -27,7 +28,7 @@ const getUsers = async ( req = request, res = response ) => {
 const createUser = async ( req = request, res = response ) => {
   const userBody  = _.pick( req.body, ['username', 'id_employee', 'password'] );
   userBody.status = userStatus[0];
-
+  
   try {
     const user = await User.create( userBody );
 
@@ -47,7 +48,7 @@ const createUser = async ( req = request, res = response ) => {
     res.status(400).json({
       ok: false,
       msg: 'An error has ocurred',
-      errors: err
+      errors: formatSequelizeError( err )
     });
   }
 }
@@ -77,7 +78,7 @@ const updateUser = async ( req = request, res = response ) => {
     res.status(400).json({
       ok: false,
       msg: 'An error has ocurred',
-      errors: err
+      errors: formatSequelizeError( err )
     });
   }
 }
@@ -117,7 +118,7 @@ const updateUserPassword = async ( req = request, res = response ) => {
     res.status(400).json({
       ok: false,
       msg: 'An error has ocurred',
-      errors: err
+      errors: formatSequelizeError( err )
     });
   }
 }
@@ -177,7 +178,7 @@ const userAddProfile = async ( req = request, res = response ) => {
     res.status(400).json({
       ok: false,
       msg: 'An error has ocurred',
-      errors: err
+      errors: formatSequelizeError( err )
     });
   }
 }
@@ -228,7 +229,7 @@ const userRemoveProfile = async ( req = request, res = response ) => {
     res.status(400).json({
       ok: false,
       msg: 'An error has ocurred',
-      errors: err
+      errors: formatSequelizeError( err )
     });
   }
 }
@@ -257,7 +258,7 @@ const deleteUser = async ( req = request, res = response ) => {
     res.status(400).json({
       ok: false,
       msg: 'An error has ocurred',
-      errors: err
+      errors: formatSequelizeError( err )
     });
   }
 }

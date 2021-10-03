@@ -4,6 +4,8 @@ const _      = require('underscore');
 
 const { Employee, User } = require('../models');
 
+const { formatSequelizeError } = require('../helpers/format-sequelize-error');
+
 const getEmployees = async ( req = request, res = response ) => {
   try {
     const employees = await Employee.findAll();
@@ -16,7 +18,7 @@ const getEmployees = async ( req = request, res = response ) => {
     res.status(400).json({
       ok: false,
       msg: 'An error has ocurred',
-      errors: err
+      errors: formatSequelizeError( err )
     });
   }
 }
@@ -41,7 +43,7 @@ const createEmployee = async ( req = request, res = response ) => {
     res.status(400).json({
       ok: false,
       msg: 'An error has ocurred',
-      errors: err
+      errors: formatSequelizeError( err )
     });
   }
 }
@@ -77,7 +79,7 @@ const updateEmployee = async ( req = request, res = response ) => {
     res.status(400).json({
       ok: false,
       msg: 'An error has ocurred',
-      errors: err
+      errors: formatSequelizeError( err )
     });
   }
 }
@@ -114,7 +116,7 @@ const deleteEmployee = async ( req = request, res = response ) => {
     res.status(400).json({
       ok: false,
       msg: 'An error has ocurred',
-      errors: err
+      errors: formatSequelizeError( err )
     });
   }
 }

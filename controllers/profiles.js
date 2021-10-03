@@ -5,6 +5,7 @@ const _      = require('underscore');
 const { Profile } = require('../models');
 
 const { profileStatus } = require('../data/static-data');
+const { formatSequelizeError } = require('../helpers/format-sequelize-error');
 
 const getProfiles = async ( req = request, res = response ) => {
   try {
@@ -18,7 +19,7 @@ const getProfiles = async ( req = request, res = response ) => {
     res.status(400).json({
       ok: false,
       msg: 'An error has ocurred',
-      errors: err
+      errors: formatSequelizeError( err )
     });
   }
 }
@@ -45,7 +46,7 @@ const createProfile = async ( req = request, res = response ) => {
     res.status(400).json({
       ok: false,
       msg: 'An error has ocurred',
-      errors: err
+      errors: formatSequelizeError( err )
     });
   }
 }
@@ -99,7 +100,7 @@ const updateProfile = async ( req = request, res = response ) => {
     res.status(400).json({
       ok: false,
       msg: 'An error has ocurred',
-      errors: err
+      errors: formatSequelizeError( err )
     });
   }
 }
@@ -136,7 +137,7 @@ const deleteProfile = async ( req = request, res = response ) => {
     res.status(400).json({
       ok: false,
       msg: 'An error has ocurred',
-      errors: err
+      errors: formatSequelizeError( err )
     });
   }
 }

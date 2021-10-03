@@ -8,10 +8,13 @@ const checkValidityFields = ( req, res = response, next ) => {
     return res.status(400).json({
       ok: false,
       msg: 'An error has ocurred',
-      errors: {
-        name: 'ValidationFieldError',
-        errors
-      }
+      errors: errors.errors.map( error => {
+        return {
+          attr  : error.param,
+          value : error.value | '',
+          msg   : error.msg
+        };
+      })
     });
   }
 
