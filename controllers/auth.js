@@ -35,14 +35,8 @@ const register = async ( req = request, res = response ) => {
       if( user ) {
         res.status(201).json({
           ok: true,
-          employee: {
-            name,
-            first_lastname,
-            second_lastname,
-            gender,
-            email,
-          },
           user: {
+            id      : user.id,
             username: user.username,
           }
         });
@@ -50,7 +44,7 @@ const register = async ( req = request, res = response ) => {
         res.status(400).json({
           ok: false,
           msg: 'An error has ocurred while creating the user',
-          errors: {}
+          errors: []
         });
       }
 
@@ -58,7 +52,7 @@ const register = async ( req = request, res = response ) => {
       res.status(400).json({
         ok: false,
         msg: 'An error has ocurred',
-        errors: {}
+        errors: []
       });
     }
   } catch ( err ) {
@@ -86,7 +80,7 @@ const login = async ( req = request, res = response ) => {
       return res.status(404).json({
         ok: false,
         msg: 'Credentials are not correct - username',
-        errors: {}
+        errors: []
       });
     }
 
@@ -96,7 +90,7 @@ const login = async ( req = request, res = response ) => {
       return res.status(400).json({
         ok: false,
         msg: 'Credentials are not correct - password',
-        errors: {}
+        errors: []
       });
     }
 

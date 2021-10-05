@@ -65,6 +65,11 @@ User.belongsTo( Employee, {
   foreignKey: 'id_employee',
 });
 
+Employee.hasMany( User, {
+  as: 'users',
+  foreignKey: 'id_employee'
+});
+
 User.addScope('defaultScope', {
   attributes: {
     exclude: ['password', 'id_employee', 'deleted_at']
