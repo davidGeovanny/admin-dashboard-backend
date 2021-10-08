@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const { checkValidityFields, validateJWT } = require('../middlewares');
 const { saleGetRules } = require('../rules/sale-rules');
-const { getSales } = require('../controllers/sales');
+const { getSales, getCommissions } = require('../controllers/sales');
 
 const router = Router();
 
@@ -10,5 +10,11 @@ router.get('/', [
   ...saleGetRules,
   checkValidityFields,
 ], getSales);
+
+router.get('/commissions', [
+  validateJWT,
+  ...saleGetRules,
+  checkValidityFields,
+], getCommissions);
 
 module.exports = router;

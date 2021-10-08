@@ -225,8 +225,8 @@ const Sale = db.define('Sale', {
   timestamps: true,
   createdAt : 'created_at',
   updatedAt : 'updated_at',
-  deletedAt : 'deleted_at',
-  paranoid  : true,
+  // deletedAt : 'deleted_at',
+  // paranoid  : true,
 });
 
 Sale.addScope('defaultScope', {
@@ -263,6 +263,10 @@ Sale.afterBulkCreate( ( sales ) => {
     return sale;
   });
 });
+
+Sale.afterFind( ( sale ) => {
+  // console.log( sale )
+})
 
 // Sale.afterFind( ( sale ) => {
 //   sale.original_price = sale.original_price / INCREMENTATION;
