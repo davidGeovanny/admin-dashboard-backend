@@ -1,7 +1,3 @@
-/** No usar */
-
-const INCREMENTATION = 100000;
-
 const db = require('../db/connection');
 const { DataTypes } = require('sequelize');
 const { salePaymentMethod, saleTypeModification } = require('../data/static-data');
@@ -77,6 +73,38 @@ const Sale = db.define('Sale', {
       },
     }
   },
+  type_route: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      customNull( value ) {
+        if( !value ) {
+          throw new Error('Need to provide a type route');
+        }
+      },
+      notNull: {
+        msg: "type route can't be null"
+      },
+    }
+  },
+  operator: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      customNull( value ) {
+        if( !value ) {
+          throw new Error('Need to provide a operator');
+        }
+      },
+      notNull: {
+        msg: "operator can't be null"
+      },
+    }
+  },
+  assistant: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   sales_folio: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -139,6 +167,20 @@ const Sale = db.define('Sale', {
       },
       notNull: {
         msg: "product can't be null"
+      },
+    }
+  },
+  type_product: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      customNull( value ) {
+        if( !value ) {
+          throw new Error('Need to provide a type product');
+        }
+      },
+      notNull: {
+        msg: "type product can't be null"
       },
     }
   },
@@ -235,44 +277,20 @@ Sale.addScope('defaultScope', {
   }
 });
 
-Sale.beforeCreate( ( sale ) => {
-  sale.original_price = sale.original_price * INCREMENTATION;
-  sale.original_price = sale.original_price * INCREMENTATION;
-  sale.original_price = sale.original_price * INCREMENTATION;
-  sale.original_price = sale.original_price * INCREMENTATION;
-});
-
-Sale.beforeBulkCreate( ( sales ) => {
-  sales.map( sale => {
-    sale.original_price = sale.original_price * INCREMENTATION;
-    sale.quantity       = sale.quantity       * INCREMENTATION;
-    sale.modified_price = sale.modified_price * INCREMENTATION;
-    sale.final_price    = sale.final_price    * INCREMENTATION;
-
-    return sale;
-  });
-});
-
-Sale.afterBulkCreate( ( sales ) => {
-  sales.map( sale => {
-    sale.original_price = sale.original_price / INCREMENTATION;
-    sale.quantity       = sale.quantity       / INCREMENTATION;
-    sale.modified_price = sale.modified_price / INCREMENTATION;
-    sale.final_price    = sale.final_price    / INCREMENTATION;
-
-    return sale;
-  });
-});
-
-Sale.afterFind( ( sale ) => {
-  // console.log( sale )
-})
-
-// Sale.afterFind( ( sale ) => {
-//   sale.original_price = sale.original_price / INCREMENTATION;
-//   sale.original_price = sale.original_price / INCREMENTATION;
-//   sale.original_price = sale.original_price / INCREMENTATION;
-//   sale.original_price = sale.original_price / INCREMENTATION;
+// Sale.addScope('commissionScope', {
+//   attributes: {
+//     exclude: ['deleted_at'],
+//   },
 // });
+
+// Sale.afterFind( ( sales ) => {
+//   // console.log( sale.quantity / INCREMENTATION )
+//   // console.log(sales.getDataValue('quantity'))
+//   // console.log({sales})
+//   // console.log(sales)
+//   sales.forEach( sale => {
+//     console.log(sale.id)
+//   })
+// })
 
 module.exports = Sale;

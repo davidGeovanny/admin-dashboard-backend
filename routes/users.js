@@ -16,7 +16,8 @@ const {
   updateUserPassword, 
   deleteUser,
   userAddProfile,
-  userRemoveProfile
+  userRemoveProfile,
+  prueba
 } = require('../controllers/users');
 
 const router = Router();
