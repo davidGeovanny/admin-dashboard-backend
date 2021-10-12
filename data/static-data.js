@@ -6,10 +6,13 @@ const profileStatus = ['activated', 'disabled'];
 const salePaymentMethod    = ['cash payment', 'credit payment'];
 const saleTypeModification = ['discount', 'over price', 'without changes'];
 
+const branchCompanyStatus = ['activated', 'disabled'];
+
 module.exports = {
   userGenders,
   userStatus,
   profileStatus,
   salePaymentMethod,
   saleTypeModification,
+  branchCompanyStatus,
 };

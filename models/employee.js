@@ -52,7 +52,7 @@ const Employee = db.define('Employee', {
     validate  : {
       isIn: {
         args:[ userGenders ],
-        msg: 'Gender not valid. Valid values: ' + userGenders.join(' | ')
+        msg : 'Gender not valid. Valid values: ' + userGenders.join(' | ')
       },
     }
   },

@@ -47,8 +47,8 @@ const User = db.define('User', {
   id_employee: {
     type: DataTypes.INTEGER,
     references: {
-      model : Employee,
-      key   : 'id_employee'
+      model: Employee,
+      key  : 'id_employee'
     }
   }
 }, {

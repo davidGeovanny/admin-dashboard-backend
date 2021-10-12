@@ -1,5 +1,6 @@
 const { request } = require('express');
 const { Op }      = require('sequelize');
+const { BranchCompany } = require('../models');
 
 const Employee = require('../models/employee');
 const Profile  = require('../models/profile');
@@ -101,10 +102,36 @@ const checkPasswordsMatch = ( password_confirmation = '', { req = request } ) =>
   return true;
 }
 
+const checkBranchCompanyAvailable = async ( branch = '', { req = request } ) => {
+  const { id = '' } = req.params;
+
+  const branchesCompany = await BranchCompany.findAll({
+    where: {
+      [ Op.and ] : [
+        { 
+          branch: { 
+            [ Op.eq ] : branch 
+          } 
+        },
+        {
+          id: {
+            [ Op.ne ] : id
+          }
+        },
+      ]
+    }
+  });
+
+  if( branchesCompany.length > 0 ) {
+    throw new Error('Branch name is already in use');
+  }
+}
+
 module.exports = {
   checkEmailAvailable,
   checkUserAvailable,
   checkProfileAvailable,
   checkPasswordsMatch,
   checkEmployeeExists,
+  checkBranchCompanyAvailable,
 };

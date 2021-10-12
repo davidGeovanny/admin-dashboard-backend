@@ -62,7 +62,7 @@ const updateProfile = async ( req = request, res = response ) => {
       return res.status(404).json({
         ok: false,
         msg: 'The profile does not exist',
-        errors: {}
+        errors: []
       });
     }
 

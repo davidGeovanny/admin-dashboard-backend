@@ -65,7 +65,7 @@ const updateEmployee = async ( req = request, res = response ) => {
       return res.status(400).json({
         ok: false,
         msg: 'The employee does not exist',
-        errors: {}
+        errors: []
       });
     }
 
@@ -94,7 +94,7 @@ const deleteEmployee = async ( req = request, res = response ) => {
       return res.status(400).json({
         ok: false,
         msg: 'The employee does not exist',
-        errors: {}
+        errors: []
       });
     }
 

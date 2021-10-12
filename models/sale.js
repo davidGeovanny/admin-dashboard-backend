@@ -73,20 +73,6 @@ const Sale = db.define('Sale', {
       },
     }
   },
-  type_route: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      customNull( value ) {
-        if( !value ) {
-          throw new Error('Need to provide a type route');
-        }
-      },
-      notNull: {
-        msg: "type route can't be null"
-      },
-    }
-  },
   operator: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -185,7 +171,7 @@ const Sale = db.define('Sale', {
     }
   },
   original_price: {
-    type: DataTypes.BIGINT,
+    type: DataTypes.DECIMAL(20, 5).UNSIGNED,
     allowNull: false,
     validate: {
       customNull( value ) {
@@ -199,7 +185,7 @@ const Sale = db.define('Sale', {
     }
   },
   quantity: {
-    type: DataTypes.MEDIUMINT,
+    type: DataTypes.DECIMAL(8, 3).UNSIGNED,
     allowNull: false,
     validate: {
       customNull( value ) {
@@ -222,7 +208,7 @@ const Sale = db.define('Sale', {
     }
   },
   modified_price: {
-    type: DataTypes.BIGINT,
+    type: DataTypes.DECIMAL(20, 5).UNSIGNED,
     allowNull: false,
     validate: {
       customNull( value ) {
@@ -236,7 +222,7 @@ const Sale = db.define('Sale', {
     }
   },
   final_price: {
-    type: DataTypes.BIGINT,
+    type: DataTypes.DECIMAL(20, 5).UNSIGNED,
     allowNull: false,
     validate: {
       customNull( value ) {
@@ -267,8 +253,6 @@ const Sale = db.define('Sale', {
   timestamps: true,
   createdAt : 'created_at',
   updatedAt : 'updated_at',
-  // deletedAt : 'deleted_at',
-  // paranoid  : true,
 });
 
 Sale.addScope('defaultScope', {
@@ -276,21 +260,5 @@ Sale.addScope('defaultScope', {
     exclude: ['deleted_at']
   }
 });
-
-// Sale.addScope('commissionScope', {
-//   attributes: {
-//     exclude: ['deleted_at'],
-//   },
-// });
-
-// Sale.afterFind( ( sales ) => {
-//   // console.log( sale.quantity / INCREMENTATION )
-//   // console.log(sales.getDataValue('quantity'))
-//   // console.log({sales})
-//   // console.log(sales)
-//   sales.forEach( sale => {
-//     console.log(sale.id)
-//   })
-// })
 
 module.exports = Sale;

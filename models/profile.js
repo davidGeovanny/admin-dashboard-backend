@@ -10,7 +10,7 @@ const Profile = db.define('Profile', {
     validate  : {
       customNull( value ) {
         if( !value ) {
-          throw new Error('Need to provide a valid first_lastname');
+          throw new Error('Need to provide a valid profile');
         }
       },
       notNull: {
@@ -27,7 +27,7 @@ const Profile = db.define('Profile', {
     validate: {
       isIn: {
         args: [ profileStatus ],
-        msg: 'Status not valid'
+        msg : 'Status not valid'
       },
     }
   },
