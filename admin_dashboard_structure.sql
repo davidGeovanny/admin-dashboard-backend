@@ -12,9 +12,19 @@ MySQL - 5.5.5-10.4.14-MariaDB : Database - admin_dashboard
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`admin_dashboard` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
+/*Table structure for table `branches_company` */
 
-USE `admin_dashboard`;
+DROP TABLE IF EXISTS `branches_company`;
+
+CREATE TABLE `branches_company` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `branch` varchar(60) NOT NULL,
+  `status` enum('actived','disabled') NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `employees` */
 
@@ -31,7 +41,7 @@ CREATE TABLE `employees` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=66 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=88 DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `profile_user` */
 
@@ -59,7 +69,7 @@ CREATE TABLE `profiles` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `sales` */
 
@@ -72,22 +82,25 @@ CREATE TABLE `sales` (
   `delivery_point_key` varchar(15) NOT NULL,
   `delivery_point` varchar(100) NOT NULL,
   `route_name` varchar(50) NOT NULL,
+  `operator` varchar(120) NOT NULL,
+  `assistant` varchar(120) DEFAULT NULL,
   `sales_folio` varchar(20) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `date` date NOT NULL,
   `hour` time DEFAULT NULL,
   `payment_method` enum('cash payment','credit payment') NOT NULL,
   `product` varchar(200) NOT NULL,
-  `original_price` bigint(20) unsigned NOT NULL,
-  `quantity` mediumint(8) unsigned NOT NULL,
+  `type_product` varchar(50) DEFAULT NULL,
+  `original_price` decimal(20,5) unsigned NOT NULL,
+  `quantity` decimal(8,3) unsigned NOT NULL,
   `type_modification` enum('discount','over price','without changes') NOT NULL,
-  `modified_price` bigint(20) unsigned NOT NULL,
-  `final_price` bigint(20) unsigned NOT NULL,
+  `modified_price` decimal(20,5) unsigned NOT NULL,
+  `final_price` decimal(20,5) unsigned NOT NULL,
   `bonification` tinyint(4) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=29624 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=19477 DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `users` */
 
@@ -105,7 +118,26 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`),
   KEY `id_employee` (`id_employee`),
   CONSTRAINT `users_ibfk_1` FOREIGN KEY (`id_employee`) REFERENCES `employees` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=91 DEFAULT CHARSET=utf8mb4;
+
+/*Table structure for table `water_commission_config` */
+
+DROP TABLE IF EXISTS `water_commission_config`;
+
+CREATE TABLE `water_commission_config` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `percent_operator` decimal(6,3) unsigned DEFAULT NULL,
+  `percent_assistant` decimal(6,3) unsigned DEFAULT NULL,
+  `percent_operator_assistant` decimal(6,3) unsigned DEFAULT NULL,
+  `minimum_sale_week` decimal(20,5) unsigned DEFAULT NULL,
+  `id_branch_company` int(10) unsigned NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `deleted_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `id_branch_company` (`id_branch_company`),
+  CONSTRAINT `water_commission_config_ibfk_1` FOREIGN KEY (`id_branch_company`) REFERENCES `branches_company` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
