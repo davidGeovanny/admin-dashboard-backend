@@ -5,6 +5,7 @@ const { formatSequelizeError } = require('../helpers/format-sequelize-error');
 const Sale = require('../models/sale');
 // const { sequelize } = require('../models/Sale');
 const { Op, Sequelize } = require('sequelize');
+const { WaterCommissionConfig } = require('../models');
 
 const getSales = async ( req = request, res = response ) => {
   try {
@@ -54,9 +55,11 @@ const getCommissions = async ( req = request, res = response ) => {
 
     await Sale.bulkCreate( resp.data.sales );
 
+    getWaterCommission();
+
     res.json({
       ok: true,
-      commissions,
+      // commissions,
     });
   } catch ( err ) {
     res.status(400).json({
@@ -69,6 +72,8 @@ const getCommissions = async ( req = request, res = response ) => {
 
 const getWaterCommission = async () => {
   try {
+
+    // const configCommissions = await WaterCommissionConfig.
 
     const sales = await Sale.findAll({
       where: [

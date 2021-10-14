@@ -1,6 +1,5 @@
 const { check, param }        = require('express-validator');
 const { checkEmailAvailable } = require('../middlewares');
-
 const { userGenders } = require('../data/static-data');
 
 const employeePostRules = [

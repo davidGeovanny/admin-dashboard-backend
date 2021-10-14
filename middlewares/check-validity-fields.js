@@ -11,7 +11,7 @@ const checkValidityFields = ( req, res = response, next ) => {
       errors: errors.errors.map( error => {
         return {
           attr  : error.param,
-          value : error.value | '',
+          value : error.value || '',
           msg   : error.msg
         };
       })

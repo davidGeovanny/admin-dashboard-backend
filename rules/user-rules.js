@@ -1,10 +1,10 @@
 const { check, param, body } = require('express-validator');
-const { userStatus } = require('../data/static-data');
 const { 
   checkUserAvailable, 
   checkPasswordsMatch, 
   checkEmployeeExists 
 } = require('../middlewares');
+const { userStatus } = require('../data/static-data');
 
 const userPostRules = [
   /** Fields */

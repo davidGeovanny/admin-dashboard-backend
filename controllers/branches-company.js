@@ -1,5 +1,4 @@
 const { request, response } = require('express');
-const { Op } = require('sequelize');
 const _      = require('underscore');
 
 const { BranchCompany } = require('../models');
@@ -34,11 +33,6 @@ const createBranchCompany = async ( req = request, res = response ) => {
     res.status(201).json({
       ok: true,
       branchCompany,
-    });
-
-    res.json({
-      ok: true,
-      getBranchesCompany
     });
   } catch ( err ) {
     res.status(400).json({

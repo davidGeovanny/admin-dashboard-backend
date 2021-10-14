@@ -8,7 +8,7 @@ const { formatSequelizeError } = require('../helpers/format-sequelize-error');
 
 const getWaterCommissionConfig = async ( req = request, res = response ) => {
   try {
-    const waterCommissionConfig = WaterCommissionConfig.findAll();
+    const waterCommissionConfig = await WaterCommissionConfig.findAll();
 
     res.json({
       ok: true,

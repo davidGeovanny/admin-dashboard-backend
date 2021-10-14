@@ -11,11 +11,13 @@ class Server {
     this.port = process.env.PORT || 8080;
 
     this.paths = {
-      auth    : '/api/auth',
-      user    : '/api/users',
-      profile : '/api/profiles',
-      employee: '/api/employees',
-      sale    : '/api/sales',
+      auth          : '/api/auth',
+      user          : '/api/users',
+      profile       : '/api/profiles',
+      employee      : '/api/employees',
+      sale          : '/api/sales',
+      branch_company: '/api/branches-company',
+      water_commission_config: '/api/water-commission-config',
     };
 
     /** DB connection  */
@@ -45,11 +47,13 @@ class Server {
   }
 
   routes() {
-    this.app.use( this.paths.auth,      require('../routes/auth') );
-    this.app.use( this.paths.user,      require('../routes/users') );
-    this.app.use( this.paths.profile,   require('../routes/profiles') );
-    this.app.use( this.paths.employee,  require('../routes/employees') );
-    this.app.use( this.paths.sale,      require('../routes/sales') );
+    this.app.use( this.paths.auth,           require('../routes/auth') );
+    this.app.use( this.paths.user,           require('../routes/users') );
+    this.app.use( this.paths.profile,        require('../routes/profiles') );
+    this.app.use( this.paths.employee,       require('../routes/employees') );
+    this.app.use( this.paths.sale,           require('../routes/sales') );
+    this.app.use( this.paths.branch_company, require('../routes/branches-company') );
+    this.app.use( this.paths.water_commission_config, require('../routes/water-commission-config') );
   }
 
   listen() {

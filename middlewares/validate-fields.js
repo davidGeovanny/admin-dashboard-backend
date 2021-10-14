@@ -1,10 +1,11 @@
 const { request } = require('express');
 const { Op }      = require('sequelize');
-const { BranchCompany } = require('../models');
+// const { BranchCompany } = require('../models');
 
 const Employee = require('../models/employee');
 const Profile  = require('../models/profile');
 const User     = require('../models/user');
+const BranchCompany = require('../models/branch-company');
 
 const checkEmailAvailable = async ( email = '' ) => {
   const employees = await Employee.findAll({
@@ -127,6 +128,18 @@ const checkBranchCompanyAvailable = async ( branch = '', { req = request } ) => 
   }
 }
 
+const checkBranchCompanyExists = async ( id_branch_company = '' ) => {
+  if( !Number( id_branch_company ) ) {
+    throw new Error('The branch company selected does not exist');
+  }
+
+  const branch_company = await BranchCompany.findByPk( id_branch_company );
+
+  if( !branch_company ) {
+    throw new Error('The branch company selected does not exist');
+  }
+}
+
 module.exports = {
   checkEmailAvailable,
   checkUserAvailable,
@@ -134,4 +147,5 @@ module.exports = {
   checkPasswordsMatch,
   checkEmployeeExists,
   checkBranchCompanyAvailable,
+  checkBranchCompanyExists,
 };

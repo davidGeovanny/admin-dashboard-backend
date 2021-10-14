@@ -1,6 +1,5 @@
 const { check, param }          = require('express-validator');
 const { checkProfileAvailable } = require('../middlewares');
-
 const { profileStatus } = require('../data/static-data');
 
 /** Post Request */
