@@ -12,7 +12,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"David\",\r\n    \"first_lastname\": \"Carrillo\",\r\n    \"second_lastname\": \"Rosales\",\r\n    \"gender\": \"male\",\r\n    \"email\": \"david.geovanny.cr1@gmail.com\",\r\n    \"password\": \"123456\",\r\n    \"password_confirmation\": \"123456\"\r\n}",
+					"raw": "{\r\n    \"name\": \"David\",\r\n    \"first_lastname\": \"Carrillo\",\r\n    \"second_lastname\": \"Rosales\",\r\n    \"gender\": \"male\",\r\n    \"email\": \"david.geovanny.cr5@gmail.com\",\r\n    \"password\": \"123456\",\r\n    \"password_confirmation\": \"123456\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -505,7 +505,7 @@
 					}
 				],
 				"url": {
-					"raw": "{{url}}/api/employees?id=1&nombre=David",
+					"raw": "{{url}}/api/employees",
 					"host": [
 						"{{url}}"
 					],
@@ -516,11 +516,13 @@
 					"query": [
 						{
 							"key": "id",
-							"value": "1"
+							"value": "1",
+							"disabled": true
 						},
 						{
 							"key": "nombre",
-							"value": "David"
+							"value": "David",
+							"disabled": true
 						}
 					]
 				}
@@ -627,6 +629,12 @@
 					{
 						"key": "x-auth",
 						"value": "6+oa9lqNGgXVq4fvrwFiZcXrSw==",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "x-token",
+						"value": "{{token}}",
 						"type": "text"
 					}
 				],
@@ -649,6 +657,240 @@
 							"key": "finalDate",
 							"value": "2021-09-30"
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get commissions",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/api/sales/commissions/?initDate=2021-09-01&finalDate=2021-09-30",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"sales",
+						"commissions",
+						""
+					],
+					"query": [
+						{
+							"key": "initDate",
+							"value": "2021-09-01"
+						},
+						{
+							"key": "finalDate",
+							"value": "2021-09-30"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get branches company",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/api/branches-company",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"branches-company"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create branch company",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"branch\": \"Cedis escuinapa\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/branches-company",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"branches-company"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update branch company",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"branch\": \"Matriz\",\r\n    \"status\": \"activated\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/branches-company/4",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"branches-company",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete branch company",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/api/branches-company/5",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"branches-company",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get water commission config",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/api/water-commission-config",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"water-commission-config"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create water commission config",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"percent_operator\": 0.032,\r\n    \"percent_assistant\": 0.022,\r\n    \"percent_operator_assistant\": 0.032,\r\n    \"id_branch_company\": 4\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/water-commission-config",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"water-commission-config"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete water commission config",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/api/water-commission-config/5",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"water-commission-config",
+						"5"
 					]
 				}
 			},
