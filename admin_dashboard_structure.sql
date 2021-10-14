@@ -19,12 +19,12 @@ DROP TABLE IF EXISTS `branches_company`;
 CREATE TABLE `branches_company` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `branch` varchar(60) NOT NULL,
-  `status` enum('actived','disabled') NOT NULL,
+  `status` enum('activated','disabled') NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `employees` */
 
@@ -129,15 +129,14 @@ CREATE TABLE `water_commission_config` (
   `percent_operator` decimal(6,3) unsigned DEFAULT NULL,
   `percent_assistant` decimal(6,3) unsigned DEFAULT NULL,
   `percent_operator_assistant` decimal(6,3) unsigned DEFAULT NULL,
-  `minimum_sale_week` decimal(20,5) unsigned DEFAULT NULL,
   `id_branch_company` int(10) unsigned NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `deleted_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `id_branch_company` (`id_branch_company`),
   CONSTRAINT `water_commission_config_ibfk_1` FOREIGN KEY (`id_branch_company`) REFERENCES `branches_company` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
