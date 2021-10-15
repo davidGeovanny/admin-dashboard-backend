@@ -1,11 +1,10 @@
 const { request, response } = require('express');
+const { Op, Sequelize } = require('sequelize');
+
+const { WaterCommissionConfig, BranchCompany } = require('../models');
 
 const hieleraApi = require('../helpers/hielera-api');
 const { formatSequelizeError } = require('../helpers/format-sequelize-error');
-const Sale = require('../models/sale');
-// const { sequelize } = require('../models/Sale');
-const { Op, Sequelize } = require('sequelize');
-const { WaterCommissionConfig } = require('../models');
 
 const getSales = async ( req = request, res = response ) => {
   try {
@@ -48,18 +47,11 @@ const getCommissions = async ( req = request, res = response ) => {
       });
     }
 
-    Sale.destroy({
-      where: {},
-      truncate: true,
-    });
-
-    await Sale.bulkCreate( resp.data.sales );
-
-    getWaterCommission();
+    const waterCommissions = await getWaterCommission( resp.data.sales );
 
     res.json({
       ok: true,
-      // commissions,
+      water_commissions: waterCommissions,
     });
   } catch ( err ) {
     res.status(400).json({
@@ -70,76 +62,85 @@ const getCommissions = async ( req = request, res = response ) => {
   }
 }
 
-const getWaterCommission = async () => {
+const getWaterCommission = async ( sales ) => {
   try {
+    const salesWater = sales.filter( sale => sale.type_product === 'AGUA EMBOTELLADA' );
 
-    // const configCommissions = await WaterCommissionConfig.
-
-    const sales = await Sale.findAll({
-      where: [
-        { type_product: { [ Op.eq ] : 'AGUA EMBOTELLADA' } },
+    const configCommissions = await WaterCommissionConfig.findAll({
+      include: [
+        {
+          model     : BranchCompany,
+          as        : 'branch',
+          attributes: []
+        }
       ],
+      attributes: [
+        'percent_operator', 
+        'percent_assistant', 
+        'percent_operator_assistant', 
+        'branch.branch'
+      ],
+      raw: true,
     });
-    
-    const commissions = sales.map( sale => {
-      let commissionOperator  = 0;
-      let commissionAssistant = 0;
-  
-      if( sale.assistant ) {
-        commissionOperator  = sale.final_price * 0.03;
-        commissionAssistant = sale.final_price * 0.02;
+
+    let commissionsObject = {};
+    let commissionsArray  = [];
+
+    salesWater.forEach( sale => {
+
+      const commissionPercents  = configCommissions.find( item => item.branch.toLowerCase() === sale.branch_company.toLowerCase() );
+
+      const commissionOperator  = commissionPercents ? commissionPercents.percent_operator  : 0;
+      const commissionAssistant = commissionPercents ? commissionPercents.percent_assistant : 0;
+      const commissionOperatorAssistant = commissionPercents ? commissionPercents.percent_operator_assistant : 0;
+
+      if( commissionsObject.hasOwnProperty( sale.operator ) ) {
+        if( sale.assistant ) {
+          commissionsObject[ sale.operator ].commission = commissionsObject[ sale.operator ].commission + ( sale.final_price * commissionOperator );
+        } else {
+          commissionsObject[ sale.operator ].commission = commissionsObject[ sale.operator ].commission + ( sale.final_price * commissionOperatorAssistant );
+        }
       } else {
-        commissionOperator  = sale.final_price * 0.05;
+        if( sale.assistant ) {
+          commissionsObject[ sale.operator ] = {
+            employee: sale.operator,
+            commission: ( sale.final_price * commissionOperator ),
+            branch: sale.branch_company
+          }
+        } else {
+          commissionsObject[ sale.operator ] = {
+            employee: sale.operator,
+            commission: ( sale.final_price * commissionOperatorAssistant ),
+            branch: sale.branch_company
+          }
+        }
       }
-  
-      const object = {
-        operator: sale.operator,
-        assistant: sale.assistant,
-        
-        commissionOperator,
-        commissionAssistant
-      };
-  
-      return object;
+
+      if( sale.assistant ) {
+        if( commissionsObject.hasOwnProperty( sale.assistant ) ) {
+          commissionsObject[ sale.assistant ].commission = commissionsObject[ sale.assistant ].commission + ( sale.final_price * commissionAssistant )
+        } else {
+          commissionsObject[ sale.assistant ] = {
+            employee: sale.assistant,
+            commission: ( sale.final_price * commissionAssistant ),
+            branch: sale.branch_company
+          }
+        }
+      }
     });
-  
-    let nuevo = {};
-  
-    for (const key in nuevo) {
-      if (Object.hasOwnProperty.call(nuevo, key)) {
-        const element = nuevo[key];
-        
+
+    for( const key in commissionsObject ) {
+      if( Object.hasOwnProperty.call( commissionsObject, key ) ) {
+        commissionsArray = [ ...commissionsArray, {
+          ...commissionsObject[ key ],
+          commission: parseFloat( commissionsObject[ key ].commission.toFixed( 2 ) ),
+        }];
       }
     }
-  
-    commissions.forEach( commission => {
-      if( nuevo.hasOwnProperty( commission.operator ) ) {
-        /** Exist: increment */
-        nuevo[ commission.operator ] = nuevo[ commission.operator ] + commission.commissionOperator;
-      } else {
-        /** No exist: create and set value */
-        nuevo[ commission.operator ] = commission.commissionOperator;
-      }
-  
-      if( nuevo.hasOwnProperty( commission.assistant ) ) {
-        /** Exist: increment */
-        nuevo[ commission.assistant ] = nuevo[ commission.assistant ] + commission.commissionAssistant;
-      } else {
-        /** No exist: create and set value */
-        nuevo[ commission.assistant ] = commission.commissionAssistant;
-      }
-    });
-    
+
+    return commissionsArray;
   } catch ( err ) {
     return [];
-  }
-}
-
-const getWaterCommissionConfig = async () => {
-  try {
-    
-  } catch ( err ) {
-    
   }
 }
 

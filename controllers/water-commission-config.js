@@ -15,6 +15,7 @@ const getWaterCommissionConfig = async ( req = request, res = response ) => {
       waterCommissionConfig
     });
   } catch ( err ) {
+    console.log( err )
     res.status(400).json({
       ok: false,
       msg: 'An error has ocurred',
