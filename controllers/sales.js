@@ -1,7 +1,7 @@
 const { request, response } = require('express');
 const { Op, Sequelize } = require('sequelize');
 
-const { WaterCommissionConfig, BranchCompany } = require('../models');
+const { WaterCommissionConfig, BranchCompany, Sale } = require('../models');
 
 const hieleraApi = require('../helpers/hielera-api');
 const { formatSequelizeError } = require('../helpers/format-sequelize-error');
@@ -47,11 +47,15 @@ const getCommissions = async ( req = request, res = response ) => {
       });
     }
 
+    // await Sale.bulkCreate( resp.data.sales );
+
     const waterCommissions = await getWaterCommission( resp.data.sales );
 
     res.json({
       ok: true,
       water_commissions: waterCommissions,
+      icebar_commissions: [],
+      icecube_commissions: [],
     });
   } catch ( err ) {
     res.status(400).json({
