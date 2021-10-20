@@ -4,7 +4,8 @@ const Profile       = require('./profile');
 const ProfileUser   = require('./profile-user');
 const Sale          = require('./sale');
 const BranchCompany = require('./branch-company');
-const WaterCommissionConfig = require('./water-commission-config');
+const WaterCommissionConfig  = require('./water-commission-config');
+const IcebarCommissionConfig = require('./icebar-commission-config');
 
 module.exports = {
   Employee,
@@ -14,4 +15,5 @@ module.exports = {
   Sale,
   BranchCompany,
   WaterCommissionConfig,
+  IcebarCommissionConfig,
 };

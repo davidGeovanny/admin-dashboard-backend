@@ -2,7 +2,7 @@ const { Router } = require('express');
 const { param }  = require('express-validator');
 
 const { checkValidityFields, validateJWT }  = require('../middlewares');
-const { waterCommissionConfigPostRules } = require('../rules/water-commission-config-rules');
+const { waterCommissionConfigPostRules }    = require('../rules/water-commission-config-rules');
 
 const { 
   getWaterCommissionConfig, 
