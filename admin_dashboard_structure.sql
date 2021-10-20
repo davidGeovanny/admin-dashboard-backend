@@ -24,7 +24,7 @@ CREATE TABLE `branches_company` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `employees` */
 
@@ -42,6 +42,26 @@ CREATE TABLE `employees` (
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=88 DEFAULT CHARSET=utf8mb4;
+
+/*Table structure for table `icebar_commission_config` */
+
+DROP TABLE IF EXISTS `icebar_commission_config`;
+
+CREATE TABLE `icebar_commission_config` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `min_range` int(10) unsigned NOT NULL,
+  `max_range` int(10) unsigned NOT NULL,
+  `cost_bar_operator` decimal(6,3) unsigned NOT NULL,
+  `cost_bar_assistant` decimal(6,3) unsigned DEFAULT NULL,
+  `cost_bar_operator_assistant` decimal(6,3) unsigned DEFAULT NULL,
+  `id_branch_company` int(10) unsigned NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id_branch_company` (`id_branch_company`),
+  CONSTRAINT `icebar_commission_config_ibfk_1` FOREIGN KEY (`id_branch_company`) REFERENCES `branches_company` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `profile_user` */
 
@@ -100,7 +120,7 @@ CREATE TABLE `sales` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19477 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=97149 DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `users` */
 
@@ -126,7 +146,7 @@ DROP TABLE IF EXISTS `water_commission_config`;
 
 CREATE TABLE `water_commission_config` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `percent_operator` decimal(6,3) unsigned DEFAULT NULL,
+  `percent_operator` decimal(6,3) unsigned NOT NULL,
   `percent_assistant` decimal(6,3) unsigned DEFAULT NULL,
   `percent_operator_assistant` decimal(6,3) unsigned DEFAULT NULL,
   `id_branch_company` int(10) unsigned NOT NULL,
@@ -136,7 +156,7 @@ CREATE TABLE `water_commission_config` (
   PRIMARY KEY (`id`),
   KEY `id_branch_company` (`id_branch_company`),
   CONSTRAINT `water_commission_config_ibfk_1` FOREIGN KEY (`id_branch_company`) REFERENCES `branches_company` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
