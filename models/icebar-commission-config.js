@@ -71,6 +71,32 @@ const IcebarCommissionConfig = db.define('IcebarCommissionConfig', {
       },
     }
   },
+  id_branch_company: {
+    type: DataTypes.INTEGER.UNSIGNED,
+    references: {
+      model: BranchCompany,
+      key  : 'id_branch_company'
+    }
+  }
+}, {
+  tableName: 'icebar_commission_config',
+  timestamps: true,
+  createdAt: 'created_at',
+  updatedAt: 'updated_at',
+  deletedAt: 'deleted_at',
+  paranoid: true,
+});
+
+/** Relations */
+IcebarCommissionConfig.belongsTo( BranchCompany, {
+  as: 'branch',
+  foreignKey: 'id_branch_company'
+});
+
+IcebarCommissionConfig.addScope('defaultScope', {
+  attributes: {
+    exclude: ['id_branch_company', 'deleted_at']
+  }
 });
 
 module.exports = IcebarCommissionConfig;

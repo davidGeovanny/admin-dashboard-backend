@@ -12,10 +12,9 @@ const getWaterCommissionConfig = async ( req = request, res = response ) => {
 
     res.json({
       ok: true,
-      waterCommissionConfig
+      waterCommissionConfig,
     });
   } catch ( err ) {
-    console.log( err )
     res.status(400).json({
       ok: false,
       msg: 'An error has ocurred',
@@ -44,7 +43,7 @@ const createWaterCommissionConfig = async ( req = request, res = response ) => {
 
     const waterCommissionConfig = await WaterCommissionConfig.create( configBody );
 
-    res.json({
+    res.status(201).json({
       ok: true,
       waterCommissionConfig
     });
@@ -62,7 +61,7 @@ const deleteWaterCommissionConfig = async ( req = request, res = response ) => {
     const { id } = req.params;
 
     const waterCommissionConfig = await WaterCommissionConfig.findByPk( id );
-
+    
     if( !waterCommissionConfig ) {
       return res.status(400).json({
         ok: false,
