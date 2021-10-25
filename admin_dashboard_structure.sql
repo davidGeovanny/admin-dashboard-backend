@@ -49,11 +49,11 @@ DROP TABLE IF EXISTS `icebar_commission_config`;
 
 CREATE TABLE `icebar_commission_config` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `min_range` int(10) unsigned NOT NULL,
-  `max_range` int(10) unsigned NOT NULL,
-  `cost_bar_operator` decimal(6,3) unsigned NOT NULL,
-  `cost_bar_assistant` decimal(6,3) unsigned DEFAULT NULL,
-  `cost_bar_operator_assistant` decimal(6,3) unsigned DEFAULT NULL,
+  `min_range` int(10) unsigned NOT NULL DEFAULT 0,
+  `max_range` int(10) unsigned NOT NULL DEFAULT 0,
+  `cost_bar_operator` decimal(6,3) unsigned NOT NULL DEFAULT 0.000,
+  `cost_bar_assistant` decimal(6,3) unsigned DEFAULT 0.000,
+  `cost_bar_operator_assistant` decimal(6,3) unsigned DEFAULT 0.000,
   `id_branch_company` int(10) unsigned NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
@@ -61,7 +61,26 @@ CREATE TABLE `icebar_commission_config` (
   PRIMARY KEY (`id`),
   KEY `id_branch_company` (`id_branch_company`),
   CONSTRAINT `icebar_commission_config_ibfk_1` FOREIGN KEY (`id_branch_company`) REFERENCES `branches_company` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4;
+
+/*Table structure for table `icecube_commission_config` */
+
+DROP TABLE IF EXISTS `icecube_commission_config`;
+
+CREATE TABLE `icecube_commission_config` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `non_commissionable_kg` decimal(7,2) unsigned DEFAULT 0.00,
+  `percent_operator` decimal(6,3) unsigned NOT NULL DEFAULT 0.000,
+  `percent_assistant` decimal(6,3) unsigned DEFAULT 0.000,
+  `percent_operator_assistant` decimal(6,3) unsigned DEFAULT 0.000,
+  `id_branch_company` int(10) unsigned NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id_branch_company` (`id_branch_company`),
+  CONSTRAINT `icecube_commission_config_ibfk_1` FOREIGN KEY (`id_branch_company`) REFERENCES `branches_company` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `profile_user` */
 
@@ -120,7 +139,7 @@ CREATE TABLE `sales` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=97149 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=4387 DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `users` */
 
@@ -146,9 +165,9 @@ DROP TABLE IF EXISTS `water_commission_config`;
 
 CREATE TABLE `water_commission_config` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `percent_operator` decimal(6,3) unsigned NOT NULL,
-  `percent_assistant` decimal(6,3) unsigned DEFAULT NULL,
-  `percent_operator_assistant` decimal(6,3) unsigned DEFAULT NULL,
+  `percent_operator` decimal(6,3) unsigned NOT NULL DEFAULT 0.000,
+  `percent_assistant` decimal(6,3) unsigned DEFAULT 0.000,
+  `percent_operator_assistant` decimal(6,3) unsigned DEFAULT 0.000,
   `id_branch_company` int(10) unsigned NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),

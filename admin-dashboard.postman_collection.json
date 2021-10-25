@@ -674,7 +674,7 @@
 					}
 				],
 				"url": {
-					"raw": "{{url}}/api/sales/commissions/?initDate=2021-09-01&finalDate=2021-09-30",
+					"raw": "{{url}}/api/sales/commissions/?initDate=2021-09-11&finalDate=2021-09-17",
 					"host": [
 						"{{url}}"
 					],
@@ -687,11 +687,11 @@
 					"query": [
 						{
 							"key": "initDate",
-							"value": "2021-09-01"
+							"value": "2021-09-11"
 						},
 						{
 							"key": "finalDate",
-							"value": "2021-09-30"
+							"value": "2021-09-17"
 						}
 					]
 				}
@@ -851,7 +851,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"percent_operator\": 0.032,\r\n    \"percent_assistant\": 0.022,\r\n    \"percent_operator_assistant\": 0.032,\r\n    \"id_branch_company\": 4\r\n}",
+					"raw": "{\r\n    \"percent_operator\": 0.03,\r\n    \"percent_assistant\": 0.02,\r\n    \"percent_operator_assistant\": 0.03,\r\n    \"id_branch_company\": 6\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -890,6 +890,204 @@
 					"path": [
 						"api",
 						"water-commission-config",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get icebar commission config",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/api/icebar-commission-config",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"icebar-commission-config"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create icebar commission config",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"min_range\": 151,\r\n    \"max_range\": 160,\r\n    \"cost_bar_operator\": 3.7,\r\n    \"cost_bar_assistant\": 2.7,\r\n    \"cost_bar_operator_assistant\": 6.5,\r\n    \"id_branch_company\": 4\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/icebar-commission-config",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"icebar-commission-config"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update icebar commission config",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"min_range\": 121,\r\n    \"max_range\": 150,\r\n    \"cost_bar_operator\": 3,\r\n    \"cost_bar_assistant\": 2.5,\r\n    \"cost_bar_operator_assistant\": 5.5,\r\n    \"id_branch_company\": 4\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/icebar-commission-config/4",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"icebar-commission-config",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete icebar commission config",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/api/icebar-commission-config/3",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"icebar-commission-config",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get icecube commission config",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/api/icecube-commission-config",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"icecube-commission-config"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create icecube commission config",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"non_commissionable_kg\": 4000,\r\n    \"percent_operator\": 0.03,\r\n    \"percent_assistant\": 0.02,\r\n    \"percent_operator_assistant\": 0.03,\r\n    \"id_branch_company\": 4\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/icecube-commission-config",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"icecube-commission-config"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete icecube commission config",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/api/icecube-commission-config/5",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"icecube-commission-config",
 						"5"
 					]
 				}

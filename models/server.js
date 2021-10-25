@@ -17,8 +17,9 @@ class Server {
       employee      : '/api/employees',
       sale          : '/api/sales',
       branch_company: '/api/branches-company',
-      water_commission_config : '/api/water-commission-config',
-      icebar_commission_config: '/api/icebar-commission-config',
+      water_commission_config  : '/api/water-commission-config',
+      icebar_commission_config : '/api/icebar-commission-config',
+      icecube_commission_config: '/api/icecube-commission-config',
     };
 
     /** DB connection  */
@@ -54,8 +55,9 @@ class Server {
     this.app.use( this.paths.employee,       require('../routes/employees') );
     this.app.use( this.paths.sale,           require('../routes/sales') );
     this.app.use( this.paths.branch_company, require('../routes/branches-company') );
-    this.app.use( this.paths.water_commission_config,  require('../routes/water-commission-config') );
-    this.app.use( this.paths.icebar_commission_config, require('../routes/icebar-commission-config') );
+    this.app.use( this.paths.water_commission_config,   require('../routes/water-commission-config') );
+    this.app.use( this.paths.icebar_commission_config,  require('../routes/icebar-commission-config') );
+    this.app.use( this.paths.icecube_commission_config, require('../routes/icecube-commission-config') );
   }
 
   listen() {

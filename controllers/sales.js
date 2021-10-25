@@ -1,7 +1,7 @@
 const { request, response } = require('express');
 const { Op, Sequelize } = require('sequelize');
 
-const { WaterCommissionConfig, BranchCompany, Sale, IcebarCommissionConfig } = require('../models');
+const { WaterCommissionConfig, BranchCompany, Sale, IcebarCommissionConfig, IcecubeCommissionConfig } = require('../models');
 
 const hieleraApi = require('../helpers/hielera-api');
 const { formatSequelizeError } = require('../helpers/format-sequelize-error');
@@ -19,6 +19,12 @@ const getSales = async ( req = request, res = response ) => {
         errors: {}
       });
     }
+
+    // await Sale.destroy({
+    //   where: {},
+    //   truncate: true,
+    // });
+    // await Sale.bulkCreate( resp.data.sales );
     
     res.json({
       ok: true,
@@ -47,14 +53,13 @@ const getCommissions = async ( req = request, res = response ) => {
       });
     }
 
-    // await Sale.bulkCreate( resp.data.sales );
-
     const waterCommissions = await getWaterCommission( resp.data.sales );
+    const icebarCommissions = await getIcebarCommissions( resp.data.sales );
 
     res.json({
       ok: true,
+      icebar_commissions: icebarCommissions,
       water_commissions: waterCommissions,
-      icebar_commissions: [],
       icecube_commissions: [],
     });
   } catch ( err ) {
@@ -169,6 +174,7 @@ const getIcebarCommissions = async ( sales ) => {
         'branch.branch'
       ],
       raw: true,
+      order: [ ['min_range', 'ASC'] ]
     });
 
     let commissionsObject = {};
@@ -178,27 +184,117 @@ const getIcebarCommissions = async ( sales ) => {
       if( commissionsObject.hasOwnProperty( sale.operator ) ) {
         commissionsObject[ sale.operator ].quantity_sold += sale.quantity;
         commissionsObject[ sale.operator ].average_price += sale.final_price;
+
+        commissionsObject[ sale.operator ].operator_quantity += sale.assistant ? sale.quantity : 0;
+        commissionsObject[ sale.operator ].operator_assistant_quantity += sale.assistant ? 0 : sale.quantity;
       } else {
         commissionsObject[ sale.operator ] = {
           employee: sale.operator,
           branch  : sale.branch_company,
-          quantity_sold: sale.quantity,
-          average_price: sale.final_price
+          quantity_sold  : sale.quantity,
+          average_price  : sale.final_price,
+          operator_quantity : sale.assistant ? sale.quantity : 0,
+          assistant_quantity: 0,
+          operator_assistant_quantity: sale.assistant ? 0 : sale.quantity,
+          commissionPercent: undefined,
+          commission       : 0,
         };
       }
 
       if( sale.assistant ) {
         if( commissionsObject.hasOwnProperty( sale.assistant ) ) {
-          commissionsObject[ sale.assistant ].commission = commissionsObject[ sale.assistant ].commission + ( sale.final_price * commissionAssistant )
+          commissionsObject[ sale.assistant ].quantity_sold += sale.quantity;
+          commissionsObject[ sale.assistant ].average_price += sale.final_price;
+
+          commissionsObject[ sale.assistant ].assistant_quantity += sale.quantity;
         } else {
           commissionsObject[ sale.assistant ] = {
             employee: sale.assistant,
-            commission: ( sale.final_price * commissionAssistant ),
-            branch: sale.branch_company
+            branch  : sale.branch_company,
+            quantity_sold  : sale.quantity,
+            average_price  : sale.final_price,
+            operator_quantity          : 0,
+            assistant_quantity         : sale.quantity,
+            operator_assistant_quantity: 0,
+            commissionPercent: undefined,
+            commission       : 0,
           }
         }
       }
     });
+
+    /** Get average price */
+    for( const key in commissionsObject ) {
+      if( Object.hasOwnProperty.call( commissionsObject, key ) ) {
+        let element = commissionsObject[ key ];
+        element.average_price = Math.round( element.average_price / element.quantity_sold );
+        
+        /** Get commission percent */
+        const commissionsBranch = configCommissions.filter( item => item.branch.toLowerCase() === element.branch.toLowerCase() );
+        
+        element.commissionPercent = commissionsBranch.find( ( item, index ) => {
+          if( element.average_price >= item.min_range && element.average_price <= item.max_range ) {
+            return item;
+          }
+
+          if( index === commissionsBranch.length - 1 ) {
+            /** Return only if is the last element and if is more than range commission */
+            if( element.average_price >= item.max_range ) {
+              return item;
+            } else {
+              return {
+                cost_bar_operator : 0,
+                cost_bar_assistant: 0,
+                cost_bar_operator_assistant: 0,
+              };
+            }
+          }
+        });
+
+        element.operator_quantity  = element.operator_quantity  * element.commissionPercent.cost_bar_operator;
+        element.assistant_quantity = element.assistant_quantity * element.commissionPercent.cost_bar_assistant;
+        element.operator_assistant_quantity = element.operator_assistant_quantity * element.commissionPercent.cost_bar_operator_assistant;
+
+        commissionsArray = [ ...commissionsArray, {
+          branch    : element.branch,
+          employee  : element.employee,
+          commission: parseFloat( ( element.operator_quantity + element.assistant_quantity + element.operator_assistant_quantity ).toFixed( 2 ) ),
+        }];
+      }
+    }
+
+    return commissionsArray;
+  } catch ( err ) {
+    return [];
+  }
+}
+
+const getIcecubeCommissions = async ( sales ) => {
+  try {
+    const salesIcebar = sales.filter( sale => sale.type_product === 'CUBO' );
+
+    const configCommissions = await IcecubeCommissionConfig.findAll({
+      include: [
+        {
+          model     : BranchCompany,
+          as        : 'branch',
+          attributes: []
+        }
+      ],
+      attributes: [
+        'non_commissionable_kg', 
+        'percent_operator', 
+        'percent_assistant', 
+        'percent_operator_assistant', 
+        'branch.branch'
+      ],
+      raw: true,
+    });
+
+    let commissionsObject = {};
+    let commissionsArray  = [];
+
+    return commissionsArray;
   } catch ( err ) {
     return [];
   }

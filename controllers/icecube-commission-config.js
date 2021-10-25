@@ -2,17 +2,17 @@ const { response, request } = require('express');
 const { Op } = require('sequelize');
 const _      = require('underscore');
 
-const { WaterCommissionConfig } = require('../models');
+const { IcecubeCommissionConfig } = require('../models');
 
 const { formatSequelizeError } = require('../helpers/format-sequelize-error');
 
-const getWaterCommissionConfig = async ( req = request, res = response ) => {
+const getIcecubeCommissionConfig = async ( req = request, res = response ) => {
   try {
-    const waterCommissionConfig = await WaterCommissionConfig.findAll();
+    const icecubeCommissionConfig = await IcecubeCommissionConfig.findAll();
 
     res.json({
       ok: true,
-      waterCommissionConfig,
+      icecubeCommissionConfig,
     });
   } catch ( err ) {
     res.status(400).json({
@@ -23,16 +23,17 @@ const getWaterCommissionConfig = async ( req = request, res = response ) => {
   }
 }
 
-const createWaterCommissionConfig = async ( req = request, res = response ) => {
+const createIcecubeCommissionConfig = async ( req = request, res = response ) => {
   try {
     const configBody = _.pick( req.body, [
+      'non_commissionable_kg', 
       'percent_operator', 
       'percent_assistant', 
       'percent_operator_assistant', 
       'id_branch_company'
     ]);
 
-    await WaterCommissionConfig.destroy({
+    await IcecubeCommissionConfig.destroy({
       where: {
         id_branch_company: {
           [ Op.eq ] : configBody.id_branch_company
@@ -40,11 +41,11 @@ const createWaterCommissionConfig = async ( req = request, res = response ) => {
       }
     });
 
-    const waterCommissionConfig = await WaterCommissionConfig.create( configBody );
+    const icecubeCommissionConfig = await IcecubeCommissionConfig.create( configBody );
 
     res.status(201).json({
       ok: true,
-      waterCommissionConfig
+      icecubeCommissionConfig
     });
   } catch ( err ) {
     res.status(400).json({
@@ -55,13 +56,13 @@ const createWaterCommissionConfig = async ( req = request, res = response ) => {
   }
 }
 
-const deleteWaterCommissionConfig = async ( req = request, res = response ) => {
+const deleteIcecubeCommissionConfig = async ( req = request, res = response ) => {
   try {
     const { id } = req.params;
 
-    const waterCommissionConfig = await WaterCommissionConfig.findByPk( id );
+    const icecubeCommissionConfig = await IcecubeCommissionConfig.findByPk( id );
     
-    if( !waterCommissionConfig ) {
+    if( !icecubeCommissionConfig ) {
       return res.status(400).json({
         ok: false,
         msg: 'The configuration does not exist',
@@ -69,11 +70,11 @@ const deleteWaterCommissionConfig = async ( req = request, res = response ) => {
       });
     }
 
-    await waterCommissionConfig.destroy();
+    await icecubeCommissionConfig.destroy();
 
     res.json({
       ok: true,
-      waterCommissionConfig
+      icecubeCommissionConfig
     });
   } catch ( err ) {
     res.status(400).json({
@@ -85,7 +86,7 @@ const deleteWaterCommissionConfig = async ( req = request, res = response ) => {
 }
 
 module.exports = {
-  getWaterCommissionConfig,
-  createWaterCommissionConfig,
-  deleteWaterCommissionConfig,
+  getIcecubeCommissionConfig,
+  createIcecubeCommissionConfig,
+  deleteIcecubeCommissionConfig,
 };
