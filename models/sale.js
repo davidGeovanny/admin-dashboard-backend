@@ -198,6 +198,20 @@ const Sale = db.define('Sale', {
       },
     }
   },
+  yield: {
+    type: DataTypes.DECIMAL(6, 2).UNSIGNED,
+    allowNull: false,
+    validate: {
+      customNull( value ) {
+        if( !value ) {
+          throw new Error('Need to provide a yield');
+        }
+      },
+      notNull: {
+        msg: "yield can't be null"
+      },
+    }
+  },
   type_modification: {
     type: DataTypes.ENUM( saleTypeModification ),
     validate: {

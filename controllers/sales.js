@@ -1,7 +1,13 @@
 const { request, response } = require('express');
 const { Op, Sequelize } = require('sequelize');
 
-const { WaterCommissionConfig, BranchCompany, Sale, IcebarCommissionConfig, IcecubeCommissionConfig } = require('../models');
+const { 
+  WaterCommissionConfig, 
+  BranchCompany, 
+  Sale, 
+  IcebarCommissionConfig, 
+  IcecubeCommissionConfig 
+} = require('../models');
 
 const hieleraApi = require('../helpers/hielera-api');
 const { formatSequelizeError } = require('../helpers/format-sequelize-error');
@@ -55,12 +61,13 @@ const getCommissions = async ( req = request, res = response ) => {
 
     const waterCommissions = await getWaterCommission( resp.data.sales );
     const icebarCommissions = await getIcebarCommissions( resp.data.sales );
+    const icecubeCommissions = await getIcecubeCommissions( resp.data.sales );
 
     res.json({
       ok: true,
-      icebar_commissions: icebarCommissions,
-      water_commissions: waterCommissions,
-      icecube_commissions: [],
+      icecube_commissions: icecubeCommissions,
+      // icebar_commissions: icebarCommissions,
+      // water_commissions: waterCommissions,
     });
   } catch ( err ) {
     res.status(400).json({
@@ -73,7 +80,7 @@ const getCommissions = async ( req = request, res = response ) => {
 
 const getWaterCommission = async ( sales ) => {
   try {
-    const salesWater = sales.filter( sale => sale.type_product === 'AGUA EMBOTELLADA' );
+    const salesWater = sales.filter( sale => sale.type_product.toLowerCase() === 'agua embotellada' );
 
     const configCommissions = await WaterCommissionConfig.findAll({
       include: [
@@ -155,7 +162,7 @@ const getWaterCommission = async ( sales ) => {
 
 const getIcebarCommissions = async ( sales ) => {
   try {
-    const salesIcebar = sales.filter( sale => sale.type_product === 'BARRA' );
+    const salesIcebar = sales.filter( sale => sale.type_product.toLowerCase() === 'barra' );
 
     const configCommissions = await IcebarCommissionConfig.findAll({
       include: [
@@ -195,7 +202,7 @@ const getIcebarCommissions = async ( sales ) => {
           average_price  : sale.final_price,
           operator_quantity : sale.assistant ? sale.quantity : 0,
           assistant_quantity: 0,
-          operator_assistant_quantity: sale.assistant ? 0 : sale.quantity,
+          operator_assistant_quantity: !sale.assistant ? sale.quantity : 0,
           commissionPercent: undefined,
           commission       : 0,
         };
@@ -223,7 +230,6 @@ const getIcebarCommissions = async ( sales ) => {
       }
     });
 
-    /** Get average price */
     for( const key in commissionsObject ) {
       if( Object.hasOwnProperty.call( commissionsObject, key ) ) {
         let element = commissionsObject[ key ];
@@ -271,7 +277,7 @@ const getIcebarCommissions = async ( sales ) => {
 
 const getIcecubeCommissions = async ( sales ) => {
   try {
-    const salesIcebar = sales.filter( sale => sale.type_product === 'CUBO' );
+    const salesIcecube = sales.filter( sale => sale.type_product.toLowerCase() === 'cubo' );
 
     const configCommissions = await IcecubeCommissionConfig.findAll({
       include: [
@@ -294,8 +300,70 @@ const getIcecubeCommissions = async ( sales ) => {
     let commissionsObject = {};
     let commissionsArray  = [];
 
+    salesIcecube.forEach( sale => {
+      const commissionPercents  = configCommissions.find( item => item.branch.toLowerCase() === sale.branch_company.toLowerCase() );
+
+      if( commissionsObject.hasOwnProperty( sale.operator ) ) {
+        const percent = sale.assistant ? commissionPercents.percent_operator : commissionPercents.percent_operator_assistant;
+
+        commissionsObject[ sale.operator ].quantity.kg += ( sale.yield * sale.quantity );
+        commissionsObject[ sale.operator ].quantity.price += ( sale.yield * sale.quantity ) * percent;
+      } else {
+        const percent = sale.assistant ? commissionPercents.percent_operator : commissionPercents.percent_operator_assistant;
+
+        commissionsObject[ sale.operator ] = {
+          employee: sale.operator,
+          branch  : sale.branch_company,
+          quantity: {
+            kg   : ( sale.yield * sale.quantity ),
+            price: ( sale.yield * sale.quantity ) * percent,
+          },
+        };
+      }
+
+      if( sale.assistant ) {
+        if( commissionsObject.hasOwnProperty( sale.assistant ) ) {
+          const percent = commissionPercents.percent_assistant;
+        
+          commissionsObject[ sale.assistant ].quantity.kg += ( sale.yield * sale.quantity );
+          commissionsObject[ sale.assistant ].quantity.price += ( sale.yield * sale.quantity ) * percent;
+        } else {
+          const percent = commissionPercents.percent_assistant;
+
+          commissionsObject[ sale.operator ] = {
+            employee: sale.operator,
+            branch  : sale.branch_company,
+            quantity: {
+              kg   : ( sale.yield * sale.quantity ),
+              price: ( sale.yield * sale.quantity ) * percent,
+            },
+          };
+        }
+      }
+    });
+
+    for( const key in commissionsObject ) {
+      if( Object.hasOwnProperty.call( commissionsObject, key ) ) {
+        const { employee, branch, quantity } = commissionsObject[ key ];
+        const { kg, price } = quantity;
+        
+        const commissionPercents  = configCommissions.find( item => item.branch.toLowerCase() === branch.toLowerCase() );
+
+        if( kg > commissionPercents.non_commissionable_kg ) {
+  
+          commissionsArray = [ ...commissionsArray, {
+            employee,
+            branch,
+            commission: parseFloat( ( ( ( kg - commissionPercents.non_commissionable_kg ) * price ) / kg ).toFixed( 2 ) ),
+          }];
+        }
+
+      }
+    }
+
     return commissionsArray;
   } catch ( err ) {
+    console.log({ err })
     return [];
   }
 }
