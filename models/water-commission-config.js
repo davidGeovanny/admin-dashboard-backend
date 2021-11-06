@@ -28,7 +28,7 @@ const WaterCommissionConfig = db.define('WaterCommissionConfig', {
           throw new Error('Need to provide a percent_assistant');
         }
       },
-    }
+    },
   },
   percent_operator_assistant: {
     type: DataTypes.DECIMAL(6, 3).UNSIGNED,

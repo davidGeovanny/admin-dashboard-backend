@@ -93,6 +93,11 @@ IcebarCommissionConfig.belongsTo( BranchCompany, {
   foreignKey: 'id_branch_company'
 });
 
+BranchCompany.hasMany( IcebarCommissionConfig, {
+  as: 'commissions', 
+  foreignKey: 'id_branch_company'
+});
+
 IcebarCommissionConfig.addScope('defaultScope', {
   attributes: {
     exclude: ['id_branch_company', 'deleted_at']

@@ -1,13 +1,8 @@
 const { request, response } = require('express');
-const { Op, Sequelize } = require('sequelize');
 
-const { 
-  WaterCommissionConfig, 
-  BranchCompany, 
-  Sale, 
-  IcebarCommissionConfig, 
-  IcecubeCommissionConfig 
-} = require('../models');
+const CommissionWater   = require('../utils/commission-water');
+const CommissionIcebar  = require('../utils/commission-icebar');
+const CommissionIcecube = require('../utils/commission-icecube');
 
 const hieleraApi = require('../helpers/hielera-api');
 const { formatSequelizeError } = require('../helpers/format-sequelize-error');
@@ -59,17 +54,18 @@ const getCommissions = async ( req = request, res = response ) => {
       });
     }
 
-    const waterCommissions = await getWaterCommission( resp.data.sales );
-    const icebarCommissions = await getIcebarCommissions( resp.data.sales );
-    const icecubeCommissions = await getIcecubeCommissions( resp.data.sales );
+    const waterCommissions   = await getWaterCommission( resp.data.sales.filter( sale => sale.type_product.toLowerCase() === 'agua embotellada' ) );
+    const icebarCommissions  = await getIcebarCommissions( resp.data.sales.filter( sale => sale.type_product.toLowerCase() === 'barra' ) );
+    const icecubeCommissions = await getIcecubeCommissions( resp.data.sales.filter( sale => sale.type_product.toLowerCase() === 'cubo' ) );
 
     res.json({
       ok: true,
+      water_commissions: waterCommissions,
+      icebar_commissions: icebarCommissions,
       icecube_commissions: icecubeCommissions,
-      // icebar_commissions: icebarCommissions,
-      // water_commissions: waterCommissions,
     });
   } catch ( err ) {
+    console.log( err )
     res.status(400).json({
       ok: false,
       msg: 'An error has ocurred',
@@ -78,292 +74,84 @@ const getCommissions = async ( req = request, res = response ) => {
   }
 }
 
-const getWaterCommission = async ( sales ) => {
+const getWaterCommission = async ( sales = [] ) => {
   try {
-    const salesWater = sales.filter( sale => sale.type_product.toLowerCase() === 'agua embotellada' );
+    const commissionWater = new CommissionWater();
+    await commissionWater.findCommissionConfig();
 
-    const configCommissions = await WaterCommissionConfig.findAll({
-      include: [
-        {
-          model     : BranchCompany,
-          as        : 'branch',
-          attributes: []
-        }
-      ],
-      attributes: [
-        'percent_operator', 
-        'percent_assistant', 
-        'percent_operator_assistant', 
-        'branch.branch'
-      ],
-      raw: true,
-    });
-
-    let commissionsObject = {};
-    let commissionsArray  = [];
-
-    salesWater.forEach( sale => {
-
-      const commissionPercents  = configCommissions.find( item => item.branch.toLowerCase() === sale.branch_company.toLowerCase() );
-
-      const commissionOperator  = commissionPercents ? commissionPercents.percent_operator  : 0;
-      const commissionAssistant = commissionPercents ? commissionPercents.percent_assistant : 0;
-      const commissionOperatorAssistant = commissionPercents ? commissionPercents.percent_operator_assistant : 0;
-
-      if( commissionsObject.hasOwnProperty( sale.operator ) ) {
-        if( sale.assistant ) {
-          commissionsObject[ sale.operator ].commission += ( sale.final_price * commissionOperator );
-        } else {
-          commissionsObject[ sale.operator ].commission += ( sale.final_price * commissionOperatorAssistant );
-        }
-      } else {
-        if( sale.assistant ) {
-          commissionsObject[ sale.operator ] = {
-            employee: sale.operator,
-            commission: ( sale.final_price * commissionOperator ),
-            branch: sale.branch_company
-          }
-        } else {
-          commissionsObject[ sale.operator ] = {
-            employee: sale.operator,
-            commission: ( sale.final_price * commissionOperatorAssistant ),
-            branch: sale.branch_company
-          }
-        }
-      }
-
+    sales.forEach( sale => {
+      /** Operator */
+      const position = sale.assistant ? 'operator' : 'operator_assistant';
+      commissionWater.addSale( sale.branch_company, sale.operator, sale.final_price, position );
+      
+      /** Assistant */
       if( sale.assistant ) {
-        if( commissionsObject.hasOwnProperty( sale.assistant ) ) {
-          commissionsObject[ sale.assistant ].commission += ( sale.final_price * commissionAssistant )
-        } else {
-          commissionsObject[ sale.assistant ] = {
-            employee: sale.assistant,
-            commission: ( sale.final_price * commissionAssistant ),
-            branch: sale.branch_company
-          }
-        }
+        commissionWater.addSale( sale.branch_company, sale.assistant, sale.final_price, 'assistant' );
       }
     });
-
-    for( const key in commissionsObject ) {
-      if( Object.hasOwnProperty.call( commissionsObject, key ) ) {
-        commissionsArray = [ ...commissionsArray, {
-          ...commissionsObject[ key ],
-          commission: parseFloat( commissionsObject[ key ].commission.toFixed( 2 ) ),
-        }];
-      }
-    }
-
-    return commissionsArray;
+    
+    return commissionWater.getCommissionsToArray();
   } catch ( err ) {
     return [];
   }
 }
 
-const getIcebarCommissions = async ( sales ) => {
+const getIcebarCommissions = async ( sales = [] ) => {
   try {
-    const salesIcebar = sales.filter( sale => sale.type_product.toLowerCase() === 'barra' );
+    const commissionIceBar = new CommissionIcebar();
+    await commissionIceBar.findCommissionConfig();
 
-    const configCommissions = await IcebarCommissionConfig.findAll({
-      include: [
-        {
-          model     : BranchCompany,
-          as        : 'branch',
-          attributes: []
-        }
-      ],
-      attributes: [
-        'min_range', 
-        'max_range', 
-        'cost_bar_operator', 
-        'cost_bar_assistant', 
-        'cost_bar_operator_assistant', 
-        'branch.branch'
-      ],
-      raw: true,
-      order: [ ['min_range', 'ASC'] ]
-    });
-
-    let commissionsObject = {};
-    let commissionsArray  = [];
-
-    salesIcebar.forEach( sale => {
-      if( commissionsObject.hasOwnProperty( sale.operator ) ) {
-        commissionsObject[ sale.operator ].quantity_sold += sale.quantity;
-        commissionsObject[ sale.operator ].average_price += sale.final_price;
-
-        commissionsObject[ sale.operator ].operator_quantity += sale.assistant ? sale.quantity : 0;
-        commissionsObject[ sale.operator ].operator_assistant_quantity += sale.assistant ? 0 : sale.quantity;
-      } else {
-        commissionsObject[ sale.operator ] = {
-          employee: sale.operator,
-          branch  : sale.branch_company,
-          quantity_sold  : sale.quantity,
-          average_price  : sale.final_price,
-          operator_quantity : sale.assistant ? sale.quantity : 0,
-          assistant_quantity: 0,
-          operator_assistant_quantity: !sale.assistant ? sale.quantity : 0,
-          commissionPercent: undefined,
-          commission       : 0,
-        };
-      }
-
+    sales.forEach( sale => {
+      /** Operator */
+      const position = sale.assistant ? 'operator' : 'operator_assistant';
+      commissionIceBar.addSale({
+        branch  : sale.branch_company,
+        name    : sale.operator,
+        quantity: sale.quantity,
+        price   : sale.final_price,
+        position
+      });
+      
+      /** Assistant */
       if( sale.assistant ) {
-        if( commissionsObject.hasOwnProperty( sale.assistant ) ) {
-          commissionsObject[ sale.assistant ].quantity_sold += sale.quantity;
-          commissionsObject[ sale.assistant ].average_price += sale.final_price;
-
-          commissionsObject[ sale.assistant ].assistant_quantity += sale.quantity;
-        } else {
-          commissionsObject[ sale.assistant ] = {
-            employee: sale.assistant,
-            branch  : sale.branch_company,
-            quantity_sold  : sale.quantity,
-            average_price  : sale.final_price,
-            operator_quantity          : 0,
-            assistant_quantity         : sale.quantity,
-            operator_assistant_quantity: 0,
-            commissionPercent: undefined,
-            commission       : 0,
-          }
-        }
-      }
-    });
-
-    for( const key in commissionsObject ) {
-      if( Object.hasOwnProperty.call( commissionsObject, key ) ) {
-        let element = commissionsObject[ key ];
-        element.average_price = Math.round( element.average_price / element.quantity_sold );
-        
-        /** Get commission percent */
-        const commissionsBranch = configCommissions.filter( item => item.branch.toLowerCase() === element.branch.toLowerCase() );
-        
-        element.commissionPercent = commissionsBranch.find( ( item, index ) => {
-          if( element.average_price >= item.min_range && element.average_price <= item.max_range ) {
-            return item;
-          }
-
-          if( index === commissionsBranch.length - 1 ) {
-            /** Return only if is the last element and if is more than range commission */
-            if( element.average_price >= item.max_range ) {
-              return item;
-            } else {
-              return {
-                cost_bar_operator : 0,
-                cost_bar_assistant: 0,
-                cost_bar_operator_assistant: 0,
-              };
-            }
-          }
+        commissionIceBar.addSale({
+          branch  : sale.branch_company,
+          name    : sale.assistant,
+          quantity: sale.quantity,
+          price   : sale.final_price,
+          position: 'assistant'
         });
-
-        element.operator_quantity  = element.operator_quantity  * element.commissionPercent.cost_bar_operator;
-        element.assistant_quantity = element.assistant_quantity * element.commissionPercent.cost_bar_assistant;
-        element.operator_assistant_quantity = element.operator_assistant_quantity * element.commissionPercent.cost_bar_operator_assistant;
-
-        commissionsArray = [ ...commissionsArray, {
-          branch    : element.branch,
-          employee  : element.employee,
-          commission: parseFloat( ( element.operator_quantity + element.assistant_quantity + element.operator_assistant_quantity ).toFixed( 2 ) ),
-        }];
       }
-    }
+    });
 
-    return commissionsArray;
+    commissionIceBar.calculateCommissions();
+    
+    return commissionIceBar.getCommissionsToArray();
   } catch ( err ) {
     return [];
   }
 }
 
-const getIcecubeCommissions = async ( sales ) => {
+const getIcecubeCommissions = async ( sales = [] ) => {
   try {
-    const salesIcecube = sales.filter( sale => sale.type_product.toLowerCase() === 'cubo' );
+    const commissionIcecube = new CommissionIcecube();
+    await commissionIcecube.findCommissionConfig();
 
-    const configCommissions = await IcecubeCommissionConfig.findAll({
-      include: [
-        {
-          model     : BranchCompany,
-          as        : 'branch',
-          attributes: []
-        }
-      ],
-      attributes: [
-        'non_commissionable_kg', 
-        'percent_operator', 
-        'percent_assistant', 
-        'percent_operator_assistant', 
-        'branch.branch'
-      ],
-      raw: true,
-    });
-
-    let commissionsObject = {};
-    let commissionsArray  = [];
-
-    salesIcecube.forEach( sale => {
-      const commissionPercents  = configCommissions.find( item => item.branch.toLowerCase() === sale.branch_company.toLowerCase() );
-
-      if( commissionsObject.hasOwnProperty( sale.operator ) ) {
-        const percent = sale.assistant ? commissionPercents.percent_operator : commissionPercents.percent_operator_assistant;
-
-        commissionsObject[ sale.operator ].quantity.kg += ( sale.yield * sale.quantity );
-        commissionsObject[ sale.operator ].quantity.price += ( sale.yield * sale.quantity ) * percent;
-      } else {
-        const percent = sale.assistant ? commissionPercents.percent_operator : commissionPercents.percent_operator_assistant;
-
-        commissionsObject[ sale.operator ] = {
-          employee: sale.operator,
-          branch  : sale.branch_company,
-          quantity: {
-            kg   : ( sale.yield * sale.quantity ),
-            price: ( sale.yield * sale.quantity ) * percent,
-          },
-        };
-      }
-
+    sales.forEach( sale => {
+      /** Operator */
+      const position = sale.assistant ? 'operator' : 'operator_assistant';
+      commissionIcecube.addSale( sale.branch_company, sale.operator, ( sale.quantity * sale.yield ), position );
+      
+      /** Assistant */
       if( sale.assistant ) {
-        if( commissionsObject.hasOwnProperty( sale.assistant ) ) {
-          const percent = commissionPercents.percent_assistant;
-        
-          commissionsObject[ sale.assistant ].quantity.kg += ( sale.yield * sale.quantity );
-          commissionsObject[ sale.assistant ].quantity.price += ( sale.yield * sale.quantity ) * percent;
-        } else {
-          const percent = commissionPercents.percent_assistant;
-
-          commissionsObject[ sale.operator ] = {
-            employee: sale.operator,
-            branch  : sale.branch_company,
-            quantity: {
-              kg   : ( sale.yield * sale.quantity ),
-              price: ( sale.yield * sale.quantity ) * percent,
-            },
-          };
-        }
+        commissionIcecube.addSale( sale.branch_company, sale.assistant, ( sale.quantity * sale.yield ), 'assistant' );
       }
     });
 
-    for( const key in commissionsObject ) {
-      if( Object.hasOwnProperty.call( commissionsObject, key ) ) {
-        const { employee, branch, quantity } = commissionsObject[ key ];
-        const { kg, price } = quantity;
-        
-        const commissionPercents  = configCommissions.find( item => item.branch.toLowerCase() === branch.toLowerCase() );
-
-        if( kg > commissionPercents.non_commissionable_kg ) {
-  
-          commissionsArray = [ ...commissionsArray, {
-            employee,
-            branch,
-            commission: parseFloat( ( ( ( kg - commissionPercents.non_commissionable_kg ) * price ) / kg ).toFixed( 2 ) ),
-          }];
-        }
-
-      }
-    }
-
-    return commissionsArray;
+    commissionIcecube.calculateCommissions();
+    
+    return commissionIcecube.getCommissionsToArray();
   } catch ( err ) {
-    console.log({ err })
     return [];
   }
 }
