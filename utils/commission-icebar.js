@@ -105,7 +105,7 @@ class CommissionIcebar extends Commissions {
   }
 
   getCommissionPercent = ( branch, average ) => {
-    const emptyCommission = { operator: 0, assistant: 0, operator_assistant: 0 };
+    const emptyCommission = { cost_bar_operator: 0, cost_bar_assistant: 0, cost_bar_operator_assistant: 0 };
 
     if( !this._commissionConfig.has( branch.toLowerCase() ) ) return emptyCommission;
 
@@ -130,8 +130,8 @@ class CommissionIcebar extends Commissions {
   getCommissionsToArray = () => {
     const array = Array.from( this._commissions, ( [ key, value ] ) => {
       return {
-        employee: key.toUpperCase(),
-        branch  : value.branch.toUpperCase(), 
+        employee  : key.toLowerCase(),
+        branch    : value.branch.toLowerCase(), 
         commission: parseFloat( value.commission.toFixed( 2 ) ),
       };
     });

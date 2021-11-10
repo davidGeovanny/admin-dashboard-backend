@@ -11,6 +11,7 @@ class Server {
     this.port = process.env.PORT || 8080;
 
     this.paths = {
+      cache         : '/api/cache',
       auth          : '/api/auth',
       user          : '/api/users',
       profile       : '/api/profiles',
@@ -49,6 +50,7 @@ class Server {
   }
 
   routes() {
+    this.app.use( this.paths.cache,          require('../routes/cache') );
     this.app.use( this.paths.auth,           require('../routes/auth') );
     this.app.use( this.paths.user,           require('../routes/users') );
     this.app.use( this.paths.profile,        require('../routes/profiles') );

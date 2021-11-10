@@ -1,4 +1,5 @@
 const { request, response } = require('express');
+const _ = require('underscore');
 
 const CommissionWater   = require('../utils/commission-water');
 const CommissionIcebar  = require('../utils/commission-icebar');
@@ -60,8 +61,8 @@ const getCommissions = async ( req = request, res = response ) => {
 
     res.json({
       ok: true,
-      water_commissions: waterCommissions,
-      icebar_commissions: icebarCommissions,
+      water_commissions  : waterCommissions,
+      icebar_commissions : icebarCommissions,
       icecube_commissions: icecubeCommissions,
     });
   } catch ( err ) {
@@ -81,17 +82,23 @@ const getWaterCommission = async ( sales = [] ) => {
 
     sales.forEach( sale => {
       /** Operator */
-      const position = sale.assistant ? 'operator' : 'operator_assistant';
+      const position = ( sale.assistant || sale.helperr ) ? 'operator' : 'operator_assistant';
       commissionWater.addSale( sale.branch_company, sale.operator, sale.final_price, position );
       
       /** Assistant */
       if( sale.assistant ) {
         commissionWater.addSale( sale.branch_company, sale.assistant, sale.final_price, 'assistant' );
       }
+
+      /** Helper */
+      if( sale.helper ) {
+        commissionWater.addSale( sale.branch_company, sale.helper, sale.final_price, 'assistant' );
+      }
     });
     
-    return commissionWater.getCommissionsToArray();
+    return _.sortBy( commissionWater.getCommissionsToArray(), 'commission' ).reverse();
   } catch ( err ) {
+    console.log( err )
     return [];
   }
 }
@@ -103,7 +110,7 @@ const getIcebarCommissions = async ( sales = [] ) => {
 
     sales.forEach( sale => {
       /** Operator */
-      const position = sale.assistant ? 'operator' : 'operator_assistant';
+      const position = ( sale.assistant || sale.helper ) ? 'operator' : 'operator_assistant';
       commissionIceBar.addSale({
         branch  : sale.branch_company,
         name    : sale.operator,
@@ -122,11 +129,22 @@ const getIcebarCommissions = async ( sales = [] ) => {
           position: 'assistant'
         });
       }
+
+      /** Helper */
+      if( sale.helper ) {
+        commissionIceBar.addSale({
+          branch  : sale.branch_company,
+          name    : sale.helper,
+          quantity: sale.quantity,
+          price   : sale.final_price,
+          position: 'assistant'
+        });
+      }
     });
 
     commissionIceBar.calculateCommissions();
     
-    return commissionIceBar.getCommissionsToArray();
+    return _.sortBy( commissionIceBar.getCommissionsToArray(), 'commission' ).reverse();
   } catch ( err ) {
     return [];
   }
@@ -139,18 +157,23 @@ const getIcecubeCommissions = async ( sales = [] ) => {
 
     sales.forEach( sale => {
       /** Operator */
-      const position = sale.assistant ? 'operator' : 'operator_assistant';
+      const position = ( sale.assistant || sale.helper ) ? 'operator' : 'operator_assistant';
       commissionIcecube.addSale( sale.branch_company, sale.operator, ( sale.quantity * sale.yield ), position );
       
       /** Assistant */
       if( sale.assistant ) {
         commissionIcecube.addSale( sale.branch_company, sale.assistant, ( sale.quantity * sale.yield ), 'assistant' );
       }
+      
+      /** Helper */
+      if( sale.helper ) {
+        commissionIcecube.addSale( sale.branch_company, sale.helper, ( sale.quantity * sale.yield ), 'assistant' );
+      }
     });
 
     commissionIcecube.calculateCommissions();
     
-    return commissionIcecube.getCommissionsToArray();
+    return _.sortBy( commissionIcecube.getCommissionsToArray(), 'commission' ).reverse();
   } catch ( err ) {
     return [];
   }

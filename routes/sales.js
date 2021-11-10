@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { checkValidityFields, validateJWT } = require('../middlewares');
+const { checkValidityFields, validateJWT, cache } = require('../middlewares');
 const { saleGetRules } = require('../rules/sale-rules');
 const { getSales, getCommissions } = require('../controllers/sales');
 
@@ -13,6 +13,7 @@ router.get('/', [
 
 router.get('/commissions', [
   validateJWT,
+  cache( 300 ),
   ...saleGetRules,
   checkValidityFields,
 ], getCommissions);

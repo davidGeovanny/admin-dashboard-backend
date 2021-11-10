@@ -91,6 +91,10 @@ const Sale = db.define('Sale', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  helper: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   sales_folio: {
     type: DataTypes.STRING,
     allowNull: false,
