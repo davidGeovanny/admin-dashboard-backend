@@ -1,7 +1,9 @@
 class Commissions {
   constructor() {
     this._commissionConfig = new Map();
-    this._commissions      = new Map();
+
+    /** @type {Map<string, import('./types/commissions-type').CommissionIcebarType>} */
+    this._commissions = new Map();
 
     this._positions = ['operator', 'assistant', 'operator_assistant'];
   }

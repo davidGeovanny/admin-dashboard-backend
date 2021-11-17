@@ -5,7 +5,7 @@ const _       = require('underscore');
 
 const { Employee, User } = require('../models');
 
-const { generateJWT }    = require('../helpers/generate-jwt');
+const { generateJWT } = require('../helpers/generate-jwt');
 const { formatSequelizeError } = require('../helpers/format-sequelize-error');
 
 const register = async ( req = request, res = response ) => {
@@ -33,7 +33,7 @@ const register = async ( req = request, res = response ) => {
       });
 
       if( user ) {
-        res.status(201).json({
+        return res.status(201).json({
           ok: true,
           user: {
             id      : user.id,
@@ -41,7 +41,7 @@ const register = async ( req = request, res = response ) => {
           }
         });
       } else {
-        res.status(400).json({
+        return res.status(400).json({
           ok: false,
           msg: 'An error has ocurred while creating the user',
           errors: []
@@ -49,14 +49,14 @@ const register = async ( req = request, res = response ) => {
       }
 
     } else {
-      res.status(400).json({
+      return res.status(400).json({
         ok: false,
         msg: 'An error has ocurred',
         errors: []
       });
     }
   } catch ( err ) {
-    res.status(400).json({
+    return res.status(400).json({
       ok: false,
       msg: 'An error has ocurred',
       errors: formatSequelizeError( err )
@@ -97,7 +97,7 @@ const login = async ( req = request, res = response ) => {
     /** Generate token */
     const token = await generateJWT( user.id );
 
-    res.json({
+    return res.json({
       ok: true,
       user: {
         id      : user.id,
@@ -106,7 +106,7 @@ const login = async ( req = request, res = response ) => {
       token,
     });
   } catch ( err ) {
-    res.status(400).json({
+    return res.status(400).json({
       ok: false,
       msg: 'An error has ocurred',
       errors: formatSequelizeError( err )
@@ -117,7 +117,7 @@ const login = async ( req = request, res = response ) => {
 const validateUserToken = async ( req = request, res = response ) => {
   const token = await generateJWT( req.user.id );
 
-  res.json({
+  return res.json({
     ok: true,
     user: req.user,
     token,

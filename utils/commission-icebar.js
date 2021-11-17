@@ -1,3 +1,6 @@
+// @ts-check
+
+
 const Commissions = require('./commissions');
 const {
   BranchCompany,
@@ -42,7 +45,7 @@ class CommissionIcebar extends Commissions {
       assistant: sale,
       commission: 0,
     };
-    this._commissions.set( name, value );
+    this._commissions.set( "name", value );
   }
 
   calculateCommissions = () => {
@@ -131,7 +134,7 @@ class CommissionIcebar extends Commissions {
     const array = Array.from( this._commissions, ( [ key, value ] ) => {
       return {
         employee  : key.toLowerCase(),
-        branch    : value.branch.toLowerCase(), 
+        branch    : value.branch.toLowerCase(),
         commission: parseFloat( value.commission.toFixed( 2 ) ),
       };
     });
