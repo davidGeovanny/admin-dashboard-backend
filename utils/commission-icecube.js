@@ -1,16 +1,37 @@
+// @ts-check
+/**
+ * @typedef { import('./types/commissions-type').IcecubeCommissionType }       IcecubeCommissionType
+ * @typedef { import('./types/commissions-type').IcecubeCommissionConfigType } IcecubeCommissionConfigType
+ * @typedef { import('./types/commissions-type').CommissionType }              CommissionType
+ */
 const {
   BranchCompany,
   IcecubeCommissionConfig,
 } = require('../models');
-const Commissions = require('./commissions');
 
-class CommissionIcecube extends Commissions {
-  constructor() { super() }
+class CommissionIcecube {
+  constructor() {
+    /** @type { Map<string, IcecubeCommissionConfigType> } */
+    this._commissionConfig = new Map();
+
+    /** @type { Map<string, IcecubeCommissionType> } */
+    this._commissions = new Map();
+
+    /** @type { string[] } */
+    this._positions = ['operator', 'assistant', 'operator_assistant'];
+  }
 
   get commissionConfig() {
     return this._commissionConfig;
   }
 
+  /**
+   * Add sale to employee.
+   * @param { string } branch   Branch company name.
+   * @param { string } name     Name of the employee.
+   * @param { number } quantity Quantity of kg sold.
+   * @param { string } position Employee's position in the sale.
+   */
   addSale = ( branch, name, quantity, position ) => {
     branch = branch.toLowerCase();
     
@@ -33,10 +54,15 @@ class CommissionIcecube extends Commissions {
     });
   }
 
+  /**
+   * Add new employee to commissions.
+   * @param { string } name   Name of the employee.
+   * @param { string } branch Branch to which the employee belongs.
+   */
   setEmployee = ( name, branch ) => {
     const value = {
       branch,
-      quantity  : { kg: 0, price: 0 },
+      quantity:   { kg: 0, price: 0 },
       commission: 0,
     };
     
@@ -94,6 +120,12 @@ class CommissionIcecube extends Commissions {
     });
   }
 
+  /**
+   * Returns the commission percentage for the sale.
+   * @param   { string } branch   Branch to which the employee belongs.
+   * @param   { string } position Employee's position in the sale.
+   * @returns { number }
+   */
   getCommissionPercent = ( branch, position ) => {
     if( !this._commissionConfig.has( branch.toLowerCase() ) ) return 0;
 
@@ -101,16 +133,21 @@ class CommissionIcecube extends Commissions {
 
     switch ( position ) {
       case 'operator':
-        return parseFloat( percent_operator );
+        return percent_operator;
 
       case 'assistant':
-        return parseFloat( percent_assistant );
+        return percent_assistant;
 
       case 'operator_assistant':
-        return parseFloat( percent_operator_assistant | percent_operator );
+        return percent_operator_assistant || percent_operator;
     }
   }
 
+  /**
+   * Returns the amount of non-commissionable kg for the commission.
+   * @param   { string } branch Branch to which the employee belongs.
+   * @returns { number }
+   */
   getNonCommissionsableKg = ( branch ) => {
     if( !this._commissionConfig.has( branch.toLowerCase() ) ) return 0;
 
@@ -118,6 +155,10 @@ class CommissionIcecube extends Commissions {
     return non_commissionable_kg;
   }
 
+  /**
+   * Transform Map to Array.
+   * @returns { CommissionType[] }
+   */
   getCommissionsToArray = () => {
     const array = Array.from( this._commissions, ( [ key, value ] ) => {
       return {

@@ -1,19 +1,36 @@
 // @ts-check
-
-
-const Commissions = require('./commissions');
+/**
+ * @typedef { import('./types/commissions-type').IcebarCommissionType }       IcebarCommissionType
+ * @typedef { import('./types/commissions-type').IcebarCommissionConfigType } IcebarCommissionConfigType
+ * @typedef { import('./types/commissions-type').IcebarConfigType }           IcebarConfigType
+ * @typedef { import('./types/commissions-type').IcebarSaleEmployeeType }     IcebarSaleEmployeeType
+ * @typedef { import('./types/commissions-type').CommissionType }             CommissionType
+ */
 const {
   BranchCompany,
   IcebarCommissionConfig,
 } = require('../models');
 
-class CommissionIcebar extends Commissions {
-  constructor() { super() }
+class CommissionIcebar {
+  constructor() {
+    /** @type { Map<string, IcebarCommissionConfigType> } */
+    this._commissionConfig = new Map();
+
+    /** @type { Map<string, IcebarCommissionType> } */
+    this._commissions = new Map();
+
+    /** @type { string[] } */
+    this._positions = ['operator', 'assistant', 'operator_assistant'];
+  }
 
   get commissionConfig() {
     return this._commissionConfig;
   }
 
+  /**
+   * Add sale to employee.
+   * @param { IcebarSaleEmployeeType } sale Sale information.
+   */
   addSale = ({ branch, name, quantity, price, position }) => {
     branch = branch.toLowerCase();
     
@@ -36,16 +53,21 @@ class CommissionIcebar extends Commissions {
     });
   }
 
+  /**
+   * Add new employee to commissions.
+   * @param { string } name   Name of the employee.
+   * @param { string } branch Branch to which the employee belongs.
+   */
   setEmployee = ( name, branch ) => {
     const sale  = { quantity: 0, price: 0 };
     const value = {
       branch,
       operator_assistant: sale,
-      operator : sale,
-      assistant: sale,
-      commission: 0,
+      operator:           sale,
+      assistant:          sale,
+      commission:         0,
     };
-    this._commissions.set( "name", value );
+    this._commissions.set( name, value );
   }
 
   calculateCommissions = () => {
@@ -54,13 +76,18 @@ class CommissionIcebar extends Commissions {
       const quantity = operator_assistant.quantity + operator.quantity + assistant.quantity;
       const price    = operator_assistant.price + operator.price + assistant.price;
       const average  = Math.round( price / quantity );
-
-      const percent = this.getCommissionPercent( branch, average );
+      const percent  = this.getCommissionPercent( branch, average );
 
       this.setCommissionEmployee( key, percent, value );
     });
   }
 
+  /**
+   * Calculate employee commission based on commission percentage.
+   * @param { string }               name    Name of the employee.
+   * @param { IcebarConfigType }     percent Commission percent.
+   * @param { IcebarCommissionType } value   Employee commissions based on their position.
+   */
   setCommissionEmployee = ( name, percent, value ) => {
     if( !value ) {
       value = this._commissions.get( name );
@@ -83,10 +110,10 @@ class CommissionIcebar extends Commissions {
       const commissionsBranch = await BranchCompany.findAll({
         include: [
           {
-            model: IcebarCommissionConfig,
-            as: 'commissions',
+            model:      IcebarCommissionConfig,
+            as:         'commissions',
             attributes: ['min_range', 'max_range', 'cost_bar_operator', 'cost_bar_assistant', 'cost_bar_operator_assistant'],
-            order: [ ['min_range', 'ASC'] ]
+            order:      [ ['min_range', 'ASC'] ]
           }
         ],
         attributes: ['branch']
@@ -94,9 +121,10 @@ class CommissionIcebar extends Commissions {
       
       this.setCommissionConfig( commissionsBranch );
     } catch ( err ) {
+      this.setCommissionConfig([]);
     }
   }
-
+  
   setCommissionConfig = ( commissions = [] ) => {
     commissions.forEach( commission => {
       const { branch, commissions } = commission;
@@ -107,8 +135,15 @@ class CommissionIcebar extends Commissions {
     });
   }
 
+  /**
+   * Get the commission percentage according to the bars sold.
+   * @param   { string } branch  Branch to which the employee belongs.
+   * @param   { number } average Average number of icebar solds.
+   * @returns { IcebarConfigType }
+   */
   getCommissionPercent = ( branch, average ) => {
-    const emptyCommission = { cost_bar_operator: 0, cost_bar_assistant: 0, cost_bar_operator_assistant: 0 };
+    /** @type { IcebarConfigType } */
+    const emptyCommission = { cost_bar_operator: 0, cost_bar_assistant: 0, cost_bar_operator_assistant: 0, min_range: 0,  max_range: 0 };
 
     if( !this._commissionConfig.has( branch.toLowerCase() ) ) return emptyCommission;
 
@@ -130,6 +165,10 @@ class CommissionIcebar extends Commissions {
     return percent;
   }
 
+  /**
+   * Transform Map to Array.
+   * @returns { CommissionType[] }
+   */
   getCommissionsToArray = () => {
     const array = Array.from( this._commissions, ( [ key, value ] ) => {
       return {

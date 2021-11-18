@@ -23,7 +23,7 @@ const profilePutRules = [
   check('profile')
     .optional()
     .notEmpty()
-    .withMessage('Neet to provide a profile name')
+    .withMessage('Need to provide a profile name')
     .isString()
     .withMessage('Need to provide a valid profile name')
     .custom( checkProfileAvailable ),

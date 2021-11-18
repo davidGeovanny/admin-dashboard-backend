@@ -1,7 +1,19 @@
 const { Router } = require('express');
-const { checkValidityFields, validateJWT, cache } = require('../middlewares');
-const { saleGetRules } = require('../rules/sale-rules');
-const { getSales, getCommissions } = require('../controllers/sales');
+
+const { 
+  checkValidityFields, 
+  validateJWT, 
+  cache 
+} = require('../middlewares');
+const { saleGetRules, topClientsGetRules } = require('../rules/sale-rules');
+
+const { 
+  getSales,
+  getTopTypeProducts,
+  getTopClients,
+  getTopProducts
+} = require('../controllers/sales');
+const { getCommissions } = require('../controllers/commissions');
 
 const router = Router();
 
@@ -17,5 +29,26 @@ router.get('/commissions', [
   ...saleGetRules,
   checkValidityFields,
 ], getCommissions);
+
+router.get('/top-clients', [
+  validateJWT,
+  // cache( 300 ),
+  ...topClientsGetRules,
+  checkValidityFields,
+], getTopClients);
+
+router.get('/top-products', [
+  validateJWT,
+  // cache( 300 ),
+  ...saleGetRules,
+  checkValidityFields,
+], getTopProducts);
+
+router.get('/top-type-product', [
+  validateJWT,
+  // cache( 300 ),
+  ...saleGetRules,
+  checkValidityFields,
+], getTopTypeProducts);
 
 module.exports = router;

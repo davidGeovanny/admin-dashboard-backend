@@ -1,16 +1,37 @@
-const Commissions = require('./commissions');
+// @ts-check
+/**
+ * @typedef { import('./types/commissions-type').WaterCommissionType }       WaterCommissionType
+ * @typedef { import('./types/commissions-type').WaterCommissionConfigType } WaterCommissionConfigType
+ * @typedef { import('./types/commissions-type').CommissionType }            CommissionType
+ */
 const {
   BranchCompany,
   WaterCommissionConfig,
 } = require('../models');
 
-class CommissionWater extends Commissions {
-  constructor() { super() }
+class CommissionWater {
+  constructor() {
+    /** @type { Map<string, WaterCommissionConfigType> } */
+    this._commissionConfig = new Map();
+
+    /** @type { Map<string, WaterCommissionType> } */
+    this._commissions = new Map();
+
+    /** @type { string[] } */
+    this._positions = ['operator', 'assistant', 'operator_assistant'];
+  }
 
   get commissionConfig() {
     return this._commissionConfig;
   }
 
+  /**
+   * Add sale to employee.
+   * @param { string } branch   Branch company name.
+   * @param { string } name     Name of the employee.
+   * @param { number } price    Final sale price.
+   * @param { string } position Employee's position in the sale.
+   */
   addSale = ( branch, name, price, position ) => {
     branch = branch.toLowerCase();
     
@@ -29,6 +50,11 @@ class CommissionWater extends Commissions {
     });
   }
 
+  /**
+   * Add new employee to commissions.
+   * @param { string } name   Name of the employee.
+   * @param { string } branch Branch to which the employee belongs.
+   */
   setEmployee = ( name, branch ) => {
     const value = { branch, commission: 0, };
     this._commissions.set( name, value );
@@ -55,6 +81,7 @@ class CommissionWater extends Commissions {
   
       this.setCommissionConfig( commissionsBranch );
     } catch ( err ) {
+      this.setCommissionConfig( [] );
     }
   }
 
@@ -72,6 +99,12 @@ class CommissionWater extends Commissions {
     });
   }
 
+  /**
+   * Returns the commission percentage for the sale.
+   * @param   { string } branch   Branch to which the employee belongs.
+   * @param   { string } position Employee's position in the sale.
+   * @returns { number }
+   */
   getCommissionPercent = ( branch, position ) => {
     if( !this._commissionConfig.has( branch.toLowerCase() ) ) return 0;
 
@@ -79,21 +112,25 @@ class CommissionWater extends Commissions {
 
     switch ( position ) {
       case 'operator':
-        return parseFloat( percent_operator );
+        return percent_operator;
 
       case 'assistant':
-        return parseFloat( percent_assistant );
+        return percent_assistant;
 
       case 'operator_assistant':
-        return parseFloat( percent_operator_assistant | percent_operator );
+        return percent_operator_assistant || percent_operator;
     }
   }
 
+  /**
+   * Transform Map to Array.
+   * @returns { CommissionType[] }
+   */
   getCommissionsToArray = () => {
     const array = Array.from( this._commissions, ( [ key, value ] ) => {
       return {
-        employee: key.toLowerCase(),
         ...value,
+        employee:   key.toLowerCase(),
         commission: parseFloat( value.commission.toFixed( 2 ) ),
       };
     });

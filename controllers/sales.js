@@ -1,9 +1,8 @@
+/**
+ * @typedef { import('../utils/interfaces/sales-interface').RespSalesType } RespSalesType
+ */
 const { request, response } = require('express');
 const _ = require('underscore');
-
-const CommissionWater   = require('../utils/commission-water');
-const CommissionIcebar  = require('../utils/commission-icebar');
-const CommissionIcecube = require('../utils/commission-icecube');
 
 const hieleraApi = require('../helpers/hielera-api');
 const { formatSequelizeError } = require('../helpers/format-sequelize-error');
@@ -12,6 +11,7 @@ const getSales = async ( req = request, res = response ) => {
   try {
     const { initDate, finalDate } = req.query;
 
+    /** @type { RespSalesType } */
     const resp = await hieleraApi.get(`/sales/?initDate=${ initDate }&finalDate=${ finalDate }`);
     
     if( !resp.data.ok ) {
@@ -28,12 +28,12 @@ const getSales = async ( req = request, res = response ) => {
     // });
     // await Sale.bulkCreate( resp.data.sales );
     
-    res.json({
-      ok: true,
+    return res.json({
+      ok:    true,
       sales: resp.data.sales.slice(0, 100)
     });
   } catch ( err ) {
-    res.status(400).json({
+    return res.status(400).json({
       ok: false,
       msg: 'An error has ocurred',
       errors: formatSequelizeError( err )
@@ -41,33 +41,99 @@ const getSales = async ( req = request, res = response ) => {
   }
 }
 
-const getCommissions = async ( req = request, res = response ) => {
+const getTopClients = async ( req = request, res = response ) => {
   try {
-    const { initDate, finalDate } = req.query;
-
+    let { initDate, finalDate, limit = 5 } = req.query;
+    
+    if( limit < 1 )  limit = 1;
+    if( limit > 10 ) limit = 10;
+    
+    /** @type { RespSalesType } */
     const resp = await hieleraApi.get(`/sales/?initDate=${ initDate }&finalDate=${ finalDate }`);
-
+    
     if( !resp.data.ok ) {
       return res.status(400).json({
-        ok: false,
-        msg: resp.data.msg,
+        ok:     false,
+        msg:    resp.data.msg,
         errors: {}
       });
     }
 
-    const waterCommissions   = await getWaterCommission( resp.data.sales.filter( sale => sale.type_product.toLowerCase() === 'agua embotellada' ) );
-    const icebarCommissions  = await getIcebarCommissions( resp.data.sales.filter( sale => sale.type_product.toLowerCase() === 'barra' ) );
-    const icecubeCommissions = await getIcecubeCommissions( resp.data.sales.filter( sale => sale.type_product.toLowerCase() === 'cubo' ) );
+    /** @type { Map<string, { frequency: number, money: number }> } */
+    const clientsMap = new Map();
+    
+    resp.data.sales.forEach( sale => {
+      if( clientsMap.has( sale.client ) ) {
+        const { frequency, money } = clientsMap.get( sale.client );
+        clientsMap.set( sale.client, { frequency: frequency + 1, money: money + sale.final_price } );
+      } else {
+        clientsMap.set( sale.client, { frequency: 1, money: sale.final_price } );
+      }
+    });
 
-    res.json({
-      ok: true,
-      water_commissions  : waterCommissions,
-      icebar_commissions : icebarCommissions,
-      icecube_commissions: icecubeCommissions,
+    const clientsArray = Array.from( clientsMap, ( [ key, value ] ) => ({ 
+      ...value, 
+      client: key, 
+      money : parseFloat( value.money.toFixed( 2 ) ) 
+    }));
+
+    return res.json({
+      ok:           true,
+      by_frequency: _.sortBy( clientsArray, 'frequency' ).reverse().slice(0, limit),
+      by_money:     _.sortBy( clientsArray, 'money' ).reverse().slice(0, limit),
     });
   } catch ( err ) {
     console.log( err )
-    res.status(400).json({
+    return res.status(400).json({
+      ok:     false,
+      msg:    'An error has ocurred',
+      errors: formatSequelizeError( err )
+    });
+  }
+}
+
+const getTopProducts = async ( req = request, res = response ) => {
+  try {
+    let { initDate, finalDate } = req.query;
+    
+    /** @type { RespSalesType } */
+    const resp = await hieleraApi.get(`/sales/?initDate=${ initDate }&finalDate=${ finalDate }`);
+
+    if( !resp.data.ok ) {
+      return res.status(400).json({
+        ok:     false,
+        msg:    resp.data.msg,
+        errors: {}
+      });
+    }
+
+    /** @type { Map<string, { frequency: number, money: number }> } */
+    const productsMap = new Map();
+
+    resp.data.sales.forEach( sale => {
+      if( productsMap.has( sale.product ) ) {
+        const { frequency, money } = productsMap.get( sale.product );
+        productsMap.set( sale.product, { frequency: frequency + sale.quantity, money: money + sale.final_price } );
+      } else {
+        productsMap.set( sale.product, { frequency: sale.quantity, money: sale.final_price } );
+      }
+    });
+
+    const productsFrequencyArray = Array.from( productsMap, ( [ key, value ] ) => ({ 
+      ...value,
+      product:   key, 
+      frequency: parseFloat( value.frequency.toFixed( 2 ) ) ,
+      money:     parseFloat( value.money.toFixed( 2 ) ) ,
+    }));
+    
+    return res.json({
+      ok:           true,
+      by_frequency: _.sortBy( productsFrequencyArray, 'frequency' ).reverse(),
+      by_money:     _.sortBy( productsFrequencyArray, 'money' ).reverse(),
+    });
+  } catch ( err ) {
+    console.log( err );
+    return res.status(400).json({
       ok: false,
       msg: 'An error has ocurred',
       errors: formatSequelizeError( err )
@@ -75,111 +141,58 @@ const getCommissions = async ( req = request, res = response ) => {
   }
 }
 
-const getWaterCommission = async ( sales = [] ) => {
+const getTopTypeProducts = async ( req = request, res = response ) => {
   try {
-    const commissionWater = new CommissionWater();
-    await commissionWater.findCommissionConfig();
-
-    sales.forEach( sale => {
-      /** Operator */
-      const position = ( sale.assistant || sale.helperr ) ? 'operator' : 'operator_assistant';
-      commissionWater.addSale( sale.branch_company, sale.operator, sale.final_price, position );
-      
-      /** Assistant */
-      if( sale.assistant ) {
-        commissionWater.addSale( sale.branch_company, sale.assistant, sale.final_price, 'assistant' );
-      }
-
-      /** Helper */
-      if( sale.helper ) {
-        commissionWater.addSale( sale.branch_company, sale.helper, sale.final_price, 'assistant' );
-      }
-    });
+    let { initDate, finalDate } = req.query;
     
-    return _.sortBy( commissionWater.getCommissionsToArray(), 'commission' ).reverse();
-  } catch ( err ) {
-    console.log( err )
-    return [];
-  }
-}
+    /** @type { RespSalesType } */
+    const resp = await hieleraApi.get(`/sales/?initDate=${ initDate }&finalDate=${ finalDate }`);
 
-const getIcebarCommissions = async ( sales = [] ) => {
-  try {
-    const commissionIceBar = new CommissionIcebar();
-    await commissionIceBar.findCommissionConfig();
-
-    sales.forEach( sale => {
-      /** Operator */
-      const position = ( sale.assistant || sale.helper ) ? 'operator' : 'operator_assistant';
-      commissionIceBar.addSale({
-        branch  : sale.branch_company,
-        name    : sale.operator,
-        quantity: sale.quantity,
-        price   : sale.final_price,
-        position
+    if( !resp.data.ok ) {
+      return res.status(400).json({
+        ok:     false,
+        msg:    resp.data.msg,
+        errors: {}
       });
-      
-      /** Assistant */
-      if( sale.assistant ) {
-        commissionIceBar.addSale({
-          branch  : sale.branch_company,
-          name    : sale.assistant,
-          quantity: sale.quantity,
-          price   : sale.final_price,
-          position: 'assistant'
-        });
-      }
+    }
 
-      /** Helper */
-      if( sale.helper ) {
-        commissionIceBar.addSale({
-          branch  : sale.branch_company,
-          name    : sale.helper,
-          quantity: sale.quantity,
-          price   : sale.final_price,
-          position: 'assistant'
-        });
+    /** @type { Map<string, { frequency: number, money: number }> } */
+    const productsHigherMoneyMap = new Map();
+
+    resp.data.sales.forEach( sale => {
+      if( productsHigherMoneyMap.has( sale.type_product ) ) {
+        const { frequency, money } = productsHigherMoneyMap.get( sale.type_product );
+        productsHigherMoneyMap.set( sale.type_product, { frequency: frequency + sale.quantity, money: money + sale.final_price } );
+      } else {
+        productsHigherMoneyMap.set( sale.type_product, { frequency: sale.quantity, money: sale.final_price } );
       }
     });
 
-    commissionIceBar.calculateCommissions();
-    
-    return _.sortBy( commissionIceBar.getCommissionsToArray(), 'commission' ).reverse();
-  } catch ( err ) {
-    return [];
-  }
-}
+    const productsHigherMoneyArray = Array.from( productsHigherMoneyMap, ( [ key, value ] ) => ({ 
+      ...value,
+      type_product: key,
+      frequency:    parseFloat( value.frequency.toFixed( 2 ) ),
+      money:        parseFloat( value.money.toFixed( 2 ) ),
+    }));
 
-const getIcecubeCommissions = async ( sales = [] ) => {
-  try {
-    const commissionIcecube = new CommissionIcecube();
-    await commissionIcecube.findCommissionConfig();
-
-    sales.forEach( sale => {
-      /** Operator */
-      const position = ( sale.assistant || sale.helper ) ? 'operator' : 'operator_assistant';
-      commissionIcecube.addSale( sale.branch_company, sale.operator, ( sale.quantity * sale.yield ), position );
-      
-      /** Assistant */
-      if( sale.assistant ) {
-        commissionIcecube.addSale( sale.branch_company, sale.assistant, ( sale.quantity * sale.yield ), 'assistant' );
-      }
-      
-      /** Helper */
-      if( sale.helper ) {
-        commissionIcecube.addSale( sale.branch_company, sale.helper, ( sale.quantity * sale.yield ), 'assistant' );
-      }
+    return res.json({
+      ok:           true,
+      by_frequency: _.sortBy( productsHigherMoneyArray, 'frequency' ).reverse(),
+      by_money:     _.sortBy( productsHigherMoneyArray, 'money' ).reverse(),
     });
-
-    commissionIcecube.calculateCommissions();
-    
-    return _.sortBy( commissionIcecube.getCommissionsToArray(), 'commission' ).reverse();
   } catch ( err ) {
-    return [];
+    console.log( err );
+    return res.status(400).json({
+      ok: false,
+      msg: 'An error has ocurred',
+      errors: formatSequelizeError( err )
+    });
   }
 }
 
 module.exports = {
   getSales,
-  getCommissions,
+  getTopClients,
+  getTopProducts,
+  getTopTypeProducts,
 };

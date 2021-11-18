@@ -14,6 +14,15 @@ const saleGetRules = [
     .withMessage('Need to provide a valid date'),
 ];
 
+const topClientsGetRules = [
+  ...saleGetRules,
+  query('limit')
+    .optional()
+    .notEmpty()
+    .withMessage('Need to provide a limit of clients')
+]
+
 module.exports = {
   saleGetRules,
+  topClientsGetRules,
 };
