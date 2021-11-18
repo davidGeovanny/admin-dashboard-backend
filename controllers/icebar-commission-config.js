@@ -2,23 +2,13 @@ const { response, request } = require('express');
 const { Op, Sequelize }     = require('sequelize');
 const _ = require('underscore');
 
-const { IcebarCommissionConfig, BranchCompany } = require('../models');
+const { IcebarCommissionConfig } = require('../models');
 
 const { formatSequelizeError } = require('../helpers/format-sequelize-error');
 
 const getIcebarCommissionConfig = async ( req = request, res = response ) => {
   try {
-    const icebarCommissionConfig = await BranchCompany.findAll({
-      include: [
-        {
-          model: IcebarCommissionConfig,
-          as: 'commissions',
-          attributes: ['min_range', 'max_range', 'cost_bar_operator', 'cost_bar_assistant', 'cost_bar_operator_assistant'],
-          order: [ ['min_range', 'ASC'] ]
-        }
-      ],
-      attributes: ['branch']
-    });
+    const icebarCommissionConfig = await IcebarCommissionConfig.findAll();
 
     res.json({
       ok: true,
