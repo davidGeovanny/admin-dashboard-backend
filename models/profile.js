@@ -32,6 +32,7 @@ const Profile = db.define('Profile', {
     }
   },
 }, {
+  tableName: 'profiles',
   timestamps: true,
   createdAt : 'created_at',
   updatedAt : 'updated_at',
