@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 // const baseURL = 'http://localhost:8081/api';
-const baseURL = 'http://200.52.220.238:71/api';
+const baseURL = 'http://200.52.220.238:72/api';
 
 const hieleraApi = axios.create({ baseURL });
 
