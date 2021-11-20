@@ -69,6 +69,7 @@ const Employee = db.define('Employee', {
     }
   },
 }, {
+  tableName: 'employees',
   timestamps: true,
   createdAt : 'created_at',
   updatedAt : 'updated_at',

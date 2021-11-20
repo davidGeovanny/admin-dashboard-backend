@@ -106,6 +106,7 @@ const login = async ( req = request, res = response ) => {
       token,
     });
   } catch ( err ) {
+    console.log( err )
     return res.status(400).json({
       ok: false,
       msg: 'An error has ocurred',

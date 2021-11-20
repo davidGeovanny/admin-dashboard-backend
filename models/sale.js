@@ -268,6 +268,7 @@ const Sale = db.define('Sale', {
     }
   },
 }, {
+  table: 'sales',
   timestamps: true,
   createdAt : 'created_at',
   updatedAt : 'updated_at',
