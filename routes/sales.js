@@ -11,7 +11,8 @@ const {
   getSales,
   getTopTypeProducts,
   getTopClients,
-  getTopProducts
+  getTopProducts,
+  getSalesPerProduct
 } = require('../controllers/sales');
 const { getCommissions } = require('../controllers/commissions');
 
@@ -50,5 +51,12 @@ router.get('/top-type-product', [
   ...saleGetRules,
   checkValidityFields,
 ], getTopTypeProducts);
+
+router.get('/sales-product', [
+  validateJWT,
+  // cache( 300 ),
+  ...saleGetRules,
+  checkValidityFields,
+], getSalesPerProduct);
 
 module.exports = router;
