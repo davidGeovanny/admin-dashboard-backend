@@ -41,7 +41,7 @@ const getSales = async ( req = request, res = response ) => {
   }
 }
 
-const getSalesPerProduct = () => {
+const getSalesPerProduct = async ( req = request, res = response ) => {
   try {
     let { initDate, finalDate } = req.query;
     
