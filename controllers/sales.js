@@ -194,9 +194,6 @@ const getTopBranches = async ( req = request, res = response ) => {
   try {
     let { initDate, finalDate } = req.query;
     
-    if( limit < 1 )  limit = 1;
-    if( limit > 10 ) limit = 10;
-    
     /** @type { RespSalesType } */
     const resp = await hieleraApi.get(`/sales/?initDate=${ initDate }&finalDate=${ finalDate }`);
     
