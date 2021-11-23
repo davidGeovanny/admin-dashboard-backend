@@ -219,7 +219,7 @@ const getTopBranches = async ( req = request, res = response ) => {
 
     const branchesArray = Array.from( branchesMap, ( [ key, value ] ) => ({ 
       ...value, 
-      client: key, 
+      branch: key, 
       money:  parseFloat( value.money.toFixed( 2 ) ) 
     }));
 
