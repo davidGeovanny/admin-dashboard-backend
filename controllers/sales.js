@@ -41,54 +41,6 @@ const getSales = async ( req = request, res = response ) => {
   }
 }
 
-const getSalesPerProduct = async ( req = request, res = response ) => {
-  try {
-    let { initDate, finalDate } = req.query;
-    
-    /** @type { RespSalesType } */
-    const resp = await hieleraApi.get(`/sales/?initDate=${ initDate }&finalDate=${ finalDate }`);
-    
-    if( !resp.data.ok ) {
-      return res.status(400).json({
-        ok:     false,
-        msg:    resp.data.msg,
-        errors: {}
-      });
-    }
-
-    /** @type { Map<string, { frequency: number, money: number }> } */
-    const productsMap = new Map();
-    
-    resp.data.sales.forEach( sale => {
-      if( productsMap.has( sale.product ) ) {
-        const { frequency, money } = productsMap.get( sale.product );
-        productsMap.set( sale.product, { frequency: frequency + sale.quantity, money: money + sale.final_price } );
-      } else {
-        productsMap.set( sale.product, { frequency: sale.quantity, money: sale.final_price } );
-      }
-    });
-
-    const productsArray = Array.from( productsMap, ( [ key, value ] ) => ({ 
-      ...value, 
-      product: key, 
-      money:   parseFloat( value.money.toFixed( 2 ) ) 
-    }));
-
-    return res.json({
-      ok:           true,
-      by_frequency: _.sortBy( productsArray, 'frequency' ).reverse(),
-      by_money:     _.sortBy( productsArray, 'money' ).reverse(),
-    });
-  } catch ( err ) {
-    console.log( err )
-    return res.status(400).json({
-      ok:     false,
-      msg:    'An error has ocurred',
-      errors: formatSequelizeError( err )
-    });
-  }
-}
-
 const getTopClients = async ( req = request, res = response ) => {
   try {
     let { initDate, finalDate, limit = 5 } = req.query;
@@ -238,10 +190,60 @@ const getTopTypeProducts = async ( req = request, res = response ) => {
   }
 }
 
+const getTopBranches = async ( req = request, res = response ) => {
+  try {
+    let { initDate, finalDate } = req.query;
+    
+    if( limit < 1 )  limit = 1;
+    if( limit > 10 ) limit = 10;
+    
+    /** @type { RespSalesType } */
+    const resp = await hieleraApi.get(`/sales/?initDate=${ initDate }&finalDate=${ finalDate }`);
+    
+    if( !resp.data.ok ) {
+      return res.status(400).json({
+        ok:     false,
+        msg:    resp.data.msg,
+        errors: {}
+      });
+    }
+
+    /** @type { Map<string, { money: number }> } */
+    const branchesMap = new Map();
+    
+    resp.data.sales.forEach( sale => {
+      if( branchesMap.has( sale.branch_company ) ) {
+        const { money } = branchesMap.get( sale.branch_company );
+        branchesMap.set( sale.branch_company, { money: money + sale.final_price } );
+      } else {
+        branchesMap.set( sale.branch_company, { money: sale.final_price } );
+      }
+    });
+
+    const branchesArray = Array.from( branchesMap, ( [ key, value ] ) => ({ 
+      ...value, 
+      client: key, 
+      money:  parseFloat( value.money.toFixed( 2 ) ) 
+    }));
+
+    return res.json({
+      ok:       true,
+      by_money: _.sortBy( branchesArray, 'money' ).reverse(),
+    });
+  } catch ( err ) {
+    console.log( err )
+    return res.status(400).json({
+      ok:     false,
+      msg:    'An error has ocurred',
+      errors: formatSequelizeError( err )
+    });
+  }
+}
+
 module.exports = {
   getSales,
   getTopClients,
   getTopProducts,
   getTopTypeProducts,
-  getSalesPerProduct,
+  getTopBranches
 };
