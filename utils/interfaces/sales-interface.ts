@@ -1,20 +1,15 @@
-export type RespSalesType = {
-  data: | { ok: false, msg: string }
-        | { ok: true,  sales: Sale[] }
-}
-  
 export interface SalesType {
   ok:    boolean;
   sales: Sale[];
 }
 
-interface Sale {
+export interface Sale {
   branch_company:     string;
   client:             string;
   delivery_point_key: number;
   delivery_point:     string;
   route_name:         string;
-  operator:           string;
+  operator:           null | string;
   assistant:          null | string;
   helper:             null | string;
   sales_folio:        string;
@@ -46,4 +41,19 @@ enum TypeProduct {
   AguaEmbotellada = "AGUA EMBOTELLADA",
   Barra = "BARRA",
   Cubo = "CUBO",
+}
+
+export interface RespTopSale {
+  ok:   boolean,
+  data: {
+    by_frequency: TopSale[],
+    by_money    : TopSale[],
+  },
+  err:  null | string,
+}
+
+export interface TopSale {
+  [ key: string ]: any;
+  frequency:       number;
+  money:           number;
 }

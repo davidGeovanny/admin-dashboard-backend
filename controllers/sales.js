@@ -1,5 +1,8 @@
 /**
- * @typedef { import('../utils/interfaces/sales-interface').RespSalesType } RespSalesType
+ * @typedef { import('../utils/types/sales-type').RespSalesType } RespSalesType
+ * @typedef { import('../utils/interfaces/sales-interface').Sale } Sale
+ * @typedef { import('../utils/interfaces/sales-interface').TopSale } TopSale
+ * @typedef { import('../utils/interfaces/sales-interface').RespTopSale } RespTopSale
  */
 const { request, response } = require('express');
 const _ = require('underscore');
@@ -41,6 +44,70 @@ const getSales = async ( req = request, res = response ) => {
   }
 }
 
+/**
+ * Get the top of a specific item in sales.
+ * @param   { Sale[] }           sales        Array of sales.
+ * @param   { keyof Sale }       key          Top sales element.
+ * @param   { boolean }          fromQuantity Indicates if the frequency comes from the amount consumed.
+ * @param   { ( keyof Sale )[] } extraKeys    Array of extra attributes to show in the object.
+ * @returns { RespTopSale] }
+ */
+const getTopFromSales = ( sales, key, fromQuantity, extraKeys = [] ) => {
+  try {
+    /** @type { Map<string, TopSale }> } */
+    const map = new Map();
+
+    sales.forEach( sale => {
+      if( map.has( sale[ key ] ) ) {
+        const element = map.get( sale[ key ] );
+        const { frequency, money } = element;
+
+        map.set( sale[ key ], {
+          ...element,
+          frequency: frequency + ( ( fromQuantity ) ? sale.quantity : 1 ),
+          money:     money + sale.final_price,
+        });
+      } else {
+        /** @type { TopSale } */
+        const data = {
+          frequency: ( fromQuantity ) ? sale.quantity : 1,
+          money:     sale.final_price,
+          ...extraKeys.map( k => ({
+            [ k ] : sale[ k ]
+          }))
+        };
+
+        map.set( sale[ key ], data );
+      }
+    });
+    
+    const array = Array.from( map, ([ k, value ]) => ({
+      ...value,
+      [ key ]:   k,
+      frequency: parseFloat( value.frequency.toFixed( 3 ) ),
+      money:     parseFloat( value.money.toFixed( 3 ) ),
+    }));
+
+    console.log({array: _.sortBy( array, 'money' ).reverse()})
+
+    return {
+      ok:   true,
+      data: {
+        by_frequency: _.sortBy( array, 'frequency' ).reverse(),
+        by_money    : _.sortBy( array, 'money' ).reverse(),
+      },
+      err:  null,
+    }
+  } catch ( err ) {
+    console.log( err );
+    return {
+      ok:   false,
+      data: { by_frequency: [], by_money: [], },
+      err,
+    };
+  }
+}
+
 const getTopClients = async ( req = request, res = response ) => {
   try {
     let { initDate, finalDate, limit = 5 } = req.query;
@@ -59,28 +126,12 @@ const getTopClients = async ( req = request, res = response ) => {
       });
     }
 
-    /** @type { Map<string, { frequency: number, money: number }> } */
-    const clientsMap = new Map();
-    
-    resp.data.sales.forEach( sale => {
-      if( clientsMap.has( sale.client ) ) {
-        const { frequency, money } = clientsMap.get( sale.client );
-        clientsMap.set( sale.client, { frequency: frequency + 1, money: money + sale.final_price } );
-      } else {
-        clientsMap.set( sale.client, { frequency: 1, money: sale.final_price } );
-      }
-    });
-
-    const clientsArray = Array.from( clientsMap, ( [ key, value ] ) => ({ 
-      ...value, 
-      client: key, 
-      money:  parseFloat( value.money.toFixed( 2 ) ) 
-    }));
+    const topData = getTopFromSales( resp.data.sales, 'client', false );
 
     return res.json({
       ok:           true,
-      by_frequency: _.sortBy( clientsArray, 'frequency' ).reverse().slice(0, limit),
-      by_money:     _.sortBy( clientsArray, 'money' ).reverse().slice(0, limit),
+      by_frequency: topData.data.by_frequency.slice(0, limit),
+      by_money:     topData.data.by_money.slice(0, limit),
     });
   } catch ( err ) {
     console.log( err )
@@ -107,29 +158,12 @@ const getTopProducts = async ( req = request, res = response ) => {
       });
     }
 
-    /** @type { Map<string, { frequency: number, money: number }> } */
-    const productsMap = new Map();
+    const topData = getTopFromSales( resp.data.sales, 'product', true );
 
-    resp.data.sales.forEach( sale => {
-      if( productsMap.has( sale.product ) ) {
-        const { frequency, money } = productsMap.get( sale.product );
-        productsMap.set( sale.product, { frequency: frequency + sale.quantity, money: money + sale.final_price } );
-      } else {
-        productsMap.set( sale.product, { frequency: sale.quantity, money: sale.final_price } );
-      }
-    });
-
-    const productsFrequencyArray = Array.from( productsMap, ( [ key, value ] ) => ({ 
-      ...value,
-      product:   key, 
-      frequency: parseFloat( value.frequency.toFixed( 2 ) ) ,
-      money:     parseFloat( value.money.toFixed( 2 ) ) ,
-    }));
-    
     return res.json({
       ok:           true,
-      by_frequency: _.sortBy( productsFrequencyArray, 'frequency' ).reverse(),
-      by_money:     _.sortBy( productsFrequencyArray, 'money' ).reverse(),
+      by_frequency: topData.data.by_frequency,
+      by_money:     topData.data.by_money,
     });
   } catch ( err ) {
     console.log( err );
@@ -156,29 +190,12 @@ const getTopTypeProducts = async ( req = request, res = response ) => {
       });
     }
 
-    /** @type { Map<string, { frequency: number, money: number }> } */
-    const productsHigherMoneyMap = new Map();
-
-    resp.data.sales.forEach( sale => {
-      if( productsHigherMoneyMap.has( sale.type_product ) ) {
-        const { frequency, money } = productsHigherMoneyMap.get( sale.type_product );
-        productsHigherMoneyMap.set( sale.type_product, { frequency: frequency + sale.quantity, money: money + sale.final_price } );
-      } else {
-        productsHigherMoneyMap.set( sale.type_product, { frequency: sale.quantity, money: sale.final_price } );
-      }
-    });
-
-    const productsHigherMoneyArray = Array.from( productsHigherMoneyMap, ( [ key, value ] ) => ({ 
-      ...value,
-      type_product: key,
-      frequency:    parseFloat( value.frequency.toFixed( 2 ) ),
-      money:        parseFloat( value.money.toFixed( 2 ) ),
-    }));
+    const topData = getTopFromSales( resp.data.sales, 'type_product', true );
 
     return res.json({
       ok:           true,
-      by_frequency: _.sortBy( productsHigherMoneyArray, 'frequency' ).reverse(),
-      by_money:     _.sortBy( productsHigherMoneyArray, 'money' ).reverse(),
+      by_frequency: topData.data.by_frequency,
+      by_money:     topData.data.by_money,
     });
   } catch ( err ) {
     console.log( err );
@@ -205,27 +222,12 @@ const getTopBranches = async ( req = request, res = response ) => {
       });
     }
 
-    /** @type { Map<string, { money: number }> } */
-    const branchesMap = new Map();
-    
-    resp.data.sales.forEach( sale => {
-      if( branchesMap.has( sale.branch_company ) ) {
-        const { money } = branchesMap.get( sale.branch_company );
-        branchesMap.set( sale.branch_company, { money: money + sale.final_price } );
-      } else {
-        branchesMap.set( sale.branch_company, { money: sale.final_price } );
-      }
-    });
-
-    const branchesArray = Array.from( branchesMap, ( [ key, value ] ) => ({ 
-      ...value, 
-      branch: key, 
-      money:  parseFloat( value.money.toFixed( 2 ) ) 
-    }));
+    const topData = getTopFromSales( resp.data.sales, 'branch_company', false );
 
     return res.json({
-      ok:       true,
-      by_money: _.sortBy( branchesArray, 'money' ).reverse(),
+      ok:           true,
+      by_frequency: topData.data.by_frequency,
+      by_money:     topData.data.by_money,
     });
   } catch ( err ) {
     console.log( err )
