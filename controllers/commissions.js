@@ -12,7 +12,7 @@ const getCommissions = async ( req = request, res = response ) => {
   try {
     const { initDate, finalDate } = req.query;
 
-    const resp = await hieleraApi.get(`/sales/?initDate=${ initDate }&finalDate=${ finalDate }`);
+    const resp = await hieleraApi.get(`/sales/?initDate=${ initDate }&finalDate=${ finalDate }&employees=1`);
 
     if( !resp.data.ok ) {
       return res.status(400).json({
