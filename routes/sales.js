@@ -26,7 +26,7 @@ router.get('/', [
 
 router.get('/commissions', [
   validateJWT,
-  cache( 300 ),
+  // cache( 300 ),
   ...saleGetRules,
   checkValidityFields,
 ], getCommissions);

@@ -8,7 +8,7 @@ const { formatSequelizeError } = require('../helpers/format-sequelize-error');
 
 const getBranchesCompany = async ( req = request, res = response ) => {
   try {
-    const getBranchesCompany = await BranchCompany.findAll();
+    const getBranchesCompany = await BranchCompany.findAndCountAll();
 
     res.json({
       ok: true,

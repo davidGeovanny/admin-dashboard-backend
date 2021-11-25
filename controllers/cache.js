@@ -1,13 +1,23 @@
-const { request, response } = require('express');
-const mcache = require('memory-cache');
+const { response, request } = require('express');
+const { CLEAR_CACHE } = require('../helpers/cache');
 
 const clearCache = async ( req = request, res = response ) => {
-  mcache.clear();
+  try {
+    const { key } = req.query;
 
-  res.json({
-    ok: true,
-    msg: 'Cleaned'
-  });
+    CLEAR_CACHE( key );
+
+    return res.json({
+      ok: true,
+      msg: 'Cache deleted',
+    });
+  } catch ( err ) {
+    return res.status(400).json({
+      ok:  false,
+      msg: 'An error has ocurred',
+      err
+    });
+  }
 }
 
 module.exports = {
