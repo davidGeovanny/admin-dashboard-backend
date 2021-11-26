@@ -73,7 +73,7 @@ Employee.hasMany( User, {
 
 User.addScope('defaultScope', {
   attributes: {
-    exclude: ['password', 'id_employee', 'deleted_at']
+    exclude: ['password', 'deleted_at']
   }
 });
 
