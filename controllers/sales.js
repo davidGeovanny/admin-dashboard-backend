@@ -18,7 +18,7 @@ const getSales = async ( req = request, res = response ) => {
     const { list } = attrSales;
     const queries = req.query;
     const { initDate, finalDate } = queries;
-    const key = `__sales__all__${ initDate }_${ finalDate }`;
+    const key = `__sales__between__${ initDate }_${ finalDate }`;
     
     let resp = JSON.parse( GET_CACHE( key ) );
 
@@ -59,7 +59,7 @@ const getSales = async ( req = request, res = response ) => {
  * @param   { keyof Sale }       key          Top sales element.
  * @param   { boolean }          fromQuantity Indicates if the frequency comes from the amount consumed.
  * @param   { ( keyof Sale )[] } extraKeys    Array of extra attributes to show in the object.
- * @returns { RespTopSale] }
+ * @returns { RespTopSale }
  */
 const getTopFromSales = ( sales, key, fromQuantity, extraKeys = [] ) => {
   try {
@@ -121,7 +121,7 @@ const getTopClients = async ( req = request, res = response ) => {
   try {
     const queries = req.query;
     let { initDate, finalDate, limit = 5 } = queries;
-    const key = `__sales__all__${ initDate }_${ finalDate }`;
+    const key = `__sales__between__${ initDate }_${ finalDate }`;
 
     limit = parseInt( limit );
 
@@ -167,7 +167,7 @@ const getTopProducts = async ( req = request, res = response ) => {
   try {
     const queries = req.query;
     let { initDate, finalDate, limit = 5 } = queries;
-    const key = `__sales__all__${ initDate }_${ finalDate }`;
+    const key = `__sales__between__${ initDate }_${ finalDate }`;
 
     limit = parseInt( limit );
 
@@ -213,7 +213,7 @@ const getTopTypeProducts = async ( req = request, res = response ) => {
   try {
     const queries = req.query;
     let { initDate, finalDate, limit = 5 } = queries;
-    const key = `__sales__all__${ initDate }_${ finalDate }`;
+    const key = `__sales__between__${ initDate }_${ finalDate }`;
 
     limit = parseInt( limit );
 
@@ -259,7 +259,7 @@ const getTopBranches = async ( req = request, res = response ) => {
   try {
     const queries = req.query;
     let { initDate, finalDate, limit = 5 } = queries;
-    const key = `__sales__all__${ initDate }_${ finalDate }`;
+    const key = `__sales__between__${ initDate }_${ finalDate }`;
 
     limit = parseInt( limit );
 

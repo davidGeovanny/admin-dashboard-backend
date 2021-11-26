@@ -4,17 +4,28 @@ const _      = require('underscore');
 
 const { WaterCommissionConfig } = require('../models');
 
-const { formatSequelizeError } = require('../helpers/format-sequelize-error');
-const { pagination }           = require('../helpers/pagination');
+const { attrWaterCommissionConfig } = require('../data/attr-water-config');
+const { formatSequelizeError }      = require('../helpers/format-sequelize-error');
+const { pagination }                = require('../helpers/pagination');
 const { GET_CACHE, SET_CACHE, CLEAR_CACHE } = require('../helpers/cache');
 
 const getWaterCommissionConfig = async ( req = request, res = response ) => {
   try {
-    const waterCommissionConfig = await WaterCommissionConfig.findAll();
+    const { keys, list } = attrWaterCommissionConfig;
+    const queries = req.query;
+    
+    let rows = JSON.parse( GET_CACHE( keys.all ) );
 
-    res.json({
+    if( !rows ) {
+      rows = await WaterCommissionConfig.findAll();
+      SET_CACHE( keys.all, JSON.stringify( rows ), 60000 );
+    }
+
+    const paginated = pagination( rows, queries, list );
+  
+    return res.json({
       ok: true,
-      waterCommissionConfig,
+      ...paginated
     });
   } catch ( err ) {
     return res.status(400).json({
@@ -43,10 +54,11 @@ const createWaterCommissionConfig = async ( req = request, res = response ) => {
     });
 
     const waterCommissionConfig = await WaterCommissionConfig.create( configBody );
+    CLEAR_CACHE( attrWaterCommissionConfig.keys.all );
 
-    res.status(201).json({
-      ok: true,
-      waterCommissionConfig
+    return res.status(201).json({
+      ok:   true,
+      data: waterCommissionConfig
     });
   } catch ( err ) {
     return res.status(400).json({
@@ -65,17 +77,18 @@ const deleteWaterCommissionConfig = async ( req = request, res = response ) => {
     
     if( !waterCommissionConfig ) {
       return res.status(400).json({
-        ok: false,
-        msg: 'The configuration does not exist',
+        ok:     false,
+        msg:    'The configuration does not exist',
         errors: []
       });
     }
 
     await waterCommissionConfig.destroy();
+    CLEAR_CACHE( attrWaterCommissionConfig.keys.all );
 
-    res.json({
+    return res.json({
       ok: true,
-      waterCommissionConfig
+      data: waterCommissionConfig
     });
   } catch ( err ) {
     return res.status(400).json({

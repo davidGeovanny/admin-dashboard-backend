@@ -5,6 +5,7 @@ const _      = require('underscore');
 
 const { User, Profile, ProfileUser } = require('../models');
 
+const { attrUsers }  = require('../data/attr-users');
 const { userStatus } = require('../data/static-data');
 const { formatSequelizeError } = require('../helpers/format-sequelize-error');
 const { pagination }           = require('../helpers/pagination');
@@ -12,11 +13,21 @@ const { GET_CACHE, SET_CACHE, CLEAR_CACHE } = require('../helpers/cache');
 
 const getUsers = async ( req = request, res = response ) => {
   try {
-    const users = await User.findAll();
+    const { keys, list } = attrUsers;
+    const queries = req.query;
     
-    res.json({
+    let rows = JSON.parse( GET_CACHE( keys.all ) );
+
+    if( !rows ) {
+      rows = await User.findAll();
+      SET_CACHE( keys.all, JSON.stringify( rows ), 60000 );
+    }
+
+    const paginated = pagination( rows, queries, list );
+  
+    return res.json({
       ok: true,
-      users
+      ...paginated
     });
   } catch ( err ) {
     return res.status(400).json({
@@ -40,11 +51,12 @@ const createUser = async ( req = request, res = response ) => {
 
     if( defaultProfile ) {
       await user.addProfile( defaultProfile );
+      CLEAR_CACHE( attrUsers.keys.all );
     }
 
-    res.json({
-      ok: true,
-      user,
+    return res.json({
+      ok:   true,
+      data: user,
     });
   } catch ( err ) {
     return res.status(400).json({
@@ -71,10 +83,11 @@ const updateUser = async ( req = request, res = response ) => {
     }
 
     await user.update( userBody );
+    CLEAR_CACHE( attrUsers.keys.all );
 
-    res.json({
-      ok: true,
-      user,
+    return res.json({
+      ok:   true,
+      data: user,
     });
   } catch ( err ) {
     return res.status(400).json({
@@ -94,8 +107,8 @@ const updateUserPassword = async ( req = request, res = response ) => {
 
     if( !user ) {
       return res.status(404).json({
-        ok: false,
-        msg: 'The user does not exist',
+        ok:     false,
+        msg:    'The user does not exist',
         errors: {}
       });
     }
@@ -104,17 +117,18 @@ const updateUserPassword = async ( req = request, res = response ) => {
 
     if( !validPassword ) {
       return res.status(400).json({
-        ok: false,
-        msg: 'Current password is not correct',
+        ok:     false,
+        msg:    'Current password is not correct',
         errors: {}
       });
     }
 
     await user.update( userBody );
+    CLEAR_CACHE( attrUsers.keys.all );
 
-    res.json({
-      ok: true,
-      user,
+    return res.json({
+      ok:   true,
+      data: user,
     });
   } catch ( err ) {
     return res.status(400).json({
@@ -134,8 +148,8 @@ const userAddProfile = async ( req = request, res = response ) => {
 
     if( !user ) {
       return res.status(404).json({
-        ok: false,
-        msg: 'The user does not exist',
+        ok:     false,
+        msg:    'The user does not exist',
         errors: {}
       });
     }
@@ -155,8 +169,8 @@ const userAddProfile = async ( req = request, res = response ) => {
 
     if( profile_user ) {
       return res.json({
-        ok: true,
-        user
+        ok:   true,
+        data: user
       });
     }
     
@@ -164,17 +178,18 @@ const userAddProfile = async ( req = request, res = response ) => {
     
     if( !profile ) {
       return res.status(404).json({
-        ok: false,
-        msg: "Can't add the selected profile. Check selected profile is activated",
+        ok:     false,
+        msg:    "Can't add the selected profile. Check selected profile is activated",
         errors: {}
       });
     }
 
     await user.addProfile( id_profile );
+    CLEAR_CACHE( attrUsers.keys.all );
 
-    res.json({
-      ok: true,
-      user,
+    return res.json({
+      ok:   true,
+      data: user,
     });
   } catch ( err ) {
     return res.status(400).json({
@@ -194,8 +209,8 @@ const userRemoveProfile = async ( req = request, res = response ) => {
 
     if( !user ) {
       return res.status(404).json({
-        ok: false,
-        msg: 'The user does not exist',
+        ok:     false,
+        msg:    'The user does not exist',
         errors: {}
       });
     }
@@ -215,17 +230,18 @@ const userRemoveProfile = async ( req = request, res = response ) => {
 
     if( !profile_user ) {
       return res.status(404).json({
-        ok: false,
-        msg: 'The user does not have the selected profile',
+        ok:     false,
+        msg:    'The user does not have the selected profile',
         errors: {}
       });
     }
 
     await profile_user.destroy();
+    CLEAR_CACHE( attrUsers.keys.all );
 
-    res.json({
-      ok: true,
-      user,
+    return res.json({
+      ok:   true,
+      data: user,
     });
   } catch ( err ) {
     return res.status(400).json({
@@ -244,17 +260,18 @@ const deleteUser = async ( req = request, res = response ) => {
 
     if( !user ) {
       return res.status(404).json({
-        ok: false,
-        msg: 'The user does not exist',
+        ok:     false,
+        msg:    'The user does not exist',
         errors: {}
       });
     }
 
     await user.destroy();
+    CLEAR_CACHE( attrUsers.keys.all );
 
-    res.json({
-      ok: true,
-      user,
+    return res.json({
+      ok:   true,
+      data: user,
     });
   } catch ( err ) {
     return res.status(400).json({

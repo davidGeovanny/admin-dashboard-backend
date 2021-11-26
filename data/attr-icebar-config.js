@@ -1,6 +1,7 @@
+/** List of public attributes for searches and queries and key for cache */
 const attrIcebarCommissionConfig = {
   keys: {
-    all: 'icebar-commission-config-all',
+    all: '__icebar_commission_config__all__',
   },
   list: [
     {

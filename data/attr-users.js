@@ -1,7 +1,7 @@
 /** List of public attributes for searches and queries and key for cache */
-const attrProfiles = {
+const attrUsers = {
   keys: {
-    all: '__profiles_all__',
+    all: '__users_all__',
   },
   list: [
     {
@@ -9,7 +9,7 @@ const attrProfiles = {
       type: 'number'
     },
     {
-      attr: 'profile',
+      attr: 'username',
       type: 'string'
     },
     {
@@ -20,5 +20,5 @@ const attrProfiles = {
 };
 
 module.exports = {
-  attrProfiles,
+  attrUsers,
 };

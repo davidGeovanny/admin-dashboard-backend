@@ -1,6 +1,7 @@
+/** List of public attributes for searches and queries and key for cache */
 const attrWaterCommissionConfig = {
   keys: {
-    all: 'water-commission-config-all',
+    all: '__water_commission_config__all__',
   },
   list: [
     {

@@ -1,7 +1,7 @@
 /** List of public attributes for searches and queries and key for cache */
 const attrBranchesCompany = {
   keys: {
-    all: 'branches-company-all',
+    all: '__branches_company__all__',
   },
   list: [
     {

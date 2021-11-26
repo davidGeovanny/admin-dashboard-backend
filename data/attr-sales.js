@@ -1,3 +1,4 @@
+/** List of public attributes for searches and queries and key for cache */
 const attrSales = {
   keys: {
   },

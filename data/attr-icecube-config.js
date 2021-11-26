@@ -1,6 +1,7 @@
+/** List of public attributes for searches and queries and key for cache */
 const attrIcecubeCommissionConfig = {
   keys: {
-    all: 'icecube-commission-config-all',
+    all: '__icecube_commission_config__all__',
   },
   list: [
     {

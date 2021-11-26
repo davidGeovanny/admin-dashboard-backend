@@ -1,7 +1,7 @@
 /** List of public attributes for searches and queries and key for cache */
 const attrEmployees = {
   keys: {
-    all: 'employees-all',
+    all: '__employees__all__',
   },
   list: [
     {
