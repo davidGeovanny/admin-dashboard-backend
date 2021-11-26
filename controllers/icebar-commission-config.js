@@ -4,20 +4,33 @@ const _ = require('underscore');
 
 const { IcebarCommissionConfig } = require('../models');
 
+const { attrIcebarCommissionConfig } = require('../data/attr-icebar-config');
 const { formatSequelizeError } = require('../helpers/format-sequelize-error');
+const { pagination }           = require('../helpers/pagination');
+const { GET_CACHE, SET_CACHE, CLEAR_CACHE } = require('../helpers/cache');
 
 const getIcebarCommissionConfig = async ( req = request, res = response ) => {
   try {
-    const icebarCommissionConfig = await IcebarCommissionConfig.findAll();
+    const { keys, list } = attrIcebarCommissionConfig;
+    const queries = req.query;
+    
+    let rows = JSON.parse( GET_CACHE( keys.all ) );
 
-    res.json({
+    if( !rows ) {
+      rows = await IcebarCommissionConfig.findAll();
+      SET_CACHE( keys.all, JSON.stringify( rows ), 60000 );
+    }
+
+    const paginated = pagination( rows, queries, list );
+  
+    return res.json({
       ok: true,
-      icebarCommissionConfig,
+      ...paginated
     });
   } catch ( err ) {
-    res.status(400).json({
-      ok: false,
-      msg: 'An error has ocurred',
+    return res.status(400).json({
+      ok:     false,
+      msg:    'An error has ocurred',
       errors: formatSequelizeError( err )
     });
   }
@@ -43,22 +56,23 @@ const createIcebarCommissionConfig = async ( req = request, res = response ) => 
 
     if( !available ) {
       return res.status(400).json({
-        ok: false,
-        msg: 'A config is already exists that is between the min and max values',
+        ok:     false,
+        msg:    'A config is already exists that is between the min and max values',
         errors: []
       });
     }
 
     const icebarCommissionConfig = await IcebarCommissionConfig.create( configBody );
+    CLEAR_CACHE( attrIcebarCommissionConfig.keys.all );
 
-    res.json({
+    return res.json({
       ok: true,
-      icebarCommissionConfig,
+      data: icebarCommissionConfig,
     });
   } catch ( err ) {
-    res.status(400).json({
-      ok: false,
-      msg: 'An error has ocurred',
+    return res.status(400).json({
+      ok:     false,
+      msg:    'An error has ocurred',
       errors: formatSequelizeError( err )
     });
   }
@@ -97,22 +111,23 @@ const updateIcebarCommissionConfig = async ( req = request, res = response ) => 
 
     if( !available ) {
       return res.status(400).json({
-        ok: false,
-        msg: 'A config is already exists that is between the min and max values',
+        ok:     false,
+        msg:    'A config is already exists that is between the min and max values',
         errors: []
       });
     }
 
     await icebarCommissionConfig.update( configBody );
+    CLEAR_CACHE( attrIcebarCommissionConfig.keys.all );
 
-    res.json({
+    return res.json({
       ok: true,
       icebarCommissionConfig,
     })
   } catch ( err ) {
-    res.status(400).json({
-      ok: false,
-      msg: 'An error has ocurred',
+    return res.status(400).json({
+      ok:     false,
+      msg:    'An error has ocurred',
       errors: formatSequelizeError( err )
     });
   }
@@ -126,22 +141,23 @@ const deleteIcebarCommissionConfig = async ( req = request, res = response ) => 
 
     if( !icebarCommissionConfig ) {
       return res.status(400).json({
-        ok: false,
-        msg: 'The configuration does not exist',
+        ok:     false,
+        msg:    'The configuration does not exist',
         errors: []
       });
     }
 
     await icebarCommissionConfig.destroy();
+    CLEAR_CACHE( attrIcebarCommissionConfig.keys.all );
 
     res.json({
       ok: true,
       icebarCommissionConfig,
     });
   } catch ( err ) {
-    res.status(400).json({
-      ok: false,
-      msg: 'An error has ocurred',
+    return res.status(400).json({
+      ok:     false,
+      msg:    'An error has ocurred',
       errors: formatSequelizeError( err )
     });
   }

@@ -7,6 +7,8 @@ const { User, Profile, ProfileUser } = require('../models');
 
 const { userStatus } = require('../data/static-data');
 const { formatSequelizeError } = require('../helpers/format-sequelize-error');
+const { pagination }           = require('../helpers/pagination');
+const { GET_CACHE, SET_CACHE, CLEAR_CACHE } = require('../helpers/cache');
 
 const getUsers = async ( req = request, res = response ) => {
   try {
@@ -17,9 +19,9 @@ const getUsers = async ( req = request, res = response ) => {
       users
     });
   } catch ( err ) {
-    res.status(400).json({
-      ok: false,
-      msg: 'An error has ocurred',
+    return res.status(400).json({
+      ok:     false,
+      msg:    'An error has ocurred',
       errors: formatSequelizeError( err )
     });
   }
@@ -45,9 +47,9 @@ const createUser = async ( req = request, res = response ) => {
       user,
     });
   } catch ( err ) {
-    res.status(400).json({
-      ok: false,
-      msg: 'An error has ocurred',
+    return res.status(400).json({
+      ok:     false,
+      msg:    'An error has ocurred',
       errors: formatSequelizeError( err )
     });
   }
@@ -75,9 +77,9 @@ const updateUser = async ( req = request, res = response ) => {
       user,
     });
   } catch ( err ) {
-    res.status(400).json({
-      ok: false,
-      msg: 'An error has ocurred',
+    return res.status(400).json({
+      ok:     false,
+      msg:    'An error has ocurred',
       errors: formatSequelizeError( err )
     });
   }
@@ -115,9 +117,9 @@ const updateUserPassword = async ( req = request, res = response ) => {
       user,
     });
   } catch ( err ) {
-    res.status(400).json({
-      ok: false,
-      msg: 'An error has ocurred',
+    return res.status(400).json({
+      ok:     false,
+      msg:    'An error has ocurred',
       errors: formatSequelizeError( err )
     });
   }
@@ -175,9 +177,9 @@ const userAddProfile = async ( req = request, res = response ) => {
       user,
     });
   } catch ( err ) {
-    res.status(400).json({
-      ok: false,
-      msg: 'An error has ocurred',
+    return res.status(400).json({
+      ok:     false,
+      msg:    'An error has ocurred',
       errors: formatSequelizeError( err )
     });
   }
@@ -226,9 +228,9 @@ const userRemoveProfile = async ( req = request, res = response ) => {
       user,
     });
   } catch ( err ) {
-    res.status(400).json({
-      ok: false,
-      msg: 'An error has ocurred',
+    return res.status(400).json({
+      ok:     false,
+      msg:    'An error has ocurred',
       errors: formatSequelizeError( err )
     });
   }
@@ -255,9 +257,9 @@ const deleteUser = async ( req = request, res = response ) => {
       user,
     });
   } catch ( err ) {
-    res.status(400).json({
-      ok: false,
-      msg: 'An error has ocurred',
+    return res.status(400).json({
+      ok:     false,
+      msg:    'An error has ocurred',
       errors: formatSequelizeError( err )
     });
   }

@@ -7,38 +7,47 @@
 const { request, response } = require('express');
 const _ = require('underscore');
 
-const hieleraApi = require('../helpers/hielera-api');
+const { attrSales } = require('../data/attr-sales');
 const { formatSequelizeError } = require('../helpers/format-sequelize-error');
+const { pagination }           = require('../helpers/pagination');
+const { GET_CACHE, SET_CACHE } = require('../helpers/cache');
+const hieleraApi = require('../helpers/hielera-api');
 
 const getSales = async ( req = request, res = response ) => {
   try {
-    const { initDate, finalDate } = req.query;
-
-    /** @type { RespSalesType } */
-    const resp = await hieleraApi.get(`/sales/?initDate=${ initDate }&finalDate=${ finalDate }`);
+    const { list } = attrSales;
+    const queries = req.query;
+    const { initDate, finalDate } = queries;
+    const key = `__sales__all__${ initDate }_${ finalDate }`;
     
-    if( !resp.data.ok ) {
-      return res.status(400).json({
-        ok: false,
-        msg: resp.data.msg,
-        errors: {}
-      });
+    let resp = JSON.parse( GET_CACHE( key ) );
+
+    if( !resp ) {
+      resp = await hieleraApi.get(`/sales/?initDate=${ initDate }&finalDate=${ finalDate }`);
+      
+      if( !resp.data.ok ) {
+        return res.status(400).json({
+          ok:     false,
+          msg:    resp.data.msg,
+          errors: {}
+        });
+      }
+
+      SET_CACHE( key, JSON.stringify( resp.data.sales ), 60000 );
+      rows = resp.data.sales;
     }
 
-    // await Sale.destroy({
-    //   where: {},
-    //   truncate: true,
-    // });
-    // await Sale.bulkCreate( resp.data.sales );
-    
+    const paginated = pagination( rows, queries, list );
+  
     return res.json({
-      ok:    true,
-      sales: resp.data.sales.slice(0, 100)
+      ok: true,
+      ...paginated
     });
   } catch ( err ) {
+    console.log( err )
     return res.status(400).json({
-      ok: false,
-      msg: 'An error has ocurred',
+      ok:     false,
+      msg:    'An error has ocurred',
       errors: formatSequelizeError( err )
     });
   }
@@ -110,31 +119,42 @@ const getTopFromSales = ( sales, key, fromQuantity, extraKeys = [] ) => {
 
 const getTopClients = async ( req = request, res = response ) => {
   try {
-    let { initDate, finalDate, limit = 5 } = req.query;
-    
+    const queries = req.query;
+    let { initDate, finalDate, limit = 5 } = queries;
+    const key = `__sales__all__${ initDate }_${ finalDate }`;
+
+    limit = parseInt( limit );
+
     if( limit < 1 )  limit = 1;
     if( limit > 10 ) limit = 10;
+
+    req.query.page  = 1;
     
-    /** @type { RespSalesType } */
-    const resp = await hieleraApi.get(`/sales/?initDate=${ initDate }&finalDate=${ finalDate }`);
-    
-    if( !resp.data.ok ) {
-      return res.status(400).json({
-        ok:     false,
-        msg:    resp.data.msg,
-        errors: {}
-      });
+    let resp = JSON.parse( GET_CACHE( key ) );
+
+    if( !resp ) {
+      resp = await hieleraApi.get(`/sales/?initDate=${ initDate }&finalDate=${ finalDate }`);
+      
+      if( !resp.data.ok ) {
+        return res.status(400).json({
+          ok:     false,
+          msg:    resp.data.msg,
+          errors: {}
+        });
+      }
+
+      SET_CACHE( key, JSON.stringify( resp.data.sales ), 60000 );
+      rows = resp.data.sales;
     }
 
-    const topData = getTopFromSales( resp.data.sales, 'client', false );
-
+    const topData = getTopFromSales( rows, 'client', false );
+  
     return res.json({
       ok:           true,
       by_frequency: topData.data.by_frequency.slice(0, limit),
       by_money:     topData.data.by_money.slice(0, limit),
     });
   } catch ( err ) {
-    console.log( err )
     return res.status(400).json({
       ok:     false,
       msg:    'An error has ocurred',
@@ -145,31 +165,45 @@ const getTopClients = async ( req = request, res = response ) => {
 
 const getTopProducts = async ( req = request, res = response ) => {
   try {
-    let { initDate, finalDate } = req.query;
-    
-    /** @type { RespSalesType } */
-    const resp = await hieleraApi.get(`/sales/?initDate=${ initDate }&finalDate=${ finalDate }`);
+    const queries = req.query;
+    let { initDate, finalDate, limit = 5 } = queries;
+    const key = `__sales__all__${ initDate }_${ finalDate }`;
 
-    if( !resp.data.ok ) {
-      return res.status(400).json({
-        ok:     false,
-        msg:    resp.data.msg,
-        errors: {}
-      });
+    limit = parseInt( limit );
+
+    if( limit < 1 )  limit = 1;
+    if( limit > 10 ) limit = 10;
+
+    req.query.page  = 1;
+    
+    let resp = JSON.parse( GET_CACHE( key ) );
+
+    if( !resp ) {
+      resp = await hieleraApi.get(`/sales/?initDate=${ initDate }&finalDate=${ finalDate }`);
+      
+      if( !resp.data.ok ) {
+        return res.status(400).json({
+          ok:     false,
+          msg:    resp.data.msg,
+          errors: {}
+        });
+      }
+
+      SET_CACHE( key, JSON.stringify( resp.data.sales ), 60000 );
+      rows = resp.data.sales;
     }
 
-    const topData = getTopFromSales( resp.data.sales, 'product', true );
-
+    const topData = getTopFromSales( rows, 'product', true );
+  
     return res.json({
       ok:           true,
-      by_frequency: topData.data.by_frequency,
-      by_money:     topData.data.by_money,
+      by_frequency: topData.data.by_frequency.slice(0, limit),
+      by_money:     topData.data.by_money.slice(0, limit),
     });
   } catch ( err ) {
-    console.log( err );
     return res.status(400).json({
-      ok: false,
-      msg: 'An error has ocurred',
+      ok:     false,
+      msg:    'An error has ocurred',
       errors: formatSequelizeError( err )
     });
   }
@@ -177,31 +211,45 @@ const getTopProducts = async ( req = request, res = response ) => {
 
 const getTopTypeProducts = async ( req = request, res = response ) => {
   try {
-    let { initDate, finalDate } = req.query;
-    
-    /** @type { RespSalesType } */
-    const resp = await hieleraApi.get(`/sales/?initDate=${ initDate }&finalDate=${ finalDate }`);
+    const queries = req.query;
+    let { initDate, finalDate, limit = 5 } = queries;
+    const key = `__sales__all__${ initDate }_${ finalDate }`;
 
-    if( !resp.data.ok ) {
-      return res.status(400).json({
-        ok:     false,
-        msg:    resp.data.msg,
-        errors: {}
-      });
+    limit = parseInt( limit );
+
+    if( limit < 1 )  limit = 1;
+    if( limit > 10 ) limit = 10;
+
+    req.query.page  = 1;
+    
+    let resp = JSON.parse( GET_CACHE( key ) );
+
+    if( !resp ) {
+      resp = await hieleraApi.get(`/sales/?initDate=${ initDate }&finalDate=${ finalDate }`);
+      
+      if( !resp.data.ok ) {
+        return res.status(400).json({
+          ok:     false,
+          msg:    resp.data.msg,
+          errors: {}
+        });
+      }
+
+      SET_CACHE( key, JSON.stringify( resp.data.sales ), 60000 );
+      rows = resp.data.sales;
     }
 
-    const topData = getTopFromSales( resp.data.sales, 'type_product', true );
-
+    const topData = getTopFromSales( rows, 'type_product', true );
+  
     return res.json({
       ok:           true,
-      by_frequency: topData.data.by_frequency,
-      by_money:     topData.data.by_money,
+      by_frequency: topData.data.by_frequency.slice(0, limit),
+      by_money:     topData.data.by_money.slice(0, limit),
     });
   } catch ( err ) {
-    console.log( err );
     return res.status(400).json({
-      ok: false,
-      msg: 'An error has ocurred',
+      ok:     false,
+      msg:    'An error has ocurred',
       errors: formatSequelizeError( err )
     });
   }
@@ -209,28 +257,42 @@ const getTopTypeProducts = async ( req = request, res = response ) => {
 
 const getTopBranches = async ( req = request, res = response ) => {
   try {
-    let { initDate, finalDate } = req.query;
+    const queries = req.query;
+    let { initDate, finalDate, limit = 5 } = queries;
+    const key = `__sales__all__${ initDate }_${ finalDate }`;
+
+    limit = parseInt( limit );
+
+    if( limit < 1 )  limit = 1;
+    if( limit > 10 ) limit = 10;
+
+    req.query.page  = 1;
     
-    /** @type { RespSalesType } */
-    const resp = await hieleraApi.get(`/sales/?initDate=${ initDate }&finalDate=${ finalDate }`);
-    
-    if( !resp.data.ok ) {
-      return res.status(400).json({
-        ok:     false,
-        msg:    resp.data.msg,
-        errors: {}
-      });
+    let resp = JSON.parse( GET_CACHE( key ) );
+
+    if( !resp ) {
+      resp = await hieleraApi.get(`/sales/?initDate=${ initDate }&finalDate=${ finalDate }`);
+      
+      if( !resp.data.ok ) {
+        return res.status(400).json({
+          ok:     false,
+          msg:    resp.data.msg,
+          errors: {}
+        });
+      }
+
+      SET_CACHE( key, JSON.stringify( resp.data.sales ), 60000 );
+      rows = resp.data.sales;
     }
 
-    const topData = getTopFromSales( resp.data.sales, 'branch_company', false );
-
+    const topData = getTopFromSales( rows, 'branch_company', true );
+  
     return res.json({
       ok:           true,
-      by_frequency: topData.data.by_frequency,
-      by_money:     topData.data.by_money,
+      by_frequency: topData.data.by_frequency.slice(0, limit),
+      by_money:     topData.data.by_money.slice(0, limit),
     });
   } catch ( err ) {
-    console.log( err )
     return res.status(400).json({
       ok:     false,
       msg:    'An error has ocurred',

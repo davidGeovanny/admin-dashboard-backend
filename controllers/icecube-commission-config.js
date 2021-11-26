@@ -4,20 +4,33 @@ const _      = require('underscore');
 
 const { IcecubeCommissionConfig } = require('../models');
 
-const { formatSequelizeError } = require('../helpers/format-sequelize-error');
+const { attrIcecubeCommissionConfig } = require('../data/attr-icecube-config');
+const { formatSequelizeError }        = require('../helpers/format-sequelize-error');
+const { pagination }                  = require('../helpers/pagination');
+const { GET_CACHE, SET_CACHE, CLEAR_CACHE } = require('../helpers/cache');
 
 const getIcecubeCommissionConfig = async ( req = request, res = response ) => {
   try {
-    const icecubeCommissionConfig = await IcecubeCommissionConfig.findAll();
+    const { keys, list } = attrIcecubeCommissionConfig;
+    const queries = req.query;
+    
+    let rows = JSON.parse( GET_CACHE( keys.all ) );
 
-    res.json({
+    if( !rows ) {
+      rows = await IcecubeCommissionConfig.findAll();
+      SET_CACHE( keys.all, JSON.stringify( rows ), 60000 );
+    }
+
+    const paginated = pagination( rows, queries, list );
+  
+    return res.json({
       ok: true,
-      icecubeCommissionConfig,
+      ...paginated
     });
   } catch ( err ) {
-    res.status(400).json({
-      ok: false,
-      msg: 'An error has ocurred',
+    return res.status(400).json({
+      ok:     false,
+      msg:    'An error has ocurred',
       errors: formatSequelizeError( err )
     });
   }
@@ -42,15 +55,16 @@ const createIcecubeCommissionConfig = async ( req = request, res = response ) =>
     });
 
     const icecubeCommissionConfig = await IcecubeCommissionConfig.create( configBody );
+    CLEAR_CACHE( attrIcecubeCommissionConfig.keys.all );
 
-    res.status(201).json({
-      ok: true,
-      icecubeCommissionConfig
+    return res.status(201).json({
+      ok:   true,
+      data: icecubeCommissionConfig
     });
   } catch ( err ) {
-    res.status(400).json({
-      ok: false,
-      msg: 'An error has ocurred',
+    return res.status(400).json({
+      ok:     false,
+      msg:    'An error has ocurred',
       errors: formatSequelizeError( err )
     });
   }
@@ -64,22 +78,23 @@ const deleteIcecubeCommissionConfig = async ( req = request, res = response ) =>
     
     if( !icecubeCommissionConfig ) {
       return res.status(400).json({
-        ok: false,
-        msg: 'The configuration does not exist',
+        ok:     false,
+        msg:    'The configuration does not exist',
         errors: []
       });
     }
 
     await icecubeCommissionConfig.destroy();
+    CLEAR_CACHE( attrIcecubeCommissionConfig.keys.all );
 
-    res.json({
-      ok: true,
-      icecubeCommissionConfig
+    return res.json({
+      ok:   true,
+      data: icecubeCommissionConfig
     });
   } catch ( err ) {
-    res.status(400).json({
-      ok: false,
-      msg: 'An error has ocurred',
+    return res.status(400).json({
+      ok:     false,
+      msg:    'An error has ocurred',
       errors: formatSequelizeError( err )
     });
   }

@@ -36,29 +36,29 @@ const register = async ( req = request, res = response ) => {
         return res.status(201).json({
           ok: true,
           user: {
-            id      : user.id,
+            id:       user.id,
             username: user.username,
           }
         });
       } else {
         return res.status(400).json({
-          ok: false,
-          msg: 'An error has ocurred while creating the user',
+          ok:     false,
+          msg:    'An error has ocurred while creating the user',
           errors: []
         });
       }
 
     } else {
       return res.status(400).json({
-        ok: false,
-        msg: 'An error has ocurred',
+        ok:     false,
+        msg:    'An error has ocurred',
         errors: []
       });
     }
   } catch ( err ) {
     return res.status(400).json({
-      ok: false,
-      msg: 'An error has ocurred',
+      ok:     false,
+      msg:    'An error has ocurred',
       errors: formatSequelizeError( err )
     });
   }
@@ -78,8 +78,8 @@ const login = async ( req = request, res = response ) => {
 
     if( !user ) {
       return res.status(404).json({
-        ok: false,
-        msg: 'Credentials are not correct - username',
+        ok:     false,
+        msg:    'Credentials are not correct - username',
         errors: []
       });
     }
@@ -88,8 +88,8 @@ const login = async ( req = request, res = response ) => {
 
     if( !validPassword ) {
       return res.status(400).json({
-        ok: false,
-        msg: 'Credentials are not correct - password',
+        ok:     false,
+        msg:    'Credentials are not correct - password',
         errors: []
       });
     }
@@ -100,16 +100,15 @@ const login = async ( req = request, res = response ) => {
     return res.json({
       ok: true,
       user: {
-        id      : user.id,
+        id:       user.id,
         username: user.username,
       },
       token,
     });
   } catch ( err ) {
-    console.log( err )
     return res.status(400).json({
-      ok: false,
-      msg: 'An error has ocurred',
+      ok:     false,
+      msg:    'An error has ocurred',
       errors: formatSequelizeError( err )
     });
   }
@@ -119,7 +118,7 @@ const validateUserToken = async ( req = request, res = response ) => {
   const token = await generateJWT( req.user.id );
 
   return res.json({
-    ok: true,
+    ok:   true,
     user: req.user,
     token,
   });

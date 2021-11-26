@@ -4,21 +4,34 @@ const _      = require('underscore');
 
 const { Profile } = require('../models');
 
+const { attrProfiles }  = require('../data/attr-profiles');
 const { profileStatus } = require('../data/static-data');
 const { formatSequelizeError } = require('../helpers/format-sequelize-error');
+const { pagination }           = require('../helpers/pagination');
+const { GET_CACHE, SET_CACHE, CLEAR_CACHE } = require('../helpers/cache');
 
 const getProfiles = async ( req = request, res = response ) => {
   try {
-    const profiles = await Profile.findAll();
+    const { keys, list } = attrProfiles;
+    const queries = req.query;
+    
+    let rows = JSON.parse( GET_CACHE( keys.all ) );
 
-    res.json({
+    if( !rows ) {
+      rows = await Profile.findAll();
+      SET_CACHE( keys.all, JSON.stringify( rows ), 60000 );
+    }
+
+    const paginated = pagination( rows, queries, list );
+  
+    return res.json({
       ok: true,
-      profiles
+      ...paginated
     });
   } catch ( err ) {
-    res.status(400).json({
-      ok: false,
-      msg: 'An error has ocurred',
+    return res.status(400).json({
+      ok:     false,
+      msg:    'An error has ocurred',
       errors: formatSequelizeError( err )
     });
   }
@@ -29,23 +42,24 @@ const createProfile = async ( req = request, res = response ) => {
 
   try {
     const profile = await Profile.create({ ...profileBody, status: profileStatus[0] });
+    CLEAR_CACHE( attrProfiles.keys.all );
     
     if( profile ) {
-      res.status(201).json({
+      return res.status(201).json({
         ok: true,
-        profile,
+        data: profile,
       });
     } else {
-      res.status(400).json({
-        ok: false,
-        msg: 'An error has ocurred',
+      return res.status(400).json({
+        ok:     false,
+        msg:    'An error has ocurred',
         errors: {}
       });
     }
   } catch ( err ) {
-    res.status(400).json({
-      ok: false,
-      msg: 'An error has ocurred',
+    return res.status(400).json({
+      ok:     false,
+      msg:    'An error has ocurred',
       errors: formatSequelizeError( err )
     });
   }
@@ -60,8 +74,8 @@ const updateProfile = async ( req = request, res = response ) => {
 
     if( !profile ) {
       return res.status(404).json({
-        ok: false,
-        msg: 'The profile does not exist',
+        ok:     false,
+        msg:    'The profile does not exist',
         errors: []
       });
     }
@@ -70,8 +84,8 @@ const updateProfile = async ( req = request, res = response ) => {
     if( Object.hasOwnProperty.call( profileBody, 'default' ) ) {
       if( profile.default && !profileBody.default ) {
         return res.status(404).json({
-          ok: false,
-          msg: 'Need provide a default profile',
+          ok:     false,
+          msg:    'Need provide a default profile',
           errors: {}
         });
       }
@@ -91,15 +105,16 @@ const updateProfile = async ( req = request, res = response ) => {
     }
 
     await profile.update( profileBody );
+    CLEAR_CACHE( attrProfiles.keys.all );
 
-    res.json({
-      ok: true,
-      profile,
+    return res.json({
+      ok:   true,
+      data: profile,
     });
   } catch ( err ) {
-    res.status(400).json({
-      ok: false,
-      msg: 'An error has ocurred',
+    return res.status(400).json({
+      ok:     false,
+      msg:    'An error has ocurred',
       errors: formatSequelizeError( err )
     });
   }
@@ -113,30 +128,31 @@ const deleteProfile = async ( req = request, res = response ) => {
 
     if( !profile ) {
       return res.status(404).json({
-        ok: false,
-        msg: 'The profile does not exist',
+        ok:     false,
+        msg:    'The profile does not exist',
         errors: {}
       });
     }
 
     if( profile.default ) {
       return res.status(400).json({
-        ok: false,
-        msg: "Can't delete the default profile",
+        ok:     false,
+        msg:    "Can't delete the default profile",
         errors: {}
       });
     }
 
     await profile.destroy();
+    CLEAR_CACHE( attrProfiles.keys.all );
 
-    res.json({
-      ok: true,
-      profile,
+    return res.json({
+      ok:   true,
+      data: profile,
     });
   } catch ( err ) {
-    res.status(400).json({
-      ok: false,
-      msg: 'An error has ocurred',
+    return res.status(400).json({
+      ok:     false,
+      msg:    'An error has ocurred',
       errors: formatSequelizeError( err )
     });
   }

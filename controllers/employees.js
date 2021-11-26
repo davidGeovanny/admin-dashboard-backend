@@ -4,20 +4,33 @@ const _      = require('underscore');
 
 const { Employee, User } = require('../models');
 
+const { attrEmployees } = require('../data/attr-employee');
 const { formatSequelizeError } = require('../helpers/format-sequelize-error');
+const { pagination }           = require('../helpers/pagination');
+const { GET_CACHE, SET_CACHE, CLEAR_CACHE } = require('../helpers/cache');
 
 const getEmployees = async ( req = request, res = response ) => {
   try {
-    const employees = await Employee.findAll();
+    const { keys, list } = attrEmployees;
+    const queries = req.query;
+    
+    let rows = JSON.parse( GET_CACHE( keys.all ) );
+
+    if( !rows ) {
+      rows = await Employee.findAll();
+      SET_CACHE( keys.all, JSON.stringify( rows ), 60000 );
+    }
+
+    const paginated = pagination( rows, queries, list );
   
-    res.json({
+    return res.json({
       ok: true,
-      employees
+      ...paginated
     });
   } catch ( err ) {
-    res.status(400).json({
-      ok: false,
-      msg: 'An error has ocurred',
+    return res.status(400).json({
+      ok:     false,
+      msg:    'An error has ocurred',
       errors: formatSequelizeError( err )
     });
   }
@@ -34,15 +47,16 @@ const createEmployee = async ( req = request, res = response ) => {
 
   try {
     const employee = await Employee.create( employeeBody );
+    CLEAR_CACHE( attrEmployees.keys.all );
   
-    res.status(201).json({
-      ok: true,
-      employee,
+    return res.status(201).json({
+      ok:   true,
+      data: employee,
     });
   } catch ( err ) {
-    res.status(400).json({
-      ok: false,
-      msg: 'An error has ocurred',
+    return res.status(400).json({
+      ok:     false,
+      msg:    'An error has ocurred',
       errors: formatSequelizeError( err )
     });
   }
@@ -63,22 +77,23 @@ const updateEmployee = async ( req = request, res = response ) => {
 
     if( !employee ) {
       return res.status(400).json({
-        ok: false,
-        msg: 'The employee does not exist',
+        ok:     false,
+        msg:    'The employee does not exist',
         errors: []
       });
     }
 
     await employee.update( employeeBody );
+    CLEAR_CACHE( attrEmployees.keys.all );
 
-    res.json({
-      ok: true,
-      employee,
+    return res.json({
+      ok:   true,
+      data: employee,
     });
   } catch ( err ) {
-    res.status(400).json({
-      ok: false,
-      msg: 'An error has ocurred',
+    return res.status(400).json({
+      ok:     false,
+      msg:    'An error has ocurred',
       errors: formatSequelizeError( err )
     });
   }
@@ -92,8 +107,8 @@ const deleteEmployee = async ( req = request, res = response ) => {
 
     if( !employee ) {
       return res.status(400).json({
-        ok: false,
-        msg: 'The employee does not exist',
+        ok:     false,
+        msg:    'The employee does not exist',
         errors: []
       });
     }
@@ -108,14 +123,16 @@ const deleteEmployee = async ( req = request, res = response ) => {
       }
     });
 
-    res.json({
+    CLEAR_CACHE( attrEmployees.keys.all );
+
+    return res.json({
       ok: true,
-      employee,
+      data: employee,
     });
   } catch ( err ) {
-    res.status(400).json({
-      ok: false,
-      msg: 'An error has ocurred',
+    return res.status(400).json({
+      ok:     false,
+      msg:    'An error has ocurred',
       errors: formatSequelizeError( err )
     });
   }

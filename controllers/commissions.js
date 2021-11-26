@@ -33,10 +33,9 @@ const getCommissions = async ( req = request, res = response ) => {
       icecube_commissions: icecubeCommissions,
     });
   } catch ( err ) {
-    console.log( err )
-    res.status(400).json({
-      ok: false,
-      msg: 'An error has ocurred',
+    return res.status(400).json({
+      ok:     false,
+      msg:    'An error has ocurred',
       errors: formatSequelizeError( err )
     });
   }
@@ -66,7 +65,6 @@ const getWaterCommission = async ( sales = [] ) => {
 
     return _.sortBy( commissionWater.getCommissionsToArray(), 'commission' ).reverse();
   } catch ( err ) {
-    console.log( err )
     return [];
   }
 }

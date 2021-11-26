@@ -5,6 +5,8 @@ const _      = require('underscore');
 const { WaterCommissionConfig } = require('../models');
 
 const { formatSequelizeError } = require('../helpers/format-sequelize-error');
+const { pagination }           = require('../helpers/pagination');
+const { GET_CACHE, SET_CACHE, CLEAR_CACHE } = require('../helpers/cache');
 
 const getWaterCommissionConfig = async ( req = request, res = response ) => {
   try {
@@ -15,9 +17,9 @@ const getWaterCommissionConfig = async ( req = request, res = response ) => {
       waterCommissionConfig,
     });
   } catch ( err ) {
-    res.status(400).json({
-      ok: false,
-      msg: 'An error has ocurred',
+    return res.status(400).json({
+      ok:     false,
+      msg:    'An error has ocurred',
       errors: formatSequelizeError( err )
     });
   }
@@ -47,9 +49,9 @@ const createWaterCommissionConfig = async ( req = request, res = response ) => {
       waterCommissionConfig
     });
   } catch ( err ) {
-    res.status(400).json({
-      ok: false,
-      msg: 'An error has ocurred',
+    return res.status(400).json({
+      ok:     false,
+      msg:    'An error has ocurred',
       errors: formatSequelizeError( err )
     });
   }
@@ -76,9 +78,9 @@ const deleteWaterCommissionConfig = async ( req = request, res = response ) => {
       waterCommissionConfig
     });
   } catch ( err ) {
-    res.status(400).json({
-      ok: false,
-      msg: 'An error has ocurred',
+    return res.status(400).json({
+      ok:     false,
+      msg:    'An error has ocurred',
       errors: formatSequelizeError( err )
     });
   }

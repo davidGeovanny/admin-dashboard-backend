@@ -22,7 +22,7 @@ const GET_CACHE = ( key ) => {
  * Gets the cache value.
  * @param   { string } data Data to cache in JSON.stringify format.
  * @param   { string } key  Cache identified name.
- * @param   { number } time How long the information is cached ( ms ).
+ * @param   { number } time How long the information is cached ( ms ). Default 300000
  * @returns { boolean }     Returns if the data was saved or not.
  */
 const SET_CACHE = ( key, data, time = CACHE_TIME_DEFAULT ) => {
