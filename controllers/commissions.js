@@ -22,9 +22,9 @@ const getCommissions = async ( req = request, res = response ) => {
       });
     }
 
-    const waterCommissions   = await getWaterCommission( resp.data.sales.filter( sale => sale.type_product.toLowerCase() === 'agua embotellada' ) );
-    const icebarCommissions  = await getIcebarCommissions( resp.data.sales.filter( sale => sale.type_product.toLowerCase() === 'barra' ) );
-    const icecubeCommissions = await getIcecubeCommissions( resp.data.sales.filter( sale => sale.type_product.toLowerCase() === 'cubo' ) );
+    const waterCommissions   = await getWaterCommission( resp.data.sales.filter( sale => sale.type_product.toLowerCase() === 'agua embotellada' && !sale.route_name.includes('PISO') ) );
+    const icebarCommissions  = await getIcebarCommissions( resp.data.sales.filter( sale => sale.type_product.toLowerCase() === 'barra' && !sale.route_name.includes('PISO') ) );
+    const icecubeCommissions = await getIcecubeCommissions( resp.data.sales.filter( sale => sale.type_product.toLowerCase() === 'cubo' && !sale.route_name.includes('PISO') ) );
 
     res.json({
       ok: true,
@@ -33,6 +33,7 @@ const getCommissions = async ( req = request, res = response ) => {
       icecube_commissions: icecubeCommissions,
     });
   } catch ( err ) {
+    console.log( err )
     return res.status(400).json({
       ok:     false,
       msg:    'An error has ocurred',
