@@ -33,7 +33,6 @@ const getCommissions = async ( req = request, res = response ) => {
       icecube_commissions: icecubeCommissions,
     });
   } catch ( err ) {
-    console.log( err )
     return res.status(400).json({
       ok:     false,
       msg:    'An error has ocurred',

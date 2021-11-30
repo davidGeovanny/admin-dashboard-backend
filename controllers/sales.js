@@ -97,8 +97,6 @@ const getTopFromSales = ( sales, key, fromQuantity, extraKeys = [] ) => {
       money:     parseFloat( value.money.toFixed( 3 ) ),
     }));
 
-    console.log({array: _.sortBy( array, 'money' ).reverse()})
-
     return {
       ok:   true,
       data: {
