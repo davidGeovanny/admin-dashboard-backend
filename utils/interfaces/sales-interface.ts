@@ -17,6 +17,7 @@ export interface Sale {
   hour:               string;
   payment_method:     PaymentMethod;
   product:            string;
+  short_product:      string;
   type_product:       TypeProduct;
   original_price:     number;
   quantity:           number;

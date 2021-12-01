@@ -13,6 +13,7 @@ const { pagination }           = require('../helpers/pagination');
 const { GET_CACHE, SET_CACHE } = require('../helpers/cache');
 const { filterResultQueries }  = require('../helpers/filter');
 const hieleraApi = require('../helpers/hielera-api');
+const { toTitleCase } = require('../helpers/capitalize');
 
 const getSales = async ( req = request, res = response ) => {
   try {
@@ -55,6 +56,16 @@ const getSales = async ( req = request, res = response ) => {
   }
 }
 
+const convertArrayToObject = (array, key) => {
+  const initialValue = {};
+  return array.reduce((obj, item) => {
+    return {
+      ...obj,
+      [item[key]]: item,
+    };
+  }, initialValue);
+};
+
 /**
  * Get the top of a specific item in sales.
  * @param   { Sale[] }           sales        Array of sales.
@@ -69,32 +80,36 @@ const getTopFromSales = ( sales, key, fromQuantity, extraKeys = [] ) => {
     const map = new Map();
 
     sales.forEach( sale => {
-      if( map.has( sale[ key ] ) ) {
-        const element = map.get( sale[ key ] );
+      const minusKey = ( typeof sale[ key ] === 'string' ) ? sale[ key ].toLowerCase() : sale[ key ];
+
+      if( map.has( minusKey ) ) {
+        const element = map.get( minusKey );
         const { frequency, money } = element;
 
-        map.set( sale[ key ], {
+        map.set( minusKey, {
           ...element,
           frequency: frequency + ( ( fromQuantity ) ? sale.quantity : 1 ),
           money:     money + sale.final_price,
         });
       } else {
         /** @type { TopSale } */
-        const data = {
+        let data = {
           frequency: ( fromQuantity ) ? sale.quantity : 1,
           money:     sale.final_price,
-          ...extraKeys.map( k => ({
-            [ k ] : sale[ k ]
-          }))
         };
 
-        map.set( sale[ key ], data );
+        extraKeys.forEach( k => {
+          data[ k ] = ( typeof sale[ k ] === 'string' ) ? toTitleCase( sale[ k ] ) : sale[ k ]
+        });
+
+        map.set( minusKey, data );
       }
     });
+
     
     const array = Array.from( map, ([ k, value ]) => ({
       ...value,
-      [ key ]:   k,
+      [ key ]:   ( typeof k === 'string' ) ? toTitleCase( k ) : k,
       frequency: parseFloat( value.frequency.toFixed( 3 ) ),
       money:     parseFloat( value.money.toFixed( 3 ) ),
     }));
@@ -193,7 +208,7 @@ const getTopProducts = async ( req = request, res = response ) => {
       rows = resp.data.sales;
     }
 
-    const topData = getTopFromSales( rows, 'product', true );
+    const topData = getTopFromSales( rows, 'product', true, ['short_product'] );
   
     return res.json({
       ok:           true,
