@@ -9,6 +9,7 @@ const { attrUsers }  = require('../data/attr-users');
 const { userStatus } = require('../data/static-data');
 const { formatSequelizeError } = require('../helpers/format-sequelize-error');
 const { pagination }           = require('../helpers/pagination');
+const { filterResultQueries }  = require('../helpers/filter');
 const { GET_CACHE, SET_CACHE, CLEAR_CACHE } = require('../helpers/cache');
 
 const getUsers = async ( req = request, res = response ) => {
@@ -23,11 +24,12 @@ const getUsers = async ( req = request, res = response ) => {
       SET_CACHE( keys.all, JSON.stringify( rows ), 60000 );
     }
 
-    const paginated = pagination( rows, queries, list );
+    rows = filterResultQueries( rows, queries, list );
+    rows = pagination( rows, queries, list );
   
     return res.json({
       ok: true,
-      ...paginated
+      ...rows
     });
   } catch ( err ) {
     return res.status(400).json({

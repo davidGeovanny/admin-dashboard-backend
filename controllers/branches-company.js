@@ -7,25 +7,39 @@ const { attrBranchesCompany }  = require('../data/attr-branch');
 const { branchCompanyStatus }  = require('../data/static-data');
 const { formatSequelizeError } = require('../helpers/format-sequelize-error');
 const { pagination }           = require('../helpers/pagination');
+const { filterResultQueries }  = require('../helpers/filter');
 const { GET_CACHE, SET_CACHE, CLEAR_CACHE } = require('../helpers/cache');
 
-const getBranchesCompany = async ( req = request, res = response ) => {
+const getRowsData = async () => {
   try {
-    const { keys, list } = attrBranchesCompany;
-    const queries = req.query;
+    const { keys } = attrBranchesCompany;
     
     let rows = JSON.parse( GET_CACHE( keys.all ) );
-
+  
     if( !rows ) {
       rows = await BranchCompany.findAll();
       SET_CACHE( keys.all, JSON.stringify( rows ), 60000 );
     }
+  
+    return rows;
+  } catch ( err ) {
+    return [];
+  }
+}
 
-    const paginated = pagination( rows, queries, list );
+const getBranchesCompany = async ( req = request, res = response ) => {
+  try {
+    const { list } = attrBranchesCompany;
+    const queries = req.query;
+    
+    let rows = await getRowsData();
+
+    rows = filterResultQueries( rows, queries, list );
+    rows = pagination( rows, queries, list );
     
     return res.json({
       ok: true,
-      ...paginated,
+      ...rows,
     });
   } catch ( err ) {
     return res.status(400).json({

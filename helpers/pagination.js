@@ -1,5 +1,4 @@
 const _ = require('underscore');
-const { filterResultQueries } = require('./filter');
 
 const DEFAULT_LIMIT     = 20;
 const DEFAULT_PAGE      = 1;
@@ -21,8 +20,6 @@ const pagination = ( rows = [], queries, listAttr = [] ) => {
   
   if( limit < 0 ) limit = 1;
   if( page  < 0 ) page  = 1;
-
-  results = filterResultQueries( rows, queries, listAttr );
   
   if( paginated.toLowerCase() === 'false' ) {
     limit = results.length;

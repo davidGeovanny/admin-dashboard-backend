@@ -11,6 +11,7 @@ const { attrSales } = require('../data/attr-sales');
 const { formatSequelizeError } = require('../helpers/format-sequelize-error');
 const { pagination }           = require('../helpers/pagination');
 const { GET_CACHE, SET_CACHE } = require('../helpers/cache');
+const { filterResultQueries }  = require('../helpers/filter');
 const hieleraApi = require('../helpers/hielera-api');
 
 const getSales = async ( req = request, res = response ) => {
@@ -20,10 +21,10 @@ const getSales = async ( req = request, res = response ) => {
     const { initDate, finalDate } = queries;
     const key = `__sales__between__${ initDate }_${ finalDate }`;
     
-    let resp = JSON.parse( GET_CACHE( key ) );
+    let rows = JSON.parse( GET_CACHE( key ) );
 
-    if( !resp ) {
-      resp = await hieleraApi.get(`/sales/?initDate=${ initDate }&finalDate=${ finalDate }`);
+    if( !rows ) {
+      const resp = await hieleraApi.get(`/sales/?initDate=${ initDate }&finalDate=${ finalDate }`);
       
       if( !resp.data.ok ) {
         return res.status(400).json({
@@ -37,11 +38,12 @@ const getSales = async ( req = request, res = response ) => {
       rows = resp.data.sales;
     }
 
-    const paginated = pagination( rows, queries, list );
+    rows = filterResultQueries( rows, queries, list );
+    rows = pagination( rows, queries, list );
   
     return res.json({
       ok: true,
-      ...paginated
+      ...rows
     });
   } catch ( err ) {
     console.log( err )

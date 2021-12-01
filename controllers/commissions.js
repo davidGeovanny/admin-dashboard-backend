@@ -16,8 +16,8 @@ const getCommissions = async ( req = request, res = response ) => {
 
     if( !resp.data.ok ) {
       return res.status(400).json({
-        ok: false,
-        msg: resp.data.msg,
+        ok:     false,
+        msg:    resp.data.msg,
         errors: {}
       });
     }
@@ -26,7 +26,7 @@ const getCommissions = async ( req = request, res = response ) => {
     const icebarCommissions  = await getIcebarCommissions( resp.data.sales.filter( sale => sale.type_product.toLowerCase() === 'barra' && !sale.route_name.includes('PISO') ) );
     const icecubeCommissions = await getIcecubeCommissions( resp.data.sales.filter( sale => sale.type_product.toLowerCase() === 'cubo' && !sale.route_name.includes('PISO') ) );
 
-    res.json({
+    return res.json({
       ok: true,
       water_commissions  : waterCommissions,
       icebar_commissions : icebarCommissions,
