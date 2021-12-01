@@ -10,7 +10,7 @@ const { pagination }           = require('../helpers/pagination');
 const { filterResultQueries }  = require('../helpers/filter');
 const { GET_CACHE, SET_CACHE, CLEAR_CACHE } = require('../helpers/cache');
 
-const getRowsData = async () => {
+const getAllRowsData = async () => {
   try {
     const { keys } = attrBranchesCompany;
     
@@ -32,7 +32,7 @@ const getBranchesCompany = async ( req = request, res = response ) => {
     const { list } = attrBranchesCompany;
     const queries = req.query;
     
-    let rows = await getRowsData();
+    let rows = await getAllRowsData();
 
     rows = filterResultQueries( rows, queries, list );
     rows = pagination( rows, queries, list );

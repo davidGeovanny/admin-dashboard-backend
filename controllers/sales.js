@@ -130,10 +130,10 @@ const getTopClients = async ( req = request, res = response ) => {
 
     req.query.page  = 1;
     
-    let resp = JSON.parse( GET_CACHE( key ) );
+    let rows = JSON.parse( GET_CACHE( key ) );
 
-    if( !resp ) {
-      resp = await hieleraApi.get(`/sales/?initDate=${ initDate }&finalDate=${ finalDate }`);
+    if( !rows ) {
+      const resp = await hieleraApi.get(`/sales/?initDate=${ initDate }&finalDate=${ finalDate }`);
       
       if( !resp.data.ok ) {
         return res.status(400).json({
@@ -176,10 +176,10 @@ const getTopProducts = async ( req = request, res = response ) => {
 
     req.query.page  = 1;
     
-    let resp = JSON.parse( GET_CACHE( key ) );
+    let rows = JSON.parse( GET_CACHE( key ) );
 
-    if( !resp ) {
-      resp = await hieleraApi.get(`/sales/?initDate=${ initDate }&finalDate=${ finalDate }`);
+    if( !rows ) {
+      const resp = await hieleraApi.get(`/sales/?initDate=${ initDate }&finalDate=${ finalDate }`);
       
       if( !resp.data.ok ) {
         return res.status(400).json({
@@ -222,10 +222,10 @@ const getTopTypeProducts = async ( req = request, res = response ) => {
 
     req.query.page  = 1;
     
-    let resp = JSON.parse( GET_CACHE( key ) );
+    let rows = JSON.parse( GET_CACHE( key ) );
 
-    if( !resp ) {
-      resp = await hieleraApi.get(`/sales/?initDate=${ initDate }&finalDate=${ finalDate }`);
+    if( !rows ) {
+      const resp = await hieleraApi.get(`/sales/?initDate=${ initDate }&finalDate=${ finalDate }`);
       
       if( !resp.data.ok ) {
         return res.status(400).json({
@@ -268,10 +268,10 @@ const getTopBranches = async ( req = request, res = response ) => {
 
     req.query.page  = 1;
     
-    let resp = JSON.parse( GET_CACHE( key ) );
+    let rows = JSON.parse( GET_CACHE( key ) );
 
-    if( !resp ) {
-      resp = await hieleraApi.get(`/sales/?initDate=${ initDate }&finalDate=${ finalDate }`);
+    if( !rows ) {
+      const resp = await hieleraApi.get(`/sales/?initDate=${ initDate }&finalDate=${ finalDate }`);
       
       if( !resp.data.ok ) {
         return res.status(400).json({

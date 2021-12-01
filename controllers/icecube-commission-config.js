@@ -10,17 +10,29 @@ const { pagination }                  = require('../helpers/pagination');
 const { filterResultQueries }         = require('../helpers/filter');
 const { GET_CACHE, SET_CACHE, CLEAR_CACHE } = require('../helpers/cache');
 
-const getIcecubeCommissionConfig = async ( req = request, res = response ) => {
+const getAllRowsData = async () => {
   try {
-    const { keys, list } = attrIcecubeCommissionConfig;
-    const queries = req.query;
+    const { keys } = attrIcecubeCommissionConfig;
     
     let rows = JSON.parse( GET_CACHE( keys.all ) );
-
+  
     if( !rows ) {
       rows = await IcecubeCommissionConfig.findAll();
       SET_CACHE( keys.all, JSON.stringify( rows ), 60000 );
     }
+  
+    return rows;
+  } catch ( err ) {
+    return [];
+  }
+}
+
+const getIcecubeCommissionConfig = async ( req = request, res = response ) => {
+  try {
+    const { list } = attrIcecubeCommissionConfig;
+    const queries = req.query;
+    
+    let rows = await getAllRowsData();
 
     rows = filterResultQueries( rows, queries, list );
     rows = pagination( rows, queries, list );

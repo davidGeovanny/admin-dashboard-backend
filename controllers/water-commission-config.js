@@ -10,17 +10,29 @@ const { pagination }                = require('../helpers/pagination');
 const { filterResultQueries }       = require('../helpers/filter');
 const { GET_CACHE, SET_CACHE, CLEAR_CACHE } = require('../helpers/cache');
 
+const getAllRowsData = async () => {
+  try {
+    const { keys } = attrWaterCommissionConfig;
+    
+    let rows = JSON.parse( GET_CACHE( keys.all ) );
+  
+    if( !rows ) {
+      rows = await WaterCommissionConfig.findAll();
+      SET_CACHE( keys.all, JSON.stringify( rows ), 60000 );
+    }
+  
+    return rows;
+  } catch ( err ) {
+    return [];
+  }
+}
+
 const getWaterCommissionConfig = async ( req = request, res = response ) => {
   try {
     const { keys, list } = attrWaterCommissionConfig;
     const queries = req.query;
     
-    let rows = JSON.parse( GET_CACHE( keys.all ) );
-
-    if( !rows ) {
-      rows = await WaterCommissionConfig.findAll();
-      SET_CACHE( keys.all, JSON.stringify( rows ), 60000 );
-    }
+    let rows = await getAllRowsData();
 
     rows = filterResultQueries( rows, queries, list );
     rows = pagination( rows, queries, list );
