@@ -48,7 +48,7 @@ const getWaterCommission = async ( sales = [] ) => {
     
     sales.forEach( sale => {
       /** Operator */
-      const position = ( sale.assistant || sale.helperr ) ? 'operator' : 'operator_assistant';
+      const position = ( sale.assistant || sale.helper ) ? 'operator' : 'operator_assistant';
       commissionWater.addSale( sale.branch_company, sale.operator, sale.final_price, position );
       
       /** Assistant */

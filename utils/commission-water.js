@@ -9,6 +9,8 @@ const {
   WaterCommissionConfig,
 } = require('../models');
 
+const { toTitleCase } = require('../helpers/capitalize');
+
 class CommissionWater {
   constructor() {
     /** @type { Map<string, WaterCommissionConfigType> } */
@@ -130,7 +132,8 @@ class CommissionWater {
     const array = Array.from( this._commissions, ( [ key, value ] ) => {
       return {
         ...value,
-        employee:   key.toLowerCase(),
+        employee  : toTitleCase( key ),
+        branch    : toTitleCase( value.branch ),
         commission: parseFloat( value.commission.toFixed( 2 ) ),
       };
     });
