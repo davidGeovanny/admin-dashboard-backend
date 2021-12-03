@@ -44,7 +44,7 @@ const getEmployees = async ( req = request, res = response ) => {
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }
@@ -70,7 +70,7 @@ const createEmployee = async ( req = request, res = response ) => {
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }
@@ -92,7 +92,7 @@ const updateEmployee = async ( req = request, res = response ) => {
     if( !employee ) {
       return res.status(400).json({
         ok:     false,
-        msg:    'The employee does not exist',
+        msg:    'El empleado no existe',
         errors: []
       });
     }
@@ -107,7 +107,7 @@ const updateEmployee = async ( req = request, res = response ) => {
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }
@@ -122,7 +122,7 @@ const deleteEmployee = async ( req = request, res = response ) => {
     if( !employee ) {
       return res.status(400).json({
         ok:     false,
-        msg:    'The employee does not exist',
+        msg:    'El empleado no existe',
         errors: []
       });
     }
@@ -146,7 +146,7 @@ const deleteEmployee = async ( req = request, res = response ) => {
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }

@@ -35,7 +35,7 @@ const getCommissions = async ( req = request, res = response ) => {
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }

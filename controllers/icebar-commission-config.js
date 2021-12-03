@@ -44,7 +44,7 @@ const getIcebarCommissionConfig = async ( req = request, res = response ) => {
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }
@@ -71,7 +71,7 @@ const createIcebarCommissionConfig = async ( req = request, res = response ) => 
     if( !available ) {
       return res.status(400).json({
         ok:     false,
-        msg:    'A config is already exists that is between the min and max values',
+        msg:    'Ya existe una configuración que está entre los valores mínimos y máximos',
         errors: []
       });
     }
@@ -86,7 +86,7 @@ const createIcebarCommissionConfig = async ( req = request, res = response ) => 
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }
@@ -110,7 +110,7 @@ const updateIcebarCommissionConfig = async ( req = request, res = response ) => 
     if( !icebarCommissionConfig ) {
       return res.status(400).json({
         ok: false,
-        msg: 'The configuration does not exist',
+        msg: 'La configuración no existe',
         errors: []
       });
     }
@@ -126,7 +126,7 @@ const updateIcebarCommissionConfig = async ( req = request, res = response ) => 
     if( !available ) {
       return res.status(400).json({
         ok:     false,
-        msg:    'A config is already exists that is between the min and max values',
+        msg:    'Ya existe una configuración que está entre los valores mínimos y máximos',
         errors: []
       });
     }
@@ -141,7 +141,7 @@ const updateIcebarCommissionConfig = async ( req = request, res = response ) => 
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }
@@ -156,7 +156,7 @@ const deleteIcebarCommissionConfig = async ( req = request, res = response ) => 
     if( !icebarCommissionConfig ) {
       return res.status(400).json({
         ok:     false,
-        msg:    'The configuration does not exist',
+        msg:    'La configuración no existe',
         errors: []
       });
     }
@@ -171,7 +171,7 @@ const deleteIcebarCommissionConfig = async ( req = request, res = response ) => 
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }

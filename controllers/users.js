@@ -46,7 +46,7 @@ const getUsers = async ( req = request, res = response ) => {
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }
@@ -75,7 +75,7 @@ const createUser = async ( req = request, res = response ) => {
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }
@@ -91,7 +91,7 @@ const updateUser = async ( req = request, res = response ) => {
     if( !user ) {
       return res.status(404).json({
         ok: false,
-        msg: 'The user does not exist',
+        msg: 'El usuario no existe',
         errors: {}
       });
     }
@@ -106,7 +106,7 @@ const updateUser = async ( req = request, res = response ) => {
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }
@@ -122,7 +122,7 @@ const updateUserPassword = async ( req = request, res = response ) => {
     if( !user ) {
       return res.status(404).json({
         ok:     false,
-        msg:    'The user does not exist',
+        msg:    'El usuario no existe',
         errors: {}
       });
     }
@@ -132,7 +132,7 @@ const updateUserPassword = async ( req = request, res = response ) => {
     if( !validPassword ) {
       return res.status(400).json({
         ok:     false,
-        msg:    'Current password is not correct',
+        msg:    'La contraseña actual no coincide con la proporcionada',
         errors: {}
       });
     }
@@ -147,7 +147,7 @@ const updateUserPassword = async ( req = request, res = response ) => {
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }
@@ -163,7 +163,7 @@ const userAddProfile = async ( req = request, res = response ) => {
     if( !user ) {
       return res.status(404).json({
         ok:     false,
-        msg:    'The user does not exist',
+        msg:    'El usuario no existe',
         errors: {}
       });
     }
@@ -193,7 +193,7 @@ const userAddProfile = async ( req = request, res = response ) => {
     if( !profile ) {
       return res.status(404).json({
         ok:     false,
-        msg:    "Can't add the selected profile. Check selected profile is activated",
+        msg:    'No se puede agregar el perfil seleccionado. Verifica si el perfil está activado',
         errors: {}
       });
     }
@@ -208,7 +208,7 @@ const userAddProfile = async ( req = request, res = response ) => {
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }
@@ -224,7 +224,7 @@ const userRemoveProfile = async ( req = request, res = response ) => {
     if( !user ) {
       return res.status(404).json({
         ok:     false,
-        msg:    'The user does not exist',
+        msg:    'El usuario no existe',
         errors: {}
       });
     }
@@ -245,7 +245,7 @@ const userRemoveProfile = async ( req = request, res = response ) => {
     if( !profile_user ) {
       return res.status(404).json({
         ok:     false,
-        msg:    'The user does not have the selected profile',
+        msg:    'El usuario seleccionado no tiene el perfil indicado',
         errors: {}
       });
     }
@@ -260,7 +260,7 @@ const userRemoveProfile = async ( req = request, res = response ) => {
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }
@@ -275,7 +275,7 @@ const deleteUser = async ( req = request, res = response ) => {
     if( !user ) {
       return res.status(404).json({
         ok:     false,
-        msg:    'The user does not exist',
+        msg:    'El usuario no existe',
         errors: {}
       });
     }
@@ -290,7 +290,7 @@ const deleteUser = async ( req = request, res = response ) => {
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }

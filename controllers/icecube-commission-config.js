@@ -44,7 +44,7 @@ const getIcecubeCommissionConfig = async ( req = request, res = response ) => {
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }
@@ -78,7 +78,7 @@ const createIcecubeCommissionConfig = async ( req = request, res = response ) =>
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }
@@ -93,7 +93,7 @@ const deleteIcecubeCommissionConfig = async ( req = request, res = response ) =>
     if( !icecubeCommissionConfig ) {
       return res.status(400).json({
         ok:     false,
-        msg:    'The configuration does not exist',
+        msg:    'La configuración no existe',
         errors: []
       });
     }
@@ -108,7 +108,7 @@ const deleteIcecubeCommissionConfig = async ( req = request, res = response ) =>
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }

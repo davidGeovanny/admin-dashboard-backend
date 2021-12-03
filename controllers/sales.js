@@ -50,21 +50,11 @@ const getSales = async ( req = request, res = response ) => {
     console.log( err )
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }
 }
-
-const convertArrayToObject = (array, key) => {
-  const initialValue = {};
-  return array.reduce((obj, item) => {
-    return {
-      ...obj,
-      [item[key]]: item,
-    };
-  }, initialValue);
-};
 
 /**
  * Get the top of a specific item in sales.
@@ -172,7 +162,7 @@ const getTopClients = async ( req = request, res = response ) => {
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }
@@ -218,7 +208,7 @@ const getTopProducts = async ( req = request, res = response ) => {
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }
@@ -264,7 +254,7 @@ const getTopTypeProducts = async ( req = request, res = response ) => {
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }
@@ -310,7 +300,7 @@ const getTopBranches = async ( req = request, res = response ) => {
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }
