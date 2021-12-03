@@ -4,7 +4,7 @@ const rateLimit = require('express-rate-limit');
 const db        = require('../db/connection');
 
 /** Associate models */
-require('./index');
+// require('./index');
 
 class Server {
   constructor() {
@@ -25,7 +25,7 @@ class Server {
     };
 
     this.apiLimiter = rateLimit( {
-      windowMs: 60 * 1 * 1000, // segundos * minutos * ms in 1 second
+      windowMs: 60 * 1 * 1000, // seconds * minutes * ms in 1 second
       max: 60,
       message: {
         ok:     false,
