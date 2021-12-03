@@ -56,6 +56,7 @@ const userPutRules = [
     .if( body('password').exists() )
     .custom( checkPasswordsMatch ),
   check('id_employee')
+    .optional()
     .notEmpty()
     .withMessage('The employee selected does not exist')
     .custom( checkEmployeeExists ),
