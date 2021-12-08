@@ -7,12 +7,23 @@ const Profile  = require('../models/profile');
 const User     = require('../models/user');
 const BranchCompany = require('../models/branch-company');
 
-const checkEmailAvailable = async ( email = '' ) => {
+const checkEmailAvailable = async ( email = '', { req = request } ) => {
+  const { id = '' } = req.params;
+
   const employees = await Employee.findAll({
     where: {
-      email: {
-        [ Op.eq ] : email
-      },
+      [ Op.and ] :  [
+        {
+          email: {
+            [ Op.eq ] : email
+          }
+        },
+        {
+          id: {
+            [ Op.ne ] : id
+          }
+        },
+      ]
     }
   });
 
