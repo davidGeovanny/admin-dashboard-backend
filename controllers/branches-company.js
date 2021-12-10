@@ -61,7 +61,7 @@ const getBranchesCompany = async ( req = request, res = response ) => {
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }
@@ -82,7 +82,7 @@ const createBranchCompany = async ( req = request, res = response ) => {
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }
@@ -98,7 +98,7 @@ const updateBranchCompany = async ( req = request, res = response ) => {
     if( !branchCompany ) {
       return res.status(404).json({
         ok:     false,
-        msg:    'The branch company does not exist',
+        msg:    'La sucursal no existe',
         errors: []
       });
     }
@@ -113,7 +113,7 @@ const updateBranchCompany = async ( req = request, res = response ) => {
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }
@@ -128,7 +128,7 @@ const deleteBranchCompany = async ( req = request, res = response ) => {
     if( !branchCompany ) {
       return res.status(404).json({
         ok:     false,
-        msg:    'The branch company does not exist',
+        msg:    'La sucursal no existe',
         errors: []
       });
     }
@@ -143,7 +143,7 @@ const deleteBranchCompany = async ( req = request, res = response ) => {
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }

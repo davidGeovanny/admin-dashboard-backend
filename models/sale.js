@@ -160,6 +160,20 @@ const Sale = db.define('Sale', {
       },
     }
   },
+  short_product: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      customNull( value ) {
+        if( !value ) {
+          throw new Error('Need to provide a short product name');
+        }
+      },
+      notNull: {
+        msg: "short product name can't be null"
+      },
+    }
+  },
   type_product: {
     type: DataTypes.STRING,
     allowNull: false,

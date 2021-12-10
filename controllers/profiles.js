@@ -45,7 +45,7 @@ const getProfiles = async ( req = request, res = response ) => {
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }
@@ -66,14 +66,14 @@ const createProfile = async ( req = request, res = response ) => {
     } else {
       return res.status(400).json({
         ok:     false,
-        msg:    'An error has ocurred',
+        msg:    'Ha ocurrido un error',
         errors: {}
       });
     }
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }
@@ -89,7 +89,7 @@ const updateProfile = async ( req = request, res = response ) => {
     if( !profile ) {
       return res.status(404).json({
         ok:     false,
-        msg:    'The profile does not exist',
+        msg:    'El perfil no existe',
         errors: []
       });
     }
@@ -128,7 +128,7 @@ const updateProfile = async ( req = request, res = response ) => {
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }
@@ -143,7 +143,7 @@ const deleteProfile = async ( req = request, res = response ) => {
     if( !profile ) {
       return res.status(404).json({
         ok:     false,
-        msg:    'The profile does not exist',
+        msg:    'El perfil no existe',
         errors: {}
       });
     }
@@ -166,7 +166,7 @@ const deleteProfile = async ( req = request, res = response ) => {
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }

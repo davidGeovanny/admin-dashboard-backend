@@ -44,7 +44,7 @@ const getWaterCommissionConfig = async ( req = request, res = response ) => {
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }
@@ -77,7 +77,7 @@ const createWaterCommissionConfig = async ( req = request, res = response ) => {
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }
@@ -92,7 +92,7 @@ const deleteWaterCommissionConfig = async ( req = request, res = response ) => {
     if( !waterCommissionConfig ) {
       return res.status(400).json({
         ok:     false,
-        msg:    'The configuration does not exist',
+        msg:    'La configuración no existe',
         errors: []
       });
     }
@@ -107,7 +107,7 @@ const deleteWaterCommissionConfig = async ( req = request, res = response ) => {
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }

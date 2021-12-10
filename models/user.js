@@ -100,7 +100,9 @@ User.beforeCreate( ( user ) => {
 });
 
 User.beforeUpdate( ( user ) => {
-  user.password = encryptPassword( user.password );
+  if( !!user.password ) {
+    user.password = encryptPassword( user.password );
+  }
 });
 
 module.exports = User;

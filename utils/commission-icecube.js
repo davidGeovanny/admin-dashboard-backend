@@ -9,6 +9,8 @@ const {
   IcecubeCommissionConfig,
 } = require('../models');
 
+const { toTitleCase } = require('../helpers/capitalize');
+
 class CommissionIcecube {
   constructor() {
     /** @type { Map<string, IcecubeCommissionConfigType> } */
@@ -162,8 +164,8 @@ class CommissionIcecube {
   getCommissionsToArray = () => {
     const array = Array.from( this._commissions, ( [ key, value ] ) => {
       return {
-        employee  : key.toLowerCase(),
-        branch    : value.branch.toLowerCase(),
+        employee  : toTitleCase( key ),
+        branch    : toTitleCase( value.branch ),
         commission: parseFloat( value.commission.toFixed( 2 ) ),
       };
     });

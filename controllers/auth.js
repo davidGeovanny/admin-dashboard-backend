@@ -43,7 +43,7 @@ const register = async ( req = request, res = response ) => {
       } else {
         return res.status(400).json({
           ok:     false,
-          msg:    'An error has ocurred while creating the user',
+          msg:    'Ha ocurrido un error mientras se creaba el usuario',
           errors: []
         });
       }
@@ -51,14 +51,14 @@ const register = async ( req = request, res = response ) => {
     } else {
       return res.status(400).json({
         ok:     false,
-        msg:    'An error has ocurred',
+        msg:    'Ha ocurrido un error',
         errors: []
       });
     }
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }
@@ -79,7 +79,7 @@ const login = async ( req = request, res = response ) => {
     if( !user ) {
       return res.status(404).json({
         ok:     false,
-        msg:    'Credentials are not correct - username',
+        msg:    'Credenciales incorrectas',
         errors: []
       });
     }
@@ -89,7 +89,7 @@ const login = async ( req = request, res = response ) => {
     if( !validPassword ) {
       return res.status(400).json({
         ok:     false,
-        msg:    'Credentials are not correct - password',
+        msg:    'Credenciales incorrectas',
         errors: []
       });
     }
@@ -108,7 +108,7 @@ const login = async ( req = request, res = response ) => {
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
-      msg:    'An error has ocurred',
+      msg:    'Ha ocurrido un error',
       errors: formatSequelizeError( err )
     });
   }

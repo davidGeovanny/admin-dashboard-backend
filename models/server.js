@@ -1,9 +1,10 @@
-const express = require('express');
-const cors    = require('cors');
-const db      = require('../db/connection');
+const express   = require('express');
+const cors      = require('cors');
+const rateLimit = require('express-rate-limit');
+const db        = require('../db/connection');
 
 /** Associate models */
-require('./index');
+// require('./index');
 
 class Server {
   constructor() {
@@ -22,6 +23,16 @@ class Server {
       icebar_commission_config : '/api/icebar-commission-config',
       icecube_commission_config: '/api/icecube-commission-config',
     };
+
+    this.apiLimiter = rateLimit( {
+      windowMs: 60 * 1 * 1000, // seconds * minutes * ms in 1 second
+      max: 60,
+      message: {
+        ok:     false,
+        msg:    'Se han realizado demasiadas peticiones desde esta dirección IP. Inténtelo de nuevo después de un 1 minuto',
+        errors: {}
+      }
+    });
 
     /** DB connection  */
     this.dbConnection();
@@ -50,6 +61,7 @@ class Server {
   }
 
   routes() {
+    this.app.use( this.apiLimiter );
     this.app.use( this.paths.cache,          require('../routes/cache') );
     this.app.use( this.paths.auth,           require('../routes/auth') );
     this.app.use( this.paths.user,           require('../routes/users') );
