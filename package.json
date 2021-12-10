@@ -21,6 +21,7 @@
     "memory-cache": "^0.2.0",
     "mysql2": "^2.3.0",
     "sequelize": "^6.6.5",
+    "sheetjs-style": "^0.15.8",
     "underscore": "^1.13.1"
   }
 }

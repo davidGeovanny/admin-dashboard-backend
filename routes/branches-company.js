@@ -11,7 +11,8 @@ const {
   getBranchesCompany, 
   createBranchCompany, 
   updateBranchCompany,
-  deleteBranchCompany
+  deleteBranchCompany,
+  getExportData
 } = require('../controllers/branches-company');
 
 const router = Router();
@@ -37,5 +38,7 @@ router.delete('/:id', [
   param('id', 'The branch company does not exist').isNumeric(),
   checkValidityFields
 ], deleteBranchCompany);
+
+router.get("/Excel", getExportData)
 
 module.exports = router;

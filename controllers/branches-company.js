@@ -1,5 +1,6 @@
 const { request, response } = require('express');
 const _ = require('underscore');
+const fs = require('fs');
 
 const { BranchCompany } = require('../models');
 
@@ -9,18 +10,34 @@ const { formatSequelizeError } = require('../helpers/format-sequelize-error');
 const { pagination }           = require('../helpers/pagination');
 const { filterResultQueries }  = require('../helpers/filter');
 const { GET_CACHE, SET_CACHE, CLEAR_CACHE } = require('../helpers/cache');
+const { ConvertirJSONaExcel } = require('../helpers/excel');
+
+const getExportData = async (req = request, res = response) => {
+  try {
+    let rows = await BranchCompany.findAll({raw: true});
+    const nombre = ConvertirJSONaExcel(rows.map(row => ({
+      identificador: row.id, Sucursal: row.branch, Estado: row.status, "Creado en": row.created_at, "Actualizado en": row.updated_at
+    })))
+    res.download("Files/" + nombre);
+    setTimeout(() => {
+      fs.unlinkSync("Files/" + nombre);//Eliminar el archivo de la ruta
+    }, 1000);
+  } catch (error) {
+    console.log(error)
+  }
+}
 
 const getAllRowsData = async () => {
   try {
     const { keys } = attrBranchesCompany;
     
     let rows = JSON.parse( GET_CACHE( keys.all ) );
-  
+    
     if( !rows ) {
       rows = await BranchCompany.findAll();
       SET_CACHE( keys.all, JSON.stringify( rows ), 60000 );
     }
-  
+    
     return rows;
   } catch ( err ) {
     return [];
@@ -137,4 +154,6 @@ module.exports = {
   createBranchCompany,
   updateBranchCompany,
   deleteBranchCompany,
+  getExportData,
+  getAllRowsData,
 };
