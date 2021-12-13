@@ -26,7 +26,7 @@ class Server {
 
     this.apiLimiter = rateLimit( {
       windowMs: 60 * 1 * 1000, // seconds * minutes * ms in 1 second
-      max: 60,
+      max: 150,
       message: {
         ok:     false,
         msg:    'Se han realizado demasiadas peticiones desde esta dirección IP. Inténtelo de nuevo después de un 1 minuto',
