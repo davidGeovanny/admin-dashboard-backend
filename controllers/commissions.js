@@ -48,12 +48,14 @@ const getWaterCommission = async ( sales = [] ) => {
     
     sales.forEach( sale => {
       /** Operator */
-      const position = ( sale.assistant || sale.helper ) ? 'operator' : 'operator_assistant';
+      /** @type { 'operator' | 'assistant' | 'operator_assistant' } */
+      let position = ( sale.assistant || sale.helper ) ? 'operator' : 'operator_assistant';
       commissionWater.addSale( sale.branch_company, sale.operator, sale.final_price, position );
       
       /** Assistant */
       if( sale.assistant ) {
-        commissionWater.addSale( sale.branch_company, sale.assistant, sale.final_price, 'assistant' );
+        position = ( sale.is_assistant_operator ) ? 'operator' : 'assistant';
+        commissionWater.addSale( sale.branch_company, sale.assistant, sale.final_price, position );
       }
 
       /** Helper */
@@ -76,7 +78,8 @@ const getIcebarCommissions = async ( sales = [] ) => {
 
     sales.forEach( sale => {
       /** Operator */
-      const position = ( sale.assistant || sale.helper ) ? 'operator' : 'operator_assistant';
+      /** @type { 'operator' | 'assistant' | 'operator_assistant' } */
+      let position = ( sale.assistant || sale.helper ) ? 'operator' : 'operator_assistant';
       commissionIceBar.addSale({
         branch  : sale.branch_company,
         name    : sale.operator,
@@ -87,12 +90,13 @@ const getIcebarCommissions = async ( sales = [] ) => {
       
       /** Assistant */
       if( sale.assistant ) {
+        position = ( sale.is_assistant_operator ) ? 'operator' : 'assistant';
         commissionIceBar.addSale({
           branch  : sale.branch_company,
           name    : sale.assistant,
           quantity: sale.quantity,
           price   : sale.final_price,
-          position: 'assistant'
+          position
         });
       }
 
@@ -123,12 +127,14 @@ const getIcecubeCommissions = async ( sales = [] ) => {
 
     sales.forEach( sale => {
       /** Operator */
-      const position = ( sale.assistant || sale.helper ) ? 'operator' : 'operator_assistant';
+      /** @type { 'operator' | 'assistant' | 'operator_assistant' } */
+      let position = ( sale.assistant || sale.helper ) ? 'operator' : 'operator_assistant';
       commissionIcecube.addSale( sale.branch_company, sale.operator, ( sale.quantity * sale.yield ), position );
       
       /** Assistant */
       if( sale.assistant ) {
-        commissionIcecube.addSale( sale.branch_company, sale.assistant, ( sale.quantity * sale.yield ), 'assistant' );
+        position = ( sale.is_assistant_operator ) ? 'operator' : 'assistant';
+        commissionIcecube.addSale( sale.branch_company, sale.assistant, ( sale.quantity * sale.yield ), position );
       }
       
       /** Helper */

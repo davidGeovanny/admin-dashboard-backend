@@ -4,44 +4,45 @@ export interface SalesType {
 }
 
 export interface Sale {
-  branch_company:     string;
-  client:             string;
-  delivery_point_key: number;
-  delivery_point:     string;
-  route_name:         string;
-  operator:           null | string;
-  assistant:          null | string;
-  helper:             null | string;
-  sales_folio:        string;
-  date:               string;
-  hour:               string;
-  payment_method:     PaymentMethod;
-  product:            string;
-  short_product:      string;
-  type_product:       TypeProduct;
-  original_price:     number;
-  quantity:           number;
-  yield:              number;
-  type_modification:  TypeModification;
-  modified_price:     number;
-  final_price:        number;
-  bonification:       number;
+  branch_company:        string;
+  client:                string;
+  delivery_point_key:    number;
+  delivery_point:        string;
+  route_name:            string;
+  operator:              null | string;
+  assistant:             null | string;
+  helper:                null | string;
+  is_assistant_operator: number;
+  sales_folio:           string;
+  date:                  string;
+  hour:                  string;
+  payment_method:        PaymentMethod;
+  product:               string;
+  short_product:         string;
+  type_product:          TypeProduct;
+  original_price:        number;
+  quantity:              number;
+  yield:                 number;
+  type_modification:     TypeModification;
+  modified_price:        number;
+  final_price:           number;
+  bonification:          number;
 }
 
 enum PaymentMethod {
-  CashPayment = "cash payment",
+  CashPayment   = "cash payment",
   CreditPayment = "credit payment",
 }
 
 enum TypeModification {
-  Discount = "discount",
+  Discount  = "discount",
   OverPrice = "over price",
 }
 
 enum TypeProduct {
   AguaEmbotellada = "AGUA EMBOTELLADA",
   Barra = "BARRA",
-  Cubo = "CUBO",
+  Cubo  = "CUBO",
 }
 
 export interface RespTopSale {
