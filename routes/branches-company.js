@@ -39,6 +39,6 @@ router.delete('/:id', [
   checkValidityFields
 ], deleteBranchCompany);
 
-router.get("/Excel", getExportData)
+router.get('/export', getExportData)
 
 module.exports = router;

@@ -1,6 +1,5 @@
 const { request, response } = require('express');
 const _ = require('underscore');
-const fs = require('fs');
 
 const { BranchCompany } = require('../models');
 
@@ -9,23 +8,9 @@ const { branchCompanyStatus }  = require('../data/static-data');
 const { formatSequelizeError } = require('../helpers/format-sequelize-error');
 const { pagination }           = require('../helpers/pagination');
 const { filterResultQueries }  = require('../helpers/filter');
+const { createExcelFile }      = require('../helpers/excel');
+const { deleteFile }           = require('../helpers/file');
 const { GET_CACHE, SET_CACHE, CLEAR_CACHE } = require('../helpers/cache');
-const { ConvertirJSONaExcel } = require('../helpers/excel');
-
-const getExportData = async (req = request, res = response) => {
-  try {
-    let rows = await BranchCompany.findAll({raw: true});
-    const nombre = ConvertirJSONaExcel(rows.map(row => ({
-      identificador: row.id, Sucursal: row.branch, Estado: row.status, "Creado en": row.created_at, "Actualizado en": row.updated_at
-    })))
-    res.download("Files/" + nombre);
-    setTimeout(() => {
-      fs.unlinkSync("Files/" + nombre);//Eliminar el archivo de la ruta
-    }, 1000);
-  } catch (error) {
-    console.log(error)
-  }
-}
 
 const getAllRowsData = async () => {
   try {
@@ -47,7 +32,7 @@ const getAllRowsData = async () => {
 const getBranchesCompany = async ( req = request, res = response ) => {
   try {
     const { list } = attrBranchesCompany;
-    const queries = req.query;
+    const queries  = req.query;
     
     let rows = await getAllRowsData();
 
@@ -149,11 +134,50 @@ const deleteBranchCompany = async ( req = request, res = response ) => {
   }
 }
 
+const getExportData = async ( req = request, res = response ) => {
+  try {
+    const { list } = attrBranchesCompany;
+    const queries  = req.query;
+
+    let rows = await BranchCompany.findAll({ raw: true });
+
+    rows = filterResultQueries( rows, queries, list );
+
+    const fileName = createExcelFile( rows.map( row => ({
+      Sucursal: row.branch,
+      Estatus:  row.status, 
+    })), 'branches' );
+
+    if( fileName === '' ) {
+      return res.status(404).json({
+        ok:     false,
+        msg:    'No ha podido crearse el archivo de Excel',
+        errors: [],
+      });
+    }
+
+    return res.download(`tmp/${ fileName }`, ( err ) => {
+      if( err ) {
+        console.log(`EXCEL: ${ err }`);
+      }
+      
+      deleteFile( fileName );
+    });
+  } catch ( err ) {
+    console.log( err );
+    return res.status(404).json({
+      ok:     false,
+      msg:    'Ha ocurrido un error',
+      errors: [],
+    });
+  }
+}
+
 module.exports = {
   getBranchesCompany,
   createBranchCompany,
   updateBranchCompany,
   deleteBranchCompany,
-  getExportData,
   getAllRowsData,
+  getExportData,
 };

@@ -1,6 +1,31 @@
-const { response, request } = require('express');
-
 const XLSX = require('sheetjs-style');
+
+const createExcelFile = ( data = [], fileName = 'excel' ) => {
+  try {
+    const currentTime = new Date().getTime();
+  
+    if( fileName.includes('.xlsx') ) {
+      fileName = fileName.replace('.xlsx', `-${ currentTime }.xlsx`);
+    } else {
+      fileName = `${ fileName }-${ currentTime }.xlsx`;
+    }
+  
+    const ws = XLSX.utils.json_to_sheet( data );
+    autofitColumn( data, ws );
+    setStyleToSheet( ws );
+  
+    /* Generate workbook and add the worksheet */
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet( wb, ws, 'Sheet1' );
+  
+    /* Save to file */
+    XLSX.writeFile( wb, `tmp/${ fileName }` );
+  
+    return fileName;
+  } catch ( err ) {
+    return '';
+  }
+}
 
 const setStyleToSheet = ( worksheet ) => {
   if( !worksheet['!ref'] ) return;
@@ -8,8 +33,9 @@ const setStyleToSheet = ( worksheet ) => {
   const range = XLSX.utils.decode_range( worksheet['!ref'] );
 
   for( let row = range.s.r; row <= range.e.r; ++row ) {
-    for( let cell = range.s.c; cell <= range.e.c; ++cell ) {
-      const cell_address = { c: cell, r: row };
+    for( let column = range.s.c; column <= range.e.c; ++column ) {
+      const cell_address = { c: column, r: row };
+      /* if a cell address is needed, encode the address */
       const cell_ref = XLSX.utils.encode_cell( cell_address );
 
       let style;
@@ -31,7 +57,6 @@ const setStyleToSheet = ( worksheet ) => {
             horizontal: 'center',
           }
         };
-        // body style
       } else {
         style = {
           font: {
@@ -46,13 +71,12 @@ const setStyleToSheet = ( worksheet ) => {
         };
       }
 
-      /* if an A1-style address is needed, encode the address */
       worksheet[ cell_ref ].s = style;
     }
   }
 }
 
-const autofitColumn = ( json, worksheet ) => {//Adaptación de celda al tamaño del contenido
+const autofitColumn = ( json, worksheet ) => {
   let objectMaxLength = [];
 
   json.forEach( ( jsonData ) => {
@@ -79,29 +103,6 @@ const autofitColumn = ( json, worksheet ) => {//Adaptación de celda al tamaño 
   worksheet['!cols'] = wscols;
 };
 
-const ConvertirJSONaExcel = (rows) =>{
-    let nombre = "Archivo";
-  
-    nombre = nombre + new Date().getTime();//Asignación de nombre a Archivo (sin sobreescribir)
-
-    const workSheet = XLSX.utils.json_to_sheet(rows);
-    XLSX.utils.sheet_add_json(workSheet, rows)
-    const workBook = XLSX.utils.book_new();
-
-    setStyleToSheet( workSheet );
-    autofitColumn(rows, workSheet );
-
-    XLSX.utils.book_append_sheet(workBook,workSheet,"Hoja 1")//Asignación del nombre de la Hoja
-
-    XLSX.write(workBook,{bookType:"xlsx",type:"buffer"})//Crear Buffer
-
-    XLSX.write(workBook,{bookType:"xlsx",type:"binary"})//Cadena Binaria 
-
-    XLSX.writeFile(workBook, "Files/" + nombre + ".xlsx")//Asignación del nombre del Libro en la ruta correspondiente
-
-    return nombre + ".xlsx";
-}
-
 module.exports = {
-  ConvertirJSONaExcel,
+  createExcelFile,
 };
