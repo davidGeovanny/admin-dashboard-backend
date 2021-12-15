@@ -5,27 +5,27 @@ const { branchCompanyStatus } = require('../data/static-data');
 const branchPostRules = [
   check('branch')
     .notEmpty()
-    .withMessage('Need to provide a branch name')
+    .withMessage('Necesita proporcionar un nombre para la sucursal')
     .isString()
-    .withMessage('Need to provide a valid branch name')
+    .withMessage('Necesita proporcionar un nombre válido')
     .custom( checkBranchCompanyAvailable )
 ];
 
 const branchPutRules = [
   /** Params */
-  param('id', 'The branch company does not exist').isNumeric(),
+  param('id', 'La sucursal no existe').isNumeric(),
   /** Fields */
   check('branch')
     .optional()
     .notEmpty()
-    .withMessage('Need to provide a branch name')
+    .withMessage('Necesita proporcionar un nombre para la sucursal')
     .isString()
-    .withMessage('Need to provide a valid branch name')
+    .withMessage('Necesita proporcionar un nombre válido')
     .custom( checkBranchCompanyAvailable ),
   check('status')
     .optional()
     .isIn( branchCompanyStatus )
-    .withMessage('Status not valid'),
+    .withMessage('Estatus no válido'),
 ];
 
 module.exports = {

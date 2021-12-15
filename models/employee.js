@@ -10,11 +10,11 @@ const Employee = db.define('Employee', {
     validate  : {
       customNull( value ) {
         if( !value ) {
-          throw new Error('Need to provide a valid name');
+          throw new Error('Necesita proporcionar un nombre válido');
         }
       },
       notNull: {
-        msg: "Name can't be null"
+        msg: 'El nombre no puede estar vacío'
       },
     }
   },
@@ -24,11 +24,11 @@ const Employee = db.define('Employee', {
     validate  : {
       customNull( value ) {
         if( !value ) {
-          throw new Error('Need to provide a valid first_lastname');
+          throw new Error('Necesita proporcionar un apellido paterno válido');
         }
       },
       notNull: {
-        msg: "first_lastname can't be null"
+        msg: 'El apellido paterno no puede estar vacío'
       },
     }
   },
@@ -38,11 +38,11 @@ const Employee = db.define('Employee', {
     validate  : {
       customNull( value ) {
         if( !value ) {
-          throw new Error('Need to provide a valid second_lastname');
+          throw new Error('Necesita proporcionar un apellido materno válido');
         }
       },
       notNull: {
-        msg: "second_lastname can't be null"
+        msg: 'El apellido materno no puede estar vacío'
       },
     }
   },
@@ -52,7 +52,7 @@ const Employee = db.define('Employee', {
     validate  : {
       isIn: {
         args:[ userGenders ],
-        msg : 'Gender not valid. Valid values: ' + userGenders.join(' | ')
+        msg : 'Género no válido. Géneros disponibles: ' + userGenders.join(' | ')
       },
     }
   },
@@ -61,10 +61,10 @@ const Employee = db.define('Employee', {
     allowNull : false,
     validate  : {
       isEmail: {
-        msg: 'Email not valid'
+        msg: 'Correo electrónico no válido'
       },
       notNull: {
-        msg: "Email can't be null"
+        msg: 'El correo electrónico no puede estar vacío'
       },
     }
   },

@@ -28,7 +28,7 @@ const checkEmailAvailable = async ( email = '', { req = request } ) => {
   });
 
   if( employees.length > 0 ) {
-    throw new Error('Email is already in use');
+    throw new Error('El correo electrónico ya está siendo utilizado');
   }
 }
 
@@ -53,7 +53,7 @@ const checkUserAvailable = async ( username = '', { req = request } ) => {
   });
 
   if( users.length > 0 ) {
-    throw new Error('The username is already in use');
+    throw new Error('El nombre de usuario ya está siendo utilizado');
   }
 }
 
@@ -61,7 +61,7 @@ const checkProfileAvailable = async ( profile = '', { req = request } ) => {
   const { id = '' } = req.params;
 
   if( profile.toLowerCase() === 'administrador' || profile.toLowerCase() === 'superadmin' ) {
-    throw new Error('Profile name is not valid');
+    throw new Error('El nombre del perfil no es válido');
   }
 
   const profiles = await Profile.findAll({
@@ -82,13 +82,13 @@ const checkProfileAvailable = async ( profile = '', { req = request } ) => {
   });
 
   if( profiles.length > 0 ) {
-    throw new Error('Profile name is already in use');
+    throw new Error('El nombre del perfil ya está siendo utilizado');
   }
 }
 
 const checkEmployeeExists = async ( id_employee = '' ) => {
   if( !Number( id_employee ) ) {
-    throw new Error('The employee selected does not exist');
+    throw new Error('El empleado seleccionado no existe');
   }
 
   const employee = await Employee.findAll({
@@ -100,7 +100,7 @@ const checkEmployeeExists = async ( id_employee = '' ) => {
   });
 
   if( employee.length <= 0 ) {
-    throw new Error('The employee selected does not exist');
+    throw new Error('El empleado seleccionado no existe');
   }
 }
 
@@ -108,7 +108,7 @@ const checkPasswordsMatch = ( password_confirmation = '', { req = request } ) =>
   const { password } = req.body;
   
   if( password_confirmation !== password ) {
-    throw new Error('The passwords do not match');
+    throw new Error('Las contraseñas no coinciden');
   }
   
   return true;
@@ -135,19 +135,19 @@ const checkBranchCompanyAvailable = async ( branch = '', { req = request } ) => 
   });
 
   if( branchesCompany.length > 0 ) {
-    throw new Error('Branch name is already in use');
+    throw new Error('El nombre de la sucursal ya está siendo utilizado');
   }
 }
 
 const checkBranchCompanyExists = async ( id_branch_company = '' ) => {
   if( !Number( id_branch_company ) ) {
-    throw new Error('The branch company selected does not exist');
+    throw new Error('La sucursal seleccionada no existe');
   }
 
   const branch_company = await BranchCompany.findByPk( id_branch_company );
 
   if( !branch_company ) {
-    throw new Error('The branch company selected does not exist');
+    throw new Error('La sucursal seleccionada no existe');
   }
 }
 

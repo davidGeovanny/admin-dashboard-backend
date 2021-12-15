@@ -10,10 +10,10 @@ const validateJWT = async ( req = request, res = response, next ) => {
   if( !token ) {
     return res.status(401).json({
       ok: false,
-      msg: 'Token not valid',
+      msg: 'Token no válido',
       errors: {
         name: 'ValidationTokenError',
-        msg: 'There is no token in the request'
+        msg: 'No hay token en la petición'
       }
     });
   }
@@ -33,10 +33,10 @@ const validateJWT = async ( req = request, res = response, next ) => {
     if( !user ) {
       return res.status(401).json({
         ok: false,
-        msg: 'Token not valid',
+        msg: 'Token no válido',
         errors: {
           name: 'ValidationTokenError',
-          msg: 'Token not valid - user does not exist'
+          msg: 'Token no válido'
         }
       });
     }
@@ -48,7 +48,7 @@ const validateJWT = async ( req = request, res = response, next ) => {
   } catch ( err ) {
     return res.status(401).json({
       ok: false,
-      msg: 'Token not valid',
+      msg: 'Token no válido',
       errors: err
     });
   }

@@ -35,10 +35,12 @@ router.put('/:id', [
 
 router.delete('/:id', [
   validateJWT,
-  param('id', 'The branch company does not exist').isNumeric(),
+  param('id', 'La sucursal no existe').isNumeric(),
   checkValidityFields
 ], deleteBranchCompany);
 
-router.get('/export', getExportData)
+router.get('/export', [
+  validateJWT
+], getExportData);
 
 module.exports = router;

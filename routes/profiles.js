@@ -31,7 +31,7 @@ router.put('/:id', [
 
 router.delete('/:id', [
   validateJWT,
-  param('id', 'The profile does not exist').isNumeric(),
+  param('id', 'La configuración no existe').isNumeric(),
   checkValidityFields
 ], deleteProfile);
 

@@ -1,18 +1,17 @@
 const { Router } = require('express');
 
 const { 
-  checkValidityFields, 
-  validateJWT, 
-  cache 
+  checkValidityFields,
+  validateJWT,
 } = require('../middlewares');
 const { saleGetRules, topClientsGetRules } = require('../rules/sale-rules');
 
 const { 
   getSales,
-  getTopTypeProducts,
   getTopClients,
   getTopProducts,
   getTopBranches,
+  getTopTypeProducts,
 } = require('../controllers/sales');
 const { getCommissions } = require('../controllers/commissions');
 

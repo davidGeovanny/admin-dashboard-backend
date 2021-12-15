@@ -4,14 +4,14 @@ const saleGetRules = [
   /** Query */
   query('initDate')
     .notEmpty()
-    .withMessage('Need to provide an init date for search sales')
+    .withMessage('Necesita proporcionar una fecha inicial para buscar las ventas')
     .isDate()
-    .withMessage('Need to provide a valid date'),
+    .withMessage('Necesita proporcionar una fecha válida'),
   query('finalDate')
     .notEmpty()
-    .withMessage('Need to provide a final date for search sales')
+    .withMessage('Necesita proporcionar una fecha final para buscar las ventas')
     .isDate()
-    .withMessage('Need to provide a valid date'),
+    .withMessage('Necesita proporcionar una fecha válida'),
 ];
 
 const topClientsGetRules = [
@@ -19,7 +19,7 @@ const topClientsGetRules = [
   query('limit')
     .optional()
     .notEmpty()
-    .withMessage('Need to provide a limit of clients')
+    .withMessage('Necesita proveer un límite de registros')
 ]
 
 module.exports = {

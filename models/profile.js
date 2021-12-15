@@ -10,11 +10,11 @@ const Profile = db.define('Profile', {
     validate  : {
       customNull( value ) {
         if( !value ) {
-          throw new Error('Need to provide a valid profile');
+          throw new Error('Necesita proporcionar el nombre del perfil');
         }
       },
       notNull: {
-        msg: "profile can't be null"
+        msg: 'El nombre del perfil no puede estar vacío'
       },
     }
   },
@@ -27,7 +27,7 @@ const Profile = db.define('Profile', {
     validate: {
       isIn: {
         args: [ profileStatus ],
-        msg : 'Status not valid'
+        msg : 'Estatus no es válido'
       },
     }
   },

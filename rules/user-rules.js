@@ -10,20 +10,20 @@ const userPostRules = [
   /** Fields */
   check('username')
     .notEmpty()
-    .withMessage('Need to provide an username')
+    .withMessage('Necesita proporcionar un nombre de usuario')
     .isString()
-    .withMessage('Need to provide a valid username')
+    .withMessage('Necesita proporcionar un nombre de usuario válido')
     .isLength({ min: 4, max: 25 })
-    .withMessage('The username length must be between 4 and 25 characters')
+    .withMessage('La longitud del nombre de usuario debe estar entre 4 y 25 caracteres')
     .custom( checkUserAvailable ),
   check('password')
     .notEmpty()
-    .withMessage('Need to provide a password'),
+    .withMessage('Necesita proporcionar una contraseña'),
   check('password_confirmation')
     .custom( checkPasswordsMatch ),
   check('id_employee')
     .notEmpty()
-    .withMessage('The employee selected does not exist')
+    .withMessage('El empleado seleccionado no existe')
     .custom( checkEmployeeExists )
     .toInt(),
 ];
@@ -42,30 +42,30 @@ const userPutRules = [
   check('username')
     .optional()
     .notEmpty()
-    .withMessage('Need to provide an username')
+    .withMessage('Necesita proporcionar un nombre de usuario')
     .isString()
-    .withMessage('Need to provide a valid username')
+    .withMessage('Necesita proporcionar un nombre de usuario válido')
     .isLength({ min: 4, max: 25 })
-    .withMessage('The username length must be between 4 and 25 characters')
+    .withMessage('La longitud del nombre de usuario debe estar entre 4 y 25 caracteres')
     .custom( checkUserAvailable ),
   check('password')
     .optional()
     .notEmpty()
-    .withMessage('Need to provide a password'),
+    .withMessage('Necesita proporcionar una contraseña'),
   check('password_confirmation')
     .if( body('password').exists() )
     .custom( checkPasswordsMatch ),
   check('id_employee')
     .optional()
     .notEmpty()
-    .withMessage('The employee selected does not exist')
+    .withMessage('El empleado seleccionado no existe')
     .custom( checkEmployeeExists ),
 ];
 
 const userPasswordRules = [
   check('password')
     .notEmpty()
-    .withMessage('Need to provide a new password'),
+    .withMessage('Necesita proporcionar una nueva contraseña'),
   check('password_confirmation')
     .if( body('password').exists() )
     .custom( checkPasswordsMatch ),
@@ -75,15 +75,15 @@ const userAddRemoveProfileRules = [
   /** Params */
   param('id')
     .notEmpty()
-    .withMessage('The username does not exist')
+    .withMessage('El usuario no existe')
     .isNumeric()
-    .withMessage('The username does not exist'),
+    .withMessage('El usuario no existe'),
   /** Fields */
   body('id_profile')
     .notEmpty()
-    .withMessage('The profile does not exist')
+    .withMessage('El perfil no existe')
     .isNumeric()
-    .withMessage('The profile does not exist')
+    .withMessage('El perfil no existe')
 ];
 
 module.exports = {

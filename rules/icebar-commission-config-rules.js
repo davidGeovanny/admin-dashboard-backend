@@ -5,30 +5,30 @@ const icebarCommissionConfigPostRules = [
   /** Fields */
   check('min_range')
     .notEmpty()
-    .withMessage('Need to provide a min range')
+    .withMessage('Necesita proporcionar un rango mínimo')
     .isInt({ min: 0 })
-    .withMessage('Min range is not a valid value'),
+    .withMessage('El rango mínimo no es un valor válido'),
   check('max_range')
     .notEmpty()
-    .withMessage('Need to provide a max range')
+    .withMessage('Necesita proporcionar un valor máximo')
     .isInt({ min: 1 })
-    .withMessage('Max range is not a valid value'),
+    .withMessage('El rango máximo no es un valor válido'),
   check('cost_bar_operator')
     .notEmpty()
-    .withMessage('Need to provide a cost bar for the operator')
+    .withMessage('Necesita proveer el costo por barra para el operador')
     .isFloat({ min: 0.001 })
-    .withMessage('Cost bar must be greather than 0'),
+    .withMessage('El costo de la barra debe de ser mayor a 0'),
   check('cost_bar_assistant')
     .optional()
     .isFloat({ min: 0.001 })
-    .withMessage('Cost bar must be greather than 0'),
+    .withMessage('El costo de la barra debe de ser mayor a 0'),
   check('cost_bar_operator_assistant')
     .optional()
     .isFloat({ min: 0.001 })
-    .withMessage('Cost bar must be greather than 0'),
+    .withMessage('El costo de la barra debe de ser mayor a 0'),
   check('id_branch_company')
     .notEmpty()
-    .withMessage('The branch company selected does not exist')
+    .withMessage('La sucursal seleccionada no existe')
     .custom( checkBranchCompanyExists )
     .toInt(),
 ];
@@ -45,33 +45,33 @@ const icebarCommissionConfigPutRules = [
   check('min_range')
     .optional()
     .notEmpty()
-    .withMessage('Need to provide a min range')
+    .withMessage('Necesita proporcionar un rango mínimo')
     .isInt({ min: 0 })
-    .withMessage('Min range is not a valid value'),
+    .withMessage('El rango mínimo no es un valor válido'),
   check('max_range')
     .optional()
     .notEmpty()
-    .withMessage('Need to provide a max range')
+    .withMessage('Necesita proporcionar un valor máximo')
     .isInt({ min: 1 })
-    .withMessage('Max range is not a valid value'),
+    .withMessage('El rango máximo no es un valor válido'),
   check('cost_bar_operator')
     .optional()
     .notEmpty()
-    .withMessage('Need to provide a cost bar for the operator')
+    .withMessage('Necesita proveer el costo por barra para el operador')
     .isFloat({ min: 0.001 })
-    .withMessage('Cost bar must be greather than 0'),
+    .withMessage('El costo de la barra debe de ser mayor a 0'),
   check('cost_bar_assistant')
     .optional()
     .isFloat({ min: 0.001 })
-    .withMessage('Cost bar must be greather than 0'),
+    .withMessage('El costo de la barra debe de ser mayor a 0'),
   check('cost_bar_operator_assistant')
     .optional()
     .isFloat({ min: 0.001 })
-    .withMessage('Cost bar must be greather than 0'),
+    .withMessage('El costo de la barra debe de ser mayor a 0'),
   check('id_branch_company')
     .optional()
     .notEmpty()
-    .withMessage('The branch company selected does not exist')
+    .withMessage('La sucursal seleccionada no existe')
     .custom( checkBranchCompanyExists )
     .toInt(),
 ];

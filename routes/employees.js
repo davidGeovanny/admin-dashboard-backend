@@ -31,7 +31,7 @@ router.put('/:id', [
 
 router.delete('/:id', [
   validateJWT,
-  param('id', 'The employee does not exist').isNumeric(),
+  param('id', 'El empleado no existe').isNumeric(),
   checkValidityFields
 ], deleteEmployee);
 

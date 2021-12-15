@@ -7,10 +7,10 @@ const authRegisterRules = [
   ...employeePostRules,
   check('password')
     .notEmpty()
-    .withMessage('Need to provide a password'),
+    .withMessage('Necesita proporcionar una contraseña'),
   check('password_confirmation')
     .notEmpty()
-    .withMessage('The passwords do not match')
+    .withMessage('Las contraseñas no coinciden')
     .custom( checkPasswordsMatch ),
 ];
 
@@ -18,10 +18,10 @@ const authLoginRules = [
   /** Fields */
   check('username')
     .notEmpty()
-    .withMessage('Need to provide an username'),
+    .withMessage('Necesita proporcionar un nombre de usuario'),
   check('password')
     .notEmpty()
-    .withMessage('Need to provide a password'),
+    .withMessage('Necesita proporcionar una contraseña'),
 ];
 
 module.exports = {

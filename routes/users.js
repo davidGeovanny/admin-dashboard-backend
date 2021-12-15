@@ -57,7 +57,7 @@ router.put('/:id/remove-profile', [
 
 router.delete('/:id', [
   validateJWT,
-  param('id', 'The user does not exist').isNumeric(),
+  param('id', 'El usuario no existe').isNumeric(),
   checkValidityFields
 ], deleteUser);
 

@@ -11,11 +11,11 @@ const IcebarCommissionConfig = db.define('IcebarCommissionConfig', {
     validate: {
       customNull( value ) {
         if( !value && value !== 0 ) {
-          throw new Error('Need to provide a min_range');
+          throw new Error('Necesita proporcionar el rango mínimo');
         }
       },
       notNull : {
-        msg: "min_range can't be null"
+        msg: 'El rango mínimo no puede estar vacío'
       },
     }
   },
@@ -26,11 +26,11 @@ const IcebarCommissionConfig = db.define('IcebarCommissionConfig', {
     validate: {
       customNull( value ) {
         if( !value && value !== 0 ) {
-          throw new Error('Need to provide a max_range');
+          throw new Error('Necesita proporcionar el rango máximo');
         }
       },
       notNull : {
-        msg: "max_range can't be null"
+        msg: 'El rango máximo no puede estar vacío'
       },
     }
   },
@@ -41,11 +41,11 @@ const IcebarCommissionConfig = db.define('IcebarCommissionConfig', {
     validate: {
       customNull( value ) {
         if( !value && value !== 0 ) {
-          throw new Error('Need to provide a cost_bar_operator');
+          throw new Error('Necesita proporcionar el costo de barra para el operador');
         }
       },
       notNull : {
-        msg: "cost_bar_operator can't be null"
+        msg: 'El costo de barra por operador no puede estar vacío'
       },
     }
   },
@@ -55,7 +55,7 @@ const IcebarCommissionConfig = db.define('IcebarCommissionConfig', {
     validate: {
       customNull( value ) {
         if( !value && value !== 0 ) {
-          throw new Error('Need to provide a cost_bar_assistant');
+          throw new Error('Necesita proporcionar el costo de barra para el asistente');
         }
       },
     }
@@ -66,7 +66,7 @@ const IcebarCommissionConfig = db.define('IcebarCommissionConfig', {
     validate: {
       customNull( value ) {
         if( !value && value !== 0 ) {
-          throw new Error('Need to provide a cost_bar_operator_assistant');
+          throw new Error('Necesita proporcionar el costo de barra para el operador asistente');
         }
       },
     }

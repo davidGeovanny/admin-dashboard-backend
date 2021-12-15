@@ -6,60 +6,60 @@ const employeePostRules = [
   /** Fields */
   check('name')
     .notEmpty()
-    .withMessage('Need to provide your name')
+    .withMessage('Necesitas proporcionar el nombre')
     .isString()
-    .withMessage('The name provided is not valid'),
+    .withMessage('El nombre proporcionado no es válido'),
   check('first_lastname')
     .notEmpty()
-    .withMessage('Need to provide your first_lastname')
+    .withMessage('Necesitas proporcionar el apellido paterno')
     .isString()
-    .withMessage('The first_lastname provided is not valid'),
+    .withMessage('El apellido paterno proporcionado no es válido'),
   check('second_lastname')
     .notEmpty()
-    .withMessage('Need to provide your second_lastname')
+    .withMessage('Necesitas proporcionar el apellido materno')
     .isString()
-    .withMessage('The second_lastname provided is not valid'),
+    .withMessage('El apellido materno proporcionado no es válido'),
   check('gender')
     .isIn( userGenders )
-    .withMessage('Gender not valid. Available values: ' + userGenders.join(', ')),
+    .withMessage('Género no válido. Géneros disponibles: ' + userGenders.join(', ')),
   check('email')
     .notEmpty()
-    .withMessage('Need to provide an email')
+    .withMessage('Necesita proporcionar un correo electrónico')
     .isEmail()
-    .withMessage('The email provided is not valid')
+    .withMessage('El correo electrónico proporcionado no es válido')
     .custom( checkEmailAvailable ),
 ];
 
 const employeePutRules = [
   /** Params */
-  param('id', 'The employee does not exist').isNumeric(),
+  param('id', 'El empleado no existe').isNumeric(),
   /** Fields */
   check('name')
     .optional()
     .notEmpty()
-    .withMessage('Need to provide your name')
+    .withMessage('Necesitas proporcionar el nombre')
     .isString()
-    .withMessage('The name provided is not valid'),
+    .withMessage('El nombre proporcionado no es válido'),
   check('first_lastname')
     .optional()
     .notEmpty()
-    .withMessage('Need to provide your first_lastname')
+    .withMessage('Necesitas proporcionar el apellido paterno')
     .isString()
-    .withMessage('The first_lastname provided is not valid'),
+    .withMessage('El apellido paterno proporcionado no es válido'),
   check('second_lastname')
     .optional()
     .notEmpty()
-    .withMessage('Need to provide your second_lastname')
+    .withMessage('Necesitas proporcionar el apellido materno')
     .isString()
-    .withMessage('The second_lastname provided is not valid'),
+    .withMessage('El apellido materno proporcionado no es válido'),
   check('gender')
     .optional()
     .isIn( userGenders )
-    .withMessage('Gender not valid. Available values: ' + userGenders.join(', ')),
+    .withMessage('Género no válido. Géneros disponibles: ' + userGenders.join(', ')),
   check('email')
     .optional()
     .isEmail()
-    .withMessage('The email provided is not valid')
+    .withMessage('El correo electrónico proporcionado no es válido')
     .custom( checkEmailAvailable ),
 ];
 

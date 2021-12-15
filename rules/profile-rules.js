@@ -7,9 +7,9 @@ const profilePostRules = [
   /** Fields */
   check('profile')
     .notEmpty()
-    .withMessage('Need to provide a profile name')
+    .withMessage('Necesita proporcionar un nombre para el perfil')
     .isString()
-    .withMessage('Need to provide a valid profile name')
+    .withMessage('Necesita proporcionar un nombre de perfil válido')
     .custom( checkProfileAvailable ),
 ];
 
@@ -23,19 +23,19 @@ const profilePutRules = [
   check('profile')
     .optional()
     .notEmpty()
-    .withMessage('Need to provide a profile name')
+    .withMessage('Necesita proporcionar un nombre para el perfil')
     .isString()
-    .withMessage('Need to provide a valid profile name')
+    .withMessage('Necesita proporcionar un nombre de perfil válido')
     .custom( checkProfileAvailable ),
   check('default')
     .optional()
     .isBoolean()
-    .withMessage('Error checking this profile as default')
+    .withMessage('Error marcando este perfil como "por defecto"')
     .toBoolean(),
   check('status')
     .optional()
     .isIn( profileStatus )
-    .withMessage("Error changing profile status")
+    .withMessage('Error cambiando el estatus del perfil')
 ];
 
 module.exports = {

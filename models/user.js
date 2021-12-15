@@ -13,11 +13,11 @@ const User = db.define('User', {
     validate: {
       customNull( value ) {
         if( !value ) {
-          throw new Error('Need to provide a username');
+          throw new Error('Necesita proporcionar un nombre de usuario');
         }
       },
       notNull : {
-        msg: "Username can't be null"
+        msg: 'El nombre de usuario no puede estar vacío'
       },
     }
   },
@@ -27,11 +27,11 @@ const User = db.define('User', {
     validate  : {
       customNull( value ) {
         if( !value ) {
-          throw new Error('Need to provide a password');
+          throw new Error('Necesita proporcionar una contraseña');
         }
       },
       notNull: {
-        msg: "Password can't be null"
+        msg: 'La contraseña no puede estar vacío'
       },
     }
   },
@@ -40,7 +40,7 @@ const User = db.define('User', {
     validate: {
       isIn: {
         args: [ userStatus ],
-        msg : 'Current user status is not valid'
+        msg : 'El estatus del usuario no es válido'
       }
     }
   },

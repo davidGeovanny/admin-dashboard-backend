@@ -10,11 +10,11 @@ const BranchCompany = db.define('BranchCompany', {
     validate  : {
       customNull( value ) {
         if( !value ) {
-          throw new Error('Need to provide a valid branch company');
+          throw new Error('Necesita proporcionar un nombre de la sucursal válido');
         }
       },
       notNull: {
-        msg: "branch company can't be null"
+        msg: 'El nombre de la sucursal no puede estar vacío'
       },
     }
   },
@@ -23,7 +23,7 @@ const BranchCompany = db.define('BranchCompany', {
     validate: {
       isIn: {
         args: [ branchCompanyStatus ],
-        msg : 'Status not valid'
+        msg : 'Estatus no válido'
       },
     }
   },

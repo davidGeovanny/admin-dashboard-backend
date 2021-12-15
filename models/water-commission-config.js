@@ -11,11 +11,11 @@ const WaterCommissionConfig = db.define('WaterCommissionConfig', {
     validate: {
       customNull( value ) {
         if( !value && value !== 0 ) {
-          throw new Error('Need to provide a percent_operator');
+          throw new Error('Necesita proporcionar el porcentaje para el operador');
         }
       },
       notNull : {
-        msg: "percent_operator can't be null"
+        msg: 'El porcentaje para el operador no puede estar vacío'
       },
     }
   },
@@ -25,7 +25,7 @@ const WaterCommissionConfig = db.define('WaterCommissionConfig', {
     validate: {
       customNull( value ) {
         if( !value && value !== 0 ) {
-          throw new Error('Need to provide a percent_assistant');
+          throw new Error('Necesita proporcionar el porcentaje para el asistente');
         }
       },
     },
@@ -36,7 +36,7 @@ const WaterCommissionConfig = db.define('WaterCommissionConfig', {
     validate: {
       customNull( value ) {
         if( !value && value !== 0 ) {
-          throw new Error('Need to provide a percent_operator_assistant');
+          throw new Error('Necesita proporcionar el porcentaje para el operador asistente');
         }
       },
     }

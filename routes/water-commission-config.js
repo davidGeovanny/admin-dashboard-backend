@@ -24,7 +24,7 @@ router.post('/', [
 
 router.delete('/:id', [
   validateJWT,
-  param('id', 'The config selected does not exist').isNumeric(),
+  param('id', 'La configuración no existe').isNumeric(),
   checkValidityFields
 ], deleteWaterCommissionConfig);
 
