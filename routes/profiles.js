@@ -8,7 +8,8 @@ const {
   createProfile, 
   getProfiles, 
   updateProfile, 
-  deleteProfile 
+  deleteProfile, 
+  getSpecificProfile
 } = require('../controllers/profiles');
 
 const router = Router();
@@ -16,6 +17,10 @@ const router = Router();
 router.get('/', [
   validateJWT
 ], getProfiles);
+
+router.get('/:id', [
+  validateJWT
+], getSpecificProfile);
 
 router.post('/', [
   validateJWT,

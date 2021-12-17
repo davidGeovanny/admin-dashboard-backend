@@ -33,7 +33,7 @@ export type IcebarSaleEmployeeType = {
 }
 
 export type IcebarCommissionConfigType = {
-  commissions: IcebarConfigType[];
+  icebar_commission_configs: IcebarConfigType[];
 }
 
 export type IcebarConfigType = {

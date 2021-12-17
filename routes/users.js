@@ -17,6 +17,7 @@ const {
   deleteUser,
   userAddProfile,
   userRemoveProfile,
+  getSpecificUser,
 } = require('../controllers/users');
 
 const router = Router();
@@ -24,6 +25,10 @@ const router = Router();
 router.get('/', [
   validateJWT
 ], getUsers);
+
+router.get('/:id', [
+  validateJWT
+], getSpecificUser);
 
 router.post('/',[
   validateJWT,

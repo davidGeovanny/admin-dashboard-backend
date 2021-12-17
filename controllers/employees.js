@@ -4,7 +4,7 @@ const _      = require('underscore');
 
 const { Employee, User } = require('../models');
 
-const { attrEmployees } = require('../data/attr-employee');
+const { attrEmployees }        = require('../data/attr-employee');
 const { formatSequelizeError } = require('../helpers/format-sequelize-error');
 const { pagination }           = require('../helpers/pagination');
 const { filterResultQueries }  = require('../helpers/filter');
@@ -40,6 +40,46 @@ const getEmployees = async ( req = request, res = response ) => {
     return res.json({
       ok: true,
       ...rows
+    });
+  } catch ( err ) {
+    return res.status(400).json({
+      ok:     false,
+      msg:    'Ha ocurrido un error',
+      errors: formatSequelizeError( err )
+    });
+  }
+}
+
+const getSpecificEmployee = async ( req = request, res = response ) => {
+  try {
+    const key    = req.originalUrl;
+    const { id } = req.params;
+
+    let row = JSON.parse( GET_CACHE( key ) );
+
+    if( !row ) {
+      row = await Employee.findByPk( id, {
+        include: [
+          {
+            model: User.scope( 'activeUsersScope' ),
+            as: 'users',
+          },
+        ]
+      });
+      SET_CACHE( key, JSON.stringify( row ), 60000 );
+    }
+
+    if( !row ) {
+      return res.status(404).json({
+        ok:     false,
+        msg:    'El empleado no existe',
+        errors: []
+      });
+    }
+  
+    return res.json({
+      ok: true,
+      data: row
     });
   } catch ( err ) {
     return res.status(400).json({
@@ -154,6 +194,7 @@ const deleteEmployee = async ( req = request, res = response ) => {
 
 module.exports = {
   getEmployees,
+  getSpecificEmployee,
   createEmployee,
   updateEmployee,
   deleteEmployee,

@@ -12,7 +12,8 @@ const {
   createBranchCompany, 
   updateBranchCompany,
   deleteBranchCompany,
-  getExportData
+  getExportData,
+  getSpecificBranchCompany
 } = require('../controllers/branches-company');
 
 const router = Router();
@@ -20,6 +21,10 @@ const router = Router();
 router.get('/', [
   validateJWT
 ], getBranchesCompany);
+
+router.get('/:id', [
+  validateJWT
+], getSpecificBranchCompany);
 
 router.post('/',[
   validateJWT,

@@ -3,7 +3,7 @@ const { Op } = require('sequelize');
 const bcrypt = require('bcryptjs');
 const _      = require('underscore');
 
-const { User, Profile, ProfileUser } = require('../models');
+const { User, Profile, ProfileUser, Employee } = require('../models');
 
 const { attrUsers }  = require('../data/attr-users');
 const { userStatus } = require('../data/static-data');
@@ -44,6 +44,54 @@ const getUsers = async ( req = request, res = response ) => {
       ...rows
     });
   } catch ( err ) {
+    return res.status(400).json({
+      ok:     false,
+      msg:    'Ha ocurrido un error',
+      errors: formatSequelizeError( err )
+    });
+  }
+}
+
+const getSpecificUser = async ( req = request, res = response ) => {
+  try {
+    const key    = req.originalUrl;
+    const { id } = req.params;
+
+    let row = JSON.parse( GET_CACHE( key ) );
+
+    if( !row ) {
+      row = await User.findByPk( id, {
+        include: [
+          {
+            model: Profile.scope( 'activeProfileScope' ),
+            as: 'profiles',
+            through: {
+              attributes: []
+            }
+          },
+          {
+            model: Employee,
+            as:    'employee',
+          },
+        ],
+      });
+      SET_CACHE( key, JSON.stringify( row ), 60000 );
+    }
+
+    if( !row ) {
+      return res.status(404).json({
+        ok:     false,
+        msg:    'El usuario no existe',
+        errors: []
+      });
+    }
+  
+    return res.json({
+      ok: true,
+      data: row
+    });
+  } catch ( err ) {
+    console.log( err )
     return res.status(400).json({
       ok:     false,
       msg:    'Ha ocurrido un error',
@@ -298,6 +346,7 @@ const deleteUser = async ( req = request, res = response ) => {
 
 module.exports = {
   getUsers,
+  getSpecificUser,
   createUser,
   updateUser,
   updateUserPassword,

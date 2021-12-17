@@ -79,25 +79,26 @@ const IcebarCommissionConfig = db.define('IcebarCommissionConfig', {
     }
   }
 }, {
-  tableName: 'icebar_commission_config',
+  tableName:  'icebar_commission_config',
   timestamps: true,
-  createdAt: 'created_at',
-  updatedAt: 'updated_at',
-  deletedAt: 'deleted_at',
-  paranoid: true,
+  createdAt:  'created_at',
+  updatedAt:  'updated_at',
+  deletedAt:  'deleted_at',
+  paranoid:   true,
 });
 
 /** Relations */
 IcebarCommissionConfig.belongsTo( BranchCompany, {
-  as: 'branch',
+  as:         'branch',
   foreignKey: 'id_branch_company'
 });
 
 BranchCompany.hasMany( IcebarCommissionConfig, {
-  as: 'commissions', 
+  as:         'icebar_commission_configs', 
   foreignKey: 'id_branch_company'
 });
 
+/** Scopes */
 IcebarCommissionConfig.addScope('defaultScope', {
   attributes: {
     exclude: ['id_branch_company', 'deleted_at']

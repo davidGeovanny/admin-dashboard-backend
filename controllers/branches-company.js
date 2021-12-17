@@ -1,7 +1,12 @@
 const { request, response } = require('express');
 const _ = require('underscore');
 
-const { BranchCompany } = require('../models');
+const { 
+  BranchCompany, 
+  IcebarCommissionConfig, 
+  IcecubeCommissionConfig, 
+  WaterCommissionConfig 
+} = require('../models');
 
 const { attrBranchesCompany }  = require('../data/attr-branch');
 const { branchCompanyStatus }  = require('../data/static-data');
@@ -44,6 +49,55 @@ const getBranchesCompany = async ( req = request, res = response ) => {
       ...rows,
     });
   } catch ( err ) {
+    return res.status(400).json({
+      ok:     false,
+      msg:    'Ha ocurrido un error',
+      errors: formatSequelizeError( err )
+    });
+  }
+}
+
+const getSpecificBranchCompany = async ( req = request, res = response ) => {
+  try {
+    const key    = req.originalUrl;
+    const { id } = req.params;
+
+    let row = JSON.parse( GET_CACHE( key ) );
+    
+    if( !row ) {
+      row = await BranchCompany.findByPk( id, {
+        include: [
+          {
+            model: IcebarCommissionConfig,
+            as: 'icebar_commission_configs',
+          },
+          {
+            model: IcecubeCommissionConfig,
+            as: 'icecube_commission_configs',
+          },
+          {
+            model: WaterCommissionConfig,
+            as: 'water_commission_configs',
+          },
+        ]
+      });
+      SET_CACHE( key, JSON.stringify( row ), 60000 );
+    }
+
+    if( !row ) {
+      return res.status(404).json({
+        ok:     false,
+        msg:    'La sucursal no existe',
+        errors: []
+      });
+    }
+    
+    return res.json({
+      ok:   true,
+      data: row,
+    });
+  } catch ( err ) {
+    console.log( err );
     return res.status(400).json({
       ok:     false,
       msg:    'Ha ocurrido un error',
@@ -175,6 +229,7 @@ const getExportData = async ( req = request, res = response ) => {
 
 module.exports = {
   getBranchesCompany,
+  getSpecificBranchCompany,
   createBranchCompany,
   updateBranchCompany,
   deleteBranchCompany,

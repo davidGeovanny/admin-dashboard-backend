@@ -74,6 +74,12 @@ IcecubeCommissionConfig.belongsTo( BranchCompany, {
   foreignKey: 'id_branch_company'
 });
 
+BranchCompany.hasMany( IcecubeCommissionConfig, {
+  as:         'icecube_commission_configs', 
+  foreignKey: 'id_branch_company'
+});
+
+/** Scopes */
 IcecubeCommissionConfig.addScope('defaultScope', {
   attributes: {
     exclude: ['id_branch_company', 'deleted_at']

@@ -2,7 +2,7 @@ const { request, response } = require('express');
 const { Op } = require('sequelize');
 const _      = require('underscore');
 
-const { Profile } = require('../models');
+const { Profile, User } = require('../models');
 
 const { attrProfiles }  = require('../data/attr-profiles');
 const { profileStatus } = require('../data/static-data');
@@ -41,6 +41,49 @@ const getProfiles = async ( req = request, res = response ) => {
     return res.json({
       ok: true,
       ...rows
+    });
+  } catch ( err ) {
+    return res.status(400).json({
+      ok:     false,
+      msg:    'Ha ocurrido un error',
+      errors: formatSequelizeError( err )
+    });
+  }
+}
+
+const getSpecificProfile = async ( req = request, res = response ) => {
+  try {
+    const key    = req.originalUrl;
+    const { id } = req.params;
+
+    let row = JSON.parse( GET_CACHE( key ) );
+
+    if( !row ) {
+      row = await Profile.findByPk( id, {
+        include: [
+          {
+            model: User.scope( 'activeUsersScope' ),
+            as: 'users',
+            through: {
+              attributes: []
+            }
+          },
+        ],
+      });
+      SET_CACHE( key, JSON.stringify( row ), 60000 );
+    }
+
+    if( !row ) {
+      return res.status(404).json({
+        ok:     false,
+        msg:    'El perfil no existe',
+        errors: []
+      });
+    }
+  
+    return res.json({
+      ok: true,
+      data: row
     });
   } catch ( err ) {
     return res.status(400).json({
@@ -174,6 +217,7 @@ const deleteProfile = async ( req = request, res = response ) => {
 
 module.exports = {
   getProfiles,
+  getSpecificProfile,
   createProfile,
   updateProfile,
   deleteProfile,

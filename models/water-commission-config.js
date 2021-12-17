@@ -59,10 +59,16 @@ const WaterCommissionConfig = db.define('WaterCommissionConfig', {
 
 /** Relations */
 WaterCommissionConfig.belongsTo( BranchCompany, {
-  as        : 'branch',
+  as:         'branch',
   foreignKey: 'id_branch_company'
 });
 
+BranchCompany.hasMany( WaterCommissionConfig, {
+  as:         'water_commission_configs', 
+  foreignKey: 'id_branch_company'
+});
+
+/** Scopes */
 WaterCommissionConfig.addScope('defaultScope', {
   attributes: {
     exclude: ['id_branch_company', 'deleted_at']

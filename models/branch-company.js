@@ -36,6 +36,7 @@ const BranchCompany = db.define('BranchCompany', {
   paranoid  : true,
 });
 
+/** Scopes */
 BranchCompany.addScope('defaultScope', {
   attributes: {
     exclude: ['deleted_at']

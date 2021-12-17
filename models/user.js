@@ -67,15 +67,25 @@ User.belongsTo( Employee, {
 });
 
 Employee.hasMany( User, {
-  as: 'users',
+  as:         'users',
   foreignKey: 'id_employee'
 });
 
+/** Scopes */
 User.addScope('defaultScope', {
   attributes: {
     exclude: ['password', 'deleted_at']
   }
 });
+
+User.addScope('activeUsersScope', {
+  attributes: {
+    exclude: ['status', 'password', 'deleted_at']
+  },
+  where: {
+    status: userStatus[0]
+  }
+})
 
 User.addScope('loginScope', {
   attributes: {

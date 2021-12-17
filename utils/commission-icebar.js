@@ -113,7 +113,7 @@ class CommissionIcebar {
         include: [
           {
             model:      IcebarCommissionConfig,
-            as:         'commissions',
+            as:         'icebar_commission_configs',
             attributes: ['min_range', 'max_range', 'cost_bar_operator', 'cost_bar_assistant', 'cost_bar_operator_assistant'],
             order:      [ ['min_range', 'ASC'] ]
           }
@@ -129,10 +129,10 @@ class CommissionIcebar {
   
   setCommissionConfig = ( commissions = [] ) => {
     commissions.forEach( commission => {
-      const { branch, commissions } = commission;
+      const { branch, icebar_commission_configs } = commission;
       
       if( !this._commissionConfig.has( branch.toLowerCase() ) ) {
-        this._commissionConfig.set( branch.toLowerCase(), { commissions });
+        this._commissionConfig.set( branch.toLowerCase(), { icebar_commission_configs });
       }
     });
   }
@@ -149,14 +149,14 @@ class CommissionIcebar {
 
     if( !this._commissionConfig.has( branch.toLowerCase() ) ) return emptyCommission;
 
-    const { commissions } = this._commissionConfig.get( branch.toLowerCase() );
+    const { icebar_commission_configs } = this._commissionConfig.get( branch.toLowerCase() );
 
-    const percent = commissions.find( ( commission, index ) => {
+    const percent = icebar_commission_configs.find( ( commission, index ) => {
       if( average >= commission.min_range && average <= commission.max_range ) {
         return commission;
       }
 
-      if( index === commissions.length - 1 ) {
+      if( index === icebar_commission_configs.length - 1 ) {
         if( average >= commission.max_range ) {
           return commission;
         } else {
