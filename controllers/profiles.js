@@ -9,7 +9,12 @@ const { profileStatus } = require('../data/static-data');
 const { formatSequelizeError } = require('../helpers/format-sequelize-error');
 const { pagination }           = require('../helpers/pagination');
 const { filterResultQueries }  = require('../helpers/filter');
-const { GET_CACHE, SET_CACHE, CLEAR_CACHE } = require('../helpers/cache');
+const { 
+  GET_CACHE, 
+  SET_CACHE, 
+  CLEAR_CACHE, 
+  CLEAR_SECTION_CACHE 
+} = require('../helpers/cache');
 
 const getAllRowsData = async () => {
   try {
@@ -162,7 +167,7 @@ const updateProfile = async ( req = request, res = response ) => {
     }
 
     await profile.update( profileBody );
-    CLEAR_CACHE( attrProfiles.keys.all );
+    CLEAR_SECTION_CACHE('profiles');
 
     return res.json({
       ok:   true,
@@ -200,7 +205,7 @@ const deleteProfile = async ( req = request, res = response ) => {
     }
 
     await profile.destroy();
-    CLEAR_CACHE( attrProfiles.keys.all );
+    CLEAR_SECTION_CACHE('profiles');
 
     return res.json({
       ok:   true,

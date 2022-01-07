@@ -10,7 +10,12 @@ const { userStatus } = require('../data/static-data');
 const { formatSequelizeError } = require('../helpers/format-sequelize-error');
 const { pagination }           = require('../helpers/pagination');
 const { filterResultQueries }  = require('../helpers/filter');
-const { GET_CACHE, SET_CACHE, CLEAR_CACHE } = require('../helpers/cache');
+const { 
+  GET_CACHE, 
+  SET_CACHE, 
+  CLEAR_CACHE, 
+  CLEAR_SECTION_CACHE 
+} = require('../helpers/cache');
 
 const getAllRowsData = async () => {
   try {
@@ -145,7 +150,7 @@ const updateUser = async ( req = request, res = response ) => {
     }
 
     await user.update( userBody );
-    CLEAR_CACHE( attrUsers.keys.all );
+    CLEAR_SECTION_CACHE('users');
 
     return res.json({
       ok:   true,
@@ -186,7 +191,6 @@ const updateUserPassword = async ( req = request, res = response ) => {
     }
 
     await user.update( userBody );
-    CLEAR_CACHE( attrUsers.keys.all );
 
     return res.json({
       ok:   true,
@@ -247,7 +251,7 @@ const userAddProfile = async ( req = request, res = response ) => {
     }
 
     await user.addProfile( id_profile );
-    CLEAR_CACHE( attrUsers.keys.all );
+    CLEAR_SECTION_CACHE('users');
 
     return res.json({
       ok:   true,
@@ -299,7 +303,7 @@ const userRemoveProfile = async ( req = request, res = response ) => {
     }
 
     await profile_user.destroy();
-    CLEAR_CACHE( attrUsers.keys.all );
+    CLEAR_SECTION_CACHE('users');
 
     return res.json({
       ok:   true,
@@ -329,7 +333,7 @@ const deleteUser = async ( req = request, res = response ) => {
     }
 
     await user.destroy();
-    CLEAR_CACHE( attrUsers.keys.all );
+    CLEAR_SECTION_CACHE('users');
 
     return res.json({
       ok:   true,

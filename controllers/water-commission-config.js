@@ -8,7 +8,12 @@ const { attrWaterCommissionConfig } = require('../data/attr-water-config');
 const { formatSequelizeError }      = require('../helpers/format-sequelize-error');
 const { pagination }                = require('../helpers/pagination');
 const { filterResultQueries }       = require('../helpers/filter');
-const { GET_CACHE, SET_CACHE, CLEAR_CACHE } = require('../helpers/cache');
+const { 
+  GET_CACHE, 
+  SET_CACHE, 
+  CLEAR_CACHE, 
+  CLEAR_SECTION_CACHE 
+} = require('../helpers/cache');
 
 const getAllRowsData = async () => {
   try {
@@ -98,7 +103,7 @@ const deleteWaterCommissionConfig = async ( req = request, res = response ) => {
     }
 
     await waterCommissionConfig.destroy();
-    CLEAR_CACHE( attrWaterCommissionConfig.keys.all );
+    CLEAR_SECTION_CACHE('water_commission_configs');
 
     return res.json({
       ok: true,

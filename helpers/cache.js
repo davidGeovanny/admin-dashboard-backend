@@ -1,3 +1,7 @@
+/**
+ * @typedef { import('../utils/types/api-section-types').ApiSection } ApiSection
+ */
+
 const mcache = require('memory-cache');
 
 const CACHE_TIME_DEFAULT = 300000;
@@ -52,8 +56,27 @@ const CLEAR_CACHE = ( key ) => {
   }
 }
 
+/**
+ * Delete a cache section.
+ * @param { ApiSection } section
+ */
+const CLEAR_SECTION_CACHE = ( section ) => {
+  try {
+    if( !section ) return;
+
+    const keys = mcache.keys().filter( key => key.includes( section ) );
+
+    keys.forEach( key => {
+      mcache.del( key );
+    });
+  } catch ( err ) {
+    console.log( err );
+  }
+}
+
 module.exports = {
   GET_CACHE,
   SET_CACHE,
   CLEAR_CACHE,
+  CLEAR_SECTION_CACHE,
 };

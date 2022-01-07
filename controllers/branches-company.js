@@ -15,7 +15,12 @@ const { pagination }           = require('../helpers/pagination');
 const { filterResultQueries }  = require('../helpers/filter');
 const { createExcelFile }      = require('../helpers/excel');
 const { deleteFile }           = require('../helpers/file');
-const { GET_CACHE, SET_CACHE, CLEAR_CACHE } = require('../helpers/cache');
+const { 
+  GET_CACHE, 
+  SET_CACHE, 
+  CLEAR_CACHE, 
+  CLEAR_SECTION_CACHE 
+} = require('../helpers/cache');
 
 const getAllRowsData = async () => {
   try {
@@ -143,7 +148,7 @@ const updateBranchCompany = async ( req = request, res = response ) => {
     }
 
     await branchCompany.update( branchBody );
-    CLEAR_CACHE( attrBranchesCompany.keys.all );
+    CLEAR_SECTION_CACHE('branches_company');
 
     return res.json({
       ok:   true,
@@ -173,7 +178,7 @@ const deleteBranchCompany = async ( req = request, res = response ) => {
     }
 
     await branchCompany.destroy();
-    CLEAR_CACHE( attrBranchesCompany.keys.all );
+    CLEAR_SECTION_CACHE('branches_company');
 
     return res.json({
       ok:   true,

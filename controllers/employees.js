@@ -8,7 +8,12 @@ const { attrEmployees }        = require('../data/attr-employee');
 const { formatSequelizeError } = require('../helpers/format-sequelize-error');
 const { pagination }           = require('../helpers/pagination');
 const { filterResultQueries }  = require('../helpers/filter');
-const { GET_CACHE, SET_CACHE, CLEAR_CACHE } = require('../helpers/cache');
+const { 
+  GET_CACHE, 
+  SET_CACHE, 
+  CLEAR_CACHE, 
+  CLEAR_SECTION_CACHE 
+} = require('../helpers/cache');
 
 const getAllRowsData = async () => {
   try {
@@ -138,7 +143,7 @@ const updateEmployee = async ( req = request, res = response ) => {
     }
 
     await employee.update( employeeBody );
-    CLEAR_CACHE( attrEmployees.keys.all );
+    CLEAR_SECTION_CACHE('employees');
 
     return res.json({
       ok:   true,
@@ -177,7 +182,7 @@ const deleteEmployee = async ( req = request, res = response ) => {
       }
     });
 
-    CLEAR_CACHE( attrEmployees.keys.all );
+    CLEAR_SECTION_CACHE('employees');
 
     return res.json({
       ok: true,

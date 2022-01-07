@@ -8,7 +8,12 @@ const { attrIcebarCommissionConfig } = require('../data/attr-icebar-config');
 const { formatSequelizeError } = require('../helpers/format-sequelize-error');
 const { pagination }           = require('../helpers/pagination');
 const { filterResultQueries }  = require('../helpers/filter');
-const { GET_CACHE, SET_CACHE, CLEAR_CACHE } = require('../helpers/cache');
+const { 
+  GET_CACHE, 
+  SET_CACHE, 
+  CLEAR_CACHE, 
+  CLEAR_SECTION_CACHE 
+} = require('../helpers/cache');
 
 const getAllRowsData = async () => {
   try {
@@ -132,7 +137,7 @@ const updateIcebarCommissionConfig = async ( req = request, res = response ) => 
     }
 
     await icebarCommissionConfig.update( configBody );
-    CLEAR_CACHE( attrIcebarCommissionConfig.keys.all );
+    CLEAR_SECTION_CACHE('icebar_commission_configs');
 
     return res.json({
       ok: true,
@@ -162,9 +167,9 @@ const deleteIcebarCommissionConfig = async ( req = request, res = response ) => 
     }
 
     await icebarCommissionConfig.destroy();
-    CLEAR_CACHE( attrIcebarCommissionConfig.keys.all );
+    CLEAR_SECTION_CACHE('icebar_commission_configs');
 
-    res.json({
+    return res.json({
       ok: true,
       icebarCommissionConfig,
     });
