@@ -1,7 +1,7 @@
-const validateFields      = require('./validate-fields');
-const checkValidityFields = require('./check-validity-fields');
-const validateJWT         = require('./validate-jwt');
-const cache               = require('./cache');
+const validateFields      = require('./ValidateFields');
+const checkValidityFields = require('./CheckValidityFields');
+const validateJWT         = require('./ValidateJWT');
+const cache               = require('./Cache');
 
 module.exports = {
   ...validateFields,

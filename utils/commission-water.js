@@ -9,7 +9,7 @@ const {
   WaterCommissionConfig,
 } = require('../models');
 
-const { toTitleCase } = require('../helpers/capitalize');
+const { toTitleCase } = require('../helpers/Capitalize');
 
 class CommissionWater {
   constructor() {
