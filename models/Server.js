@@ -1,7 +1,7 @@
 const express   = require('express');
 const cors      = require('cors');
 const rateLimit = require('express-rate-limit');
-const db        = require('../db/Connection_t');
+const db        = require('../db/Connection');
 
 /** Associate models */
 // require('./index');
@@ -62,12 +62,12 @@ class Server {
 
   routes() {
     this.app.use( this.apiLimiter );
-    this.app.use( this.paths.cache,          require('../routes/Cache_t') );
-    this.app.use( this.paths.auth,           require('../routes/Auth_t') );
-    this.app.use( this.paths.user,           require('../routes/Users_t') );
-    this.app.use( this.paths.profile,        require('../routes/Profiles_t') );
-    this.app.use( this.paths.employee,       require('../routes/Employees_t') );
-    this.app.use( this.paths.sale,           require('../routes/Sales_t') );
+    this.app.use( this.paths.cache,          require('../routes/Cache') );
+    this.app.use( this.paths.auth,           require('../routes/Auth') );
+    this.app.use( this.paths.user,           require('../routes/Users') );
+    this.app.use( this.paths.profile,        require('../routes/Profiles') );
+    this.app.use( this.paths.employee,       require('../routes/Employees') );
+    this.app.use( this.paths.sale,           require('../routes/Sales') );
     this.app.use( this.paths.branch_company, require('../routes/BranchesCompany') );
     this.app.use( this.paths.water_commission_config,   require('../routes/WaterCommissionConfigs') );
     this.app.use( this.paths.icebar_commission_config,  require('../routes/IcebarCommissionConfigs') );

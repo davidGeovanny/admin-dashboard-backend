@@ -11,16 +11,16 @@ const {
 const { attrBranchesCompany }  = require('../../data/AttrBranchCompany');
 const { branchCompanyStatus }  = require('../../data/static-data');
 const { formatSequelizeError } = require('../../helpers/format-sequelize-error');
-const { pagination }           = require('../../helpers/Pagination_t');
-const { filterResultQueries }  = require('../../helpers/Filter_t');
-const { createExcelFile }      = require('../../helpers/Excel_t');
-const { deleteFile }           = require('../../helpers/File_t');
+const { pagination }           = require('../../helpers/Pagination');
+const { filterResultQueries }  = require('../../helpers/Filter');
+const { createExcelFile }      = require('../../helpers/Excel');
+const { deleteFile }           = require('../../helpers/File');
 const { 
   GET_CACHE, 
   SET_CACHE, 
   CLEAR_CACHE, 
   CLEAR_SECTION_CACHE 
-} = require('../../helpers/Cache_t');
+} = require('../../helpers/Cache');
 
 const getAllRowsData = async () => {
   try {

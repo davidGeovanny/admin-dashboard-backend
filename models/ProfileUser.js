@@ -1,7 +1,7 @@
-const db = require('../db/Connection_t');
+const db = require('../db/Connection');
 
-const Profile = require('./Profile_t');
-const User    = require('./User_t');
+const Profile = require('./Profile');
+const User    = require('./User');
 
 const ProfileUser = db.define('ProfileUser', {}, {
   tableName : 'profile_user',

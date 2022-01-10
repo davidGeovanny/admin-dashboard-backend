@@ -1,5 +1,5 @@
 const { response, request } = require('express');
-const { CLEAR_CACHE } = require('../../helpers/Cache_t');
+const { CLEAR_CACHE } = require('../../helpers/Cache');
 
 const clearCache = async ( req = request, res = response ) => {
   try {

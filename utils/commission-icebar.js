@@ -11,7 +11,7 @@ const {
   IcebarCommissionConfig,
 } = require('../models');
 
-const { toTitleCase } = require('../helpers/Capitalize_t');
+const { toTitleCase } = require('../helpers/Capitalize');
 
 class CommissionIcebar {
   constructor() {

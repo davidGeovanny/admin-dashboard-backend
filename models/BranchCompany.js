@@ -1,4 +1,4 @@
-const db = require('../db/Connection_t');
+const db = require('../db/Connection');
 const { DataTypes, Op } = require('sequelize');
 
 const { branchCompanyStatus } = require('../data/static-data');

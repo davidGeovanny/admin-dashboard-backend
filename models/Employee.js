@@ -1,4 +1,4 @@
-const db = require('../db/Connection_t');
+const db = require('../db/Connection');
 const { DataTypes } = require('sequelize');
 
 const { userGenders } = require('../data/static-data');
