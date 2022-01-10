@@ -1,5 +1,5 @@
 const Employee      = require('./Employee_t');
-const User          = require('./User');
+const User          = require('./User_t');
 const Profile       = require('./Profile_t');
 const ProfileUser   = require('./ProfileUser');
 const Sale          = require('./Sale_t');
