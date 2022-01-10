@@ -7,14 +7,14 @@ const { Profile, User } = require('../../models');
 const { attrProfiles }  = require('../../data/AttrProfile');
 const { profileStatus } = require('../../data/static-data');
 const { formatSequelizeError } = require('../../helpers/format-sequelize-error');
-const { pagination }           = require('../../helpers/Pagination');
-const { filterResultQueries }  = require('../../helpers/Filter');
+const { pagination }           = require('../../helpers/Pagination_t');
+const { filterResultQueries }  = require('../../helpers/Filter_t');
 const { 
   GET_CACHE, 
   SET_CACHE, 
   CLEAR_CACHE, 
   CLEAR_SECTION_CACHE 
-} = require('../../helpers/Cache');
+} = require('../../helpers/Cache_t');
 
 const getAllRowsData = async () => {
   try {

@@ -9,10 +9,10 @@ const _ = require('underscore');
 
 const { attrSales } = require('../../data/AttrSale');
 const { formatSequelizeError } = require('../../helpers/format-sequelize-error');
-const { pagination }           = require('../../helpers/Pagination');
-const { GET_CACHE, SET_CACHE } = require('../../helpers/cache');
-const { filterResultQueries }  = require('../../helpers/Filter');
-const { toTitleCase } = require('../../helpers/Capitalize');
+const { pagination }           = require('../../helpers/Pagination_t');
+const { GET_CACHE, SET_CACHE } = require('../../helpers/Cache_t');
+const { filterResultQueries }  = require('../../helpers/Filter_t');
+const { toTitleCase } = require('../../helpers/Capitalize_t');
 const hieleraApi = require('../../helpers/HieleraApi');
 
 const getSales = async ( req = request, res = response ) => {

@@ -1,7 +1,7 @@
-const db = require('../db/Connection');
+const db = require('../db/Connection_t');
 const { DataTypes } = require('sequelize');
 
-const Employee = require('./Employee');
+const Employee = require('./Employee_t');
 
 const { encryptPassword } = require('../helpers/EncryptPassword');
 const { userStatus } = require('../data/static-data');

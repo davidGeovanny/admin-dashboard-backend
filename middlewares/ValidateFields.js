@@ -2,8 +2,8 @@ const { request } = require('express');
 const { Op }      = require('sequelize');
 // const { BranchCompany } = require('../models');
 
-const Employee = require('../models/Employee');
-const Profile  = require('../models/Profile');
+const Employee = require('../models/Employee_t');
+const Profile  = require('../models/Profile_t');
 const User     = require('../models/User');
 const BranchCompany = require('../models/BranchCompany');
 

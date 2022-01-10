@@ -9,7 +9,7 @@ const {
   IcecubeCommissionConfig,
 } = require('../models');
 
-const { toTitleCase } = require('../helpers/Capitalize');
+const { toTitleCase } = require('../helpers/Capitalize_t');
 
 class CommissionIcecube {
   constructor() {
