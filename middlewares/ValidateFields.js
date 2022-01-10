@@ -4,7 +4,7 @@ const { Op }      = require('sequelize');
 
 const Employee = require('../models/Employee_t');
 const Profile  = require('../models/Profile_t');
-const User     = require('../models/User');
+const User     = require('../models/User_t');
 const BranchCompany = require('../models/BranchCompany');
 
 const checkEmailAvailable = async ( email = '', { req = request } ) => {
