@@ -9,6 +9,14 @@ const toUpperCaseWords = ( str = '' ) => {
   });
 }
 
+/**
+ * Function that capitalizes the first letter of the text sent by parameter.
+ * @param { string } str Text string to transform.
+ * @returns { string }
+ */
+const capitalizeFirstLetter = ( str = '' ) => charAt(0).toUpperCase() + str.slice(1);
+
 module.exports = {
   toUpperCaseWords,
+  capitalizeFirstLetter,
 };

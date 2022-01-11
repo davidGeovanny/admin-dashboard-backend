@@ -1,8 +1,8 @@
 const db = require('../db/Connection');
 const { DataTypes } = require('sequelize');
 
-const { toUpperCaseWords } = require('../helpers/Capitalize');
 const EmployeeAttr = require('../utils/classes/EmployeeAttr');
+const { toUpperCaseWords } = require('../helpers/Capitalize');
 
 const Employee = db.define('Employee', {
   name: {
@@ -17,7 +17,10 @@ const Employee = db.define('Employee', {
       notNull: {
         msg: 'El nombre no puede estar vacío'
       },
-    }
+    },
+    set( value ) {
+      this.setDataValue( 'name', toUpperCaseWords( value ) );
+    },
   },
   first_lastname: {
     type      : DataTypes.STRING,
@@ -31,7 +34,10 @@ const Employee = db.define('Employee', {
       notNull: {
         msg: 'El apellido paterno no puede estar vacío'
       },
-    }
+    },
+    set( value ) {
+      this.setDataValue( 'first_lastname', toUpperCaseWords( value ) );
+    },
   },
   second_lastname: {
     type      : DataTypes.STRING,
@@ -45,7 +51,10 @@ const Employee = db.define('Employee', {
       notNull: {
         msg: 'El apellido materno no puede estar vacío'
       },
-    }
+    },
+    set( value ) {
+      this.setDataValue( 'second_lastname', toUpperCaseWords( value ) );
+    },
   },
   gender: {
     type      : DataTypes.ENUM( EmployeeAttr.GENDERS ),
@@ -67,7 +76,10 @@ const Employee = db.define('Employee', {
       notNull: {
         msg: 'El correo electrónico no puede estar vacío'
       },
-    }
+    },
+    set( value ) {
+      this.setDataValue( 'email', value.toLowerCase() );
+    },
   },
 }, {
   tableName: 'employees',
@@ -81,31 +93,6 @@ const Employee = db.define('Employee', {
 Employee.addScope('defaultScope', {
   attributes: {
     exclude: ['deleted_at']
-  }
-});
-
-Employee.beforeCreate( ( employee ) => {
-  employee.name            = toUpperCaseWords( employee.name );
-  employee.first_lastname  = toUpperCaseWords( employee.first_lastname );
-  employee.second_lastname = toUpperCaseWords( employee.second_lastname );
-  employee.email           = employee.email.toLowerCase();
-});
-
-Employee.beforeUpdate( ( employee ) => {
-  if( !!employee.name ) {
-    employee.name = toUpperCaseWords( employee.name );
-  }
-
-  if( !!employee.first_lastname ) {
-    employee.first_lastname = toUpperCaseWords( employee.first_lastname );
-  }
-
-  if( !!employee.second_lastname ) {
-    employee.second_lastname = toUpperCaseWords( employee.second_lastname );
-  }
-
-  if( !!employee.email ) {
-    employee.email = employee.email.toLowerCase();
   }
 });
 

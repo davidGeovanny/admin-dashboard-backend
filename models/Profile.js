@@ -2,6 +2,7 @@ const db = require('../db/Connection');
 const { DataTypes } = require('sequelize');
 
 const ProfileAttr = require('../utils/classes/ProfileAttr');
+const { capitalizeFirstLetter } = require('../helpers/Capitalize');
 
 const Profile = db.define('Profile', {
   profile: {
@@ -16,7 +17,10 @@ const Profile = db.define('Profile', {
       notNull: {
         msg: 'El nombre del perfil no puede estar vacío'
       },
-    }
+    },
+    set( value ) {
+      this.setDataValue( 'profile', capitalizeFirstLetter( value ) );
+    },
   },
   default: {
     type        : DataTypes.BOOLEAN,

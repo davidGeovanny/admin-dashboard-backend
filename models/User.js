@@ -33,6 +33,9 @@ const User = db.define('User', {
       notNull: {
         msg: 'La contraseña no puede estar vacío'
       },
+    },
+    set( value ) {
+      this.setDataValue( 'password', encryptPassword( value ) );
     }
   },
   status: {
@@ -102,16 +105,6 @@ User.addScope('tokenScope', {
   },
   where: {
     status: UserAttr.STATUS[0]
-  }
-});
-
-User.beforeCreate( ( user ) => {
-  user.password = encryptPassword( user.password );
-});
-
-User.beforeUpdate( ( user ) => {
-  if( !!user.password ) {
-    user.password = encryptPassword( user.password );
   }
 });
 

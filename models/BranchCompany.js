@@ -17,7 +17,10 @@ const BranchCompany = db.define('BranchCompany', {
       notNull: {
         msg: 'El nombre de la sucursal no puede estar vacío'
       },
-    }
+    },
+    set( value ) {
+      this.setDataValue( 'branch', toUpperCaseWords( value ) );
+    },
   },
   status: {
     type: DataTypes.ENUM( BranchCompanyAttr.STATUS ),
@@ -52,16 +55,6 @@ BranchCompany.addScope('activeBranchesScope', {
     status: {
       [ Op.eq ] : BranchCompanyAttr.STATUS[0]
     }
-  }
-});
-
-BranchCompany.beforeCreate( ( branchCompany ) => {
-  branchCompany.branch = toUpperCaseWords( branchCompany.branch );
-});
-
-BranchCompany.beforeUpdate( ( branchCompany ) => {
-  if( !!branchCompany.branch ) {
-    branchCompany.branch = toUpperCaseWords( branchCompany.branch );
   }
 });
 

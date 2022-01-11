@@ -56,13 +56,13 @@ class Server {
   globalMiddlewares() {
     /** CORS */
     this.app.use( cors() );
-
     /** Read and parse body */
     this.app.use( express.json() );
+    /** Add request limit */
+    this.app.use( this.apiLimiter );
   }
 
   routes() {
-    this.app.use( this.apiLimiter );
     /** Public routes */
     this.app.use( this.paths.auth, require('../routes/Auth') );
     /** Private routes */
