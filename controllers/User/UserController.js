@@ -3,39 +3,18 @@ const { Op } = require('sequelize');
 const bcrypt = require('bcryptjs');
 const _      = require('underscore');
 
-const { User, Profile, Employee } = require('../../models');
+const { User, Profile } = require('../../models');
 const UserAttr = require('../../utils/classes/UserAttr');
 
-const { formatSequelizeError } = require('../../helpers/FormatSequelizeError');
-const { pagination }           = require('../../helpers/Pagination');
 const { filterResultQueries }  = require('../../helpers/Filter');
-const { 
-  GET_CACHE, 
-  SET_CACHE, 
-  CLEAR_CACHE, 
-  CLEAR_SECTION_CACHE 
-} = require('../../helpers/Cache');
-
-const getAllRowsData = async () => {
-  try {
-    let rows = JSON.parse( GET_CACHE( `${ UserAttr.SECTION }(all)` ) );
-  
-    if( !rows ) {
-      rows = await User.findAll();
-      SET_CACHE( `${ UserAttr.SECTION }(all)`, JSON.stringify( rows ), 60000 );
-    }
-  
-    return rows;
-  } catch ( err ) {
-    return [];
-  }
-}
+const { pagination }           = require('../../helpers/Pagination');
+const { formatSequelizeError } = require('../../helpers/FormatSequelizeError');
 
 const getUsers = async ( req = request, res = response ) => {
   try {
     const queries = req.query;
     
-    let rows = await getAllRowsData();
+    let rows = await User.findAll();
 
     rows = filterResultQueries( rows, queries, UserAttr.filterable );
     rows = pagination( rows, queries, UserAttr.filterable );
@@ -66,7 +45,6 @@ const createUser = async ( req = request, res = response ) => {
 
     if( defaultProfile ) {
       await user.addProfile( defaultProfile );
-      CLEAR_CACHE( `${ UserAttr.SECTION }(all)` );
     }
 
     return res.json({
@@ -98,7 +76,6 @@ const updateUser = async ( req = request, res = response ) => {
     }
 
     await user.update( userBody );
-    CLEAR_SECTION_CACHE('users');
 
     return res.json({
       ok:   true,
@@ -168,7 +145,6 @@ const deleteUser = async ( req = request, res = response ) => {
     }
 
     await user.destroy();
-    CLEAR_SECTION_CACHE('users');
 
     return res.json({
       ok:   true,

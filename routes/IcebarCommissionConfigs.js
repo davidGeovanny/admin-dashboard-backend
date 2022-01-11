@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const { param } = require('express-validator');
 
-const { validateJWT, checkValidityFields } = require('../middlewares');
+const { checkValidityFields } = require('../middlewares');
 const { icebarCommissionConfigPostRules, icebarCommissionConfigPutRules } = require('../rules/IcebarCommissionConfigRules');
 
 const { 
@@ -13,24 +13,19 @@ const {
 
 const router = Router();
 
-router.get('/', [
-  validateJWT,
-], getIcebarCommissionConfig);
+router.get('/', [], getIcebarCommissionConfig);
 
 router.post('/', [
-  validateJWT,
   ...icebarCommissionConfigPostRules,
   checkValidityFields
 ], createIcebarCommissionConfig);
 
 router.put('/:id', [
-  validateJWT,
   ...icebarCommissionConfigPutRules,
   checkValidityFields
 ], updateIcebarCommissionConfig);
 
 router.delete('/:id', [
-  validateJWT,
   param('id', 'La configuración no existe').isNumeric(),
   checkValidityFields
 ], deleteIcebarCommissionConfig);

@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const { param }  = require('express-validator');
 
-const { checkValidityFields, validateJWT }  = require('../middlewares');
+const { checkValidityFields }  = require('../middlewares');
 const { profilePutRules, profilePostRules } = require('../rules/ProfileRules');
 
 const { 
@@ -14,28 +14,21 @@ const { getProfileUsers } = require('../controllers/Profile/ProfileUserControlle
 
 const router = Router();
 
-router.get('/', [
-  validateJWT
-], getProfiles);
+router.get('/', [], getProfiles);
 
-router.get('/:id/users', [
-  validateJWT
-], getProfileUsers);
+router.get('/:id/users', [], getProfileUsers);
 
 router.post('/', [
-  validateJWT,
   ...profilePostRules,
   checkValidityFields
 ], createProfile);
 
 router.put('/:id', [
-  validateJWT,
   ...profilePutRules,
   checkValidityFields
 ], updateProfile);
 
 router.delete('/:id', [
-  validateJWT,
   param('id', 'La configuración no existe').isNumeric(),
   checkValidityFields
 ], deleteProfile);

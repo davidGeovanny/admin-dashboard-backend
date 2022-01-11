@@ -8,28 +8,12 @@ const IcebarCommissionConfigAttr = require('../../utils/classes/IcebarCommission
 const { formatSequelizeError } = require('../../helpers/FormatSequelizeError');
 const { pagination }           = require('../../helpers/Pagination');
 const { filterResultQueries }  = require('../../helpers/Filter');
-const { GET_CACHE, SET_CACHE, CLEAR_CACHE } = require('../../helpers/Cache');
-
-const getAllRowsData = async () => {
-  try {
-    let rows = JSON.parse( GET_CACHE( `${ IcebarCommissionConfigAttr.SECTION }(all)` ) );
-  
-    if( !rows ) {
-      rows = await IcebarCommissionConfig.findAll();
-      SET_CACHE( `${ IcebarCommissionConfigAttr.SECTION }(all)`, JSON.stringify( rows ), 60000 );
-    }
-  
-    return rows;
-  } catch ( err ) {
-    return [];
-  }
-}
 
 const getIcebarCommissionConfig = async ( req = request, res = response ) => {
   try {
     const queries = req.query;
     
-    let rows = await getAllRowsData();
+    let rows = await IcebarCommissionConfig.findAll();
 
     rows = filterResultQueries( rows, queries, IcebarCommissionConfigAttr.filterable );
     rows = pagination( rows, queries, IcebarCommissionConfigAttr.filterable );
@@ -74,7 +58,6 @@ const createIcebarCommissionConfig = async ( req = request, res = response ) => 
     }
 
     const icebarCommissionConfig = await IcebarCommissionConfig.create( configBody );
-    CLEAR_CACHE( `${ IcebarCommissionConfigAttr.SECTION }(all)` );
 
     return res.json({
       ok: true,
@@ -129,12 +112,11 @@ const updateIcebarCommissionConfig = async ( req = request, res = response ) => 
     }
 
     await icebarCommissionConfig.update( configBody );
-    CLEAR_CACHE( `${ IcebarCommissionConfigAttr.SECTION }(all)` );
 
     return res.json({
-      ok: true,
-      icebarCommissionConfig,
-    })
+      ok:   true,
+      data: icebarCommissionConfig,
+    });
   } catch ( err ) {
     return res.status(400).json({
       ok:     false,
@@ -159,11 +141,10 @@ const deleteIcebarCommissionConfig = async ( req = request, res = response ) => 
     }
 
     await icebarCommissionConfig.destroy();
-    CLEAR_CACHE( `${ IcebarCommissionConfigAttr.SECTION }(all)` );
 
     return res.json({
-      ok: true,
-      icebarCommissionConfig,
+      ok:   true,
+      data: icebarCommissionConfig,
     });
   } catch ( err ) {
     return res.status(400).json({
@@ -195,7 +176,8 @@ const checkRangesAreAvailabe = async ( id_branch_company, min_range, max_range, 
       }
     });
 
-    return configs ? false : true;
+    return !!!configs;
+    // return configs ? false : true;
   } catch ( err ) {
     return false;
   }

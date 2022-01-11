@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const { param }  = require('express-validator');
 
-const { checkValidityFields, validateJWT } = require('../middlewares');
+const { checkValidityFields } = require('../middlewares');
 const { 
   userPostRules, 
   userPutRules, 
@@ -17,58 +17,46 @@ const {
   deleteUser,
 } = require('../controllers/User/UserController');
 const { 
-  userAddProfile, 
-  userRemoveProfile, 
-  getUserProfiles 
+userAddProfile, 
+userRemoveProfile, 
+getUserProfiles 
 } = require('../controllers/User/UserProfileController');
 const { getUserEmployee } = require('../controllers/User/UserEmployeeController');
 
 const router = Router();
 
-router.get('/', [
-  validateJWT
-], getUsers);
+router.get('/', [], getUsers);
 
-router.get('/:id/profiles', [
-  validateJWT
-], getUserProfiles);
+router.get('/:id/profiles', [], getUserProfiles);
 
-router.get('/:id/employee', [
-  validateJWT
-], getUserEmployee);
+router.get('/:id/employee', [], getUserEmployee);
 
 router.post('/',[
-  validateJWT,
   ...userPostRules,
   checkValidityFields
 ], createUser);
 
 router.put('/:id', [
-  validateJWT,
   ...userPutRules,
   checkValidityFields
 ], updateUser);
 
 router.put('/:id/change-password', [
-  validateJWT,
   ...userPasswordRules,
   checkValidityFields
 ], updateUserPassword);
 
 router.put('/:id/add-profile', [
-  validateJWT,
   ...userAddRemoveProfileRules,
   checkValidityFields
 ], userAddProfile);
 
 router.put('/:id/remove-profile', [
-  validateJWT,
   ...userAddRemoveProfileRules,
   checkValidityFields
 ], userRemoveProfile);
 
 router.delete('/:id', [
-  validateJWT,
   param('id', 'El usuario no existe').isNumeric(),
   checkValidityFields
 ], deleteUser);

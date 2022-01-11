@@ -1,9 +1,6 @@
 const { Router } = require('express');
 
-const { 
-  checkValidityFields,
-  validateJWT,
-} = require('../middlewares');
+const { checkValidityFields } = require('../middlewares');
 const { saleGetRules, topClientsGetRules } = require('../rules/SaleRules');
 
 const { 
@@ -18,42 +15,31 @@ const { getCommissions } = require('../controllers/Commission/CommissionControll
 const router = Router();
 
 router.get('/', [
-  validateJWT,
   ...saleGetRules,
   checkValidityFields,
 ], getSales);
 
 router.get('/commissions', [
-  validateJWT,
-  // cache( 300 ),
   ...saleGetRules,
   checkValidityFields,
 ], getCommissions);
 
 router.get('/top-clients', [
-  validateJWT,
-  // cache( 300 ),
   ...topClientsGetRules,
   checkValidityFields,
 ], getTopClients);
 
 router.get('/top-products', [
-  validateJWT,
-  // cache( 300 ),
   ...saleGetRules,
   checkValidityFields,
 ], getTopProducts);
 
 router.get('/top-type-product', [
-  validateJWT,
-  // cache( 300 ),
   ...saleGetRules,
   checkValidityFields,
 ], getTopTypeProducts);
 
 router.get('/top-branches', [
-  validateJWT,
-  // cache( 300 ),
   ...saleGetRules,
   checkValidityFields,
 ], getTopBranches);

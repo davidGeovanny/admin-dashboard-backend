@@ -1,8 +1,8 @@
 // @ts-check
 /**
- * @typedef { import('./types/commissions-type').WaterCommissionType }       WaterCommissionType
- * @typedef { import('./types/commissions-type').WaterCommissionConfigType } WaterCommissionConfigType
- * @typedef { import('./types/commissions-type').CommissionType }            CommissionType
+ * @typedef { import('./types/CommissionType').WaterCommissionType }       WaterCommissionType
+ * @typedef { import('./types/CommissionType').WaterCommissionConfigType } WaterCommissionConfigType
+ * @typedef { import('./types/CommissionType').CommissionType }            CommissionType
  */
 const {
   BranchCompany,

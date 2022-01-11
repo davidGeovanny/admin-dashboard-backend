@@ -1,12 +1,12 @@
 const { request, response } = require('express');
 const _ = require('underscore');
 
-const CommissionWater   = require('../../utils/commission-water');
-const CommissionIcebar  = require('../../utils/commission-icebar');
-const CommissionIcecube = require('../../utils/commission-icecube');
+const CommissionWater   = require('../../utils/CommissionWater');
+const CommissionIcebar  = require('../../utils/CommissionIcebar');
+const CommissionIcecube = require('../../utils/CommissionIcecube');
 
-const hieleraApi = require('../../helpers/HieleraApi');
 const { formatSequelizeError } = require('../../helpers/FormatSequelizeError');
+const hieleraApi = require('../../helpers/HieleraApi');
 
 const getCommissions = async ( req = request, res = response ) => {
   try {
@@ -18,13 +18,15 @@ const getCommissions = async ( req = request, res = response ) => {
       return res.status(400).json({
         ok:     false,
         msg:    resp.data.msg,
-        errors: {}
+        errors: []
       });
     }
 
-    const waterCommissions   = await getWaterCommission( resp.data.sales.filter( sale => sale.type_product.toLowerCase() === 'agua embotellada' && !sale.route_name.includes('PISO') ) );
-    const icebarCommissions  = await getIcebarCommissions( resp.data.sales.filter( sale => sale.type_product.toLowerCase() === 'barra' && !sale.route_name.includes('PISO') ) );
-    const icecubeCommissions = await getIcecubeCommissions( resp.data.sales.filter( sale => sale.type_product.toLowerCase() === 'cubo' && !sale.route_name.includes('PISO') ) );
+    const sales = resp.data.sales.filter( sale => !sale.route_name.includes('PISO') );
+
+    const waterCommissions   = await getWaterCommission( sales.filter( sale => sale.type_product.toLowerCase() === 'agua embotellada' ) );
+    const icebarCommissions  = await getIcebarCommissions( sales.filter( sale => sale.type_product.toLowerCase() === 'barra' ) );
+    const icecubeCommissions = await getIcecubeCommissions( sales.filter( sale => sale.type_product.toLowerCase() === 'cubo' ) );
 
     return res.json({
       ok: true,

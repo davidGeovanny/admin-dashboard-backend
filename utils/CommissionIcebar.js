@@ -1,10 +1,10 @@
 // @ts-check
 /**
- * @typedef { import('./types/commissions-type').IcebarCommissionType }       IcebarCommissionType
- * @typedef { import('./types/commissions-type').IcebarCommissionConfigType } IcebarCommissionConfigType
- * @typedef { import('./types/commissions-type').IcebarConfigType }           IcebarConfigType
- * @typedef { import('./types/commissions-type').IcebarSaleEmployeeType }     IcebarSaleEmployeeType
- * @typedef { import('./types/commissions-type').CommissionType }             CommissionType
+ * @typedef { import('./types/CommissionType').IcebarCommissionType }       IcebarCommissionType
+ * @typedef { import('./types/CommissionType').IcebarCommissionConfigType } IcebarCommissionConfigType
+ * @typedef { import('./types/CommissionType').IcebarConfigType }           IcebarConfigType
+ * @typedef { import('./types/CommissionType').IcebarSaleEmployeeType }     IcebarSaleEmployeeType
+ * @typedef { import('./types/CommissionType').CommissionType }             CommissionType
  */
 const {
   BranchCompany,

@@ -1,5 +1,5 @@
 /**
- * @typedef { import('../utils/types/api-section-types').ApiSection } ApiSection
+ * @typedef { import('../utils/types/ApiSectionType').ApiSection } ApiSection
  */
 
 const mcache = require('memory-cache');
@@ -58,7 +58,7 @@ const CLEAR_CACHE = ( key ) => {
 
 /**
  * Delete a cache section.
- * @param { ApiSection } section
+ * @param { string } section
  */
 const CLEAR_SECTION_CACHE = ( section ) => {
   try {

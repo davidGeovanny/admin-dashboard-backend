@@ -8,28 +8,12 @@ const IcecubeCommissionConfigAttr = require('../../utils/classes/IcecubeCommissi
 const { formatSequelizeError } = require('../../helpers/FormatSequelizeError');
 const { pagination }           = require('../../helpers/Pagination');
 const { filterResultQueries }  = require('../../helpers/Filter');
-const { GET_CACHE, SET_CACHE, CLEAR_CACHE } = require('../../helpers/Cache');
-
-const getAllRowsData = async () => {
-  try {
-    let rows = JSON.parse( GET_CACHE( `${ IcecubeCommissionConfigAttr.SECTION }(all)` ) );
-  
-    if( !rows ) {
-      rows = await IcecubeCommissionConfig.findAll();
-      SET_CACHE( `${ IcecubeCommissionConfigAttr.SECTION }(all)`, JSON.stringify( rows ), 60000 );
-    }
-  
-    return rows;
-  } catch ( err ) {
-    return [];
-  }
-}
 
 const getIcecubeCommissionConfig = async ( req = request, res = response ) => {
   try {
     const queries = req.query;
     
-    let rows = await getAllRowsData();
+    let rows = await IcecubeCommissionConfig.findAll();
 
     rows = filterResultQueries( rows, queries, IcecubeCommissionConfigAttr.filterable );
     rows = pagination( rows, queries, IcecubeCommissionConfigAttr.filterable );
@@ -66,7 +50,6 @@ const createIcecubeCommissionConfig = async ( req = request, res = response ) =>
     });
 
     const icecubeCommissionConfig = await IcecubeCommissionConfig.create( configBody );
-    CLEAR_CACHE( `${ IcecubeCommissionConfigAttr.SECTION }(all)` );
 
     return res.status(201).json({
       ok:   true,
@@ -96,7 +79,6 @@ const deleteIcecubeCommissionConfig = async ( req = request, res = response ) =>
     }
 
     await icecubeCommissionConfig.destroy();
-    CLEAR_CACHE( `${ IcecubeCommissionConfigAttr.SECTION }(all)` );
 
     return res.json({
       ok:   true,

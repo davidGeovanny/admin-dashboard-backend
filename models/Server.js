@@ -1,7 +1,8 @@
-const express   = require('express');
-const cors      = require('cors');
-const rateLimit = require('express-rate-limit');
-const db        = require('../db/Connection');
+const express         = require('express');
+const cors            = require('cors');
+const rateLimit       = require('express-rate-limit');
+const db              = require('../db/Connection');
+const { validateJWT } = require('../middlewares/ValidateJWT');
 
 /** Associate models */
 // require('./index');
@@ -37,7 +38,7 @@ class Server {
     /** DB connection  */
     this.dbConnection();
 
-    this.middlewares();
+    this.globalMiddlewares();
 
     /** API Rest routes */
     this.routes();
@@ -52,7 +53,7 @@ class Server {
     }
   }
 
-  middlewares() {
+  globalMiddlewares() {
     /** CORS */
     this.app.use( cors() );
 
@@ -62,8 +63,11 @@ class Server {
 
   routes() {
     this.app.use( this.apiLimiter );
+    /** Public routes */
+    this.app.use( this.paths.auth, require('../routes/Auth') );
+    /** Private routes */
+    this.app.use( validateJWT );
     this.app.use( this.paths.cache,          require('../routes/Cache') );
-    this.app.use( this.paths.auth,           require('../routes/Auth') );
     this.app.use( this.paths.user,           require('../routes/Users') );
     this.app.use( this.paths.profile,        require('../routes/Profiles') );
     this.app.use( this.paths.employee,       require('../routes/Employees') );

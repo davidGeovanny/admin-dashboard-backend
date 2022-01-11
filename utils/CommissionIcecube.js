@@ -1,8 +1,8 @@
 // @ts-check
 /**
- * @typedef { import('./types/commissions-type').IcecubeCommissionType }       IcecubeCommissionType
- * @typedef { import('./types/commissions-type').IcecubeCommissionConfigType } IcecubeCommissionConfigType
- * @typedef { import('./types/commissions-type').CommissionType }              CommissionType
+ * @typedef { import('./types/CommissionType').IcecubeCommissionType }       IcecubeCommissionType
+ * @typedef { import('./types/CommissionType').IcecubeCommissionConfigType } IcecubeCommissionConfigType
+ * @typedef { import('./types/CommissionType').CommissionType }              CommissionType
  */
 const {
   BranchCompany,

@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const { param }  = require('express-validator');
 
-const { checkValidityFields, validateJWT }    = require('../middlewares');
+const { checkValidityFields } = require('../middlewares');
 const { employeePostRules, employeePutRules } = require('../rules/EmployeeRules');
 
 const { 
@@ -14,28 +14,21 @@ const { getEmployeeUsers } = require('../controllers/Employee/EmployeeUserContro
 
 const router = Router();
 
-router.get('/', [
-  validateJWT
-], getEmployees);
+router.get('/', [], getEmployees);
 
-router.get('/:id/users', [
-  validateJWT
-], getEmployeeUsers);
+router.get('/:id/users', [], getEmployeeUsers);
 
 router.post('/', [
-  validateJWT,
   ...employeePostRules,
   checkValidityFields
 ], createEmployee);
 
 router.put('/:id', [
-  validateJWT,
   ...employeePutRules,
   checkValidityFields
 ], updateEmployee);
 
 router.delete('/:id', [
-  validateJWT,
   param('id', 'El empleado no existe').isNumeric(),
   checkValidityFields
 ], deleteEmployee);

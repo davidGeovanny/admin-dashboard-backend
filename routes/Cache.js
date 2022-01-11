@@ -2,12 +2,11 @@ const { Router }     = require('express');
 const { query }      = require('express-validator');
 const { clearCache } = require('../controllers/Cache/CacheController');
 
-const { validateJWT, checkValidityFields } = require('../middlewares');
+const { checkValidityFields } = require('../middlewares');
 
 const router = Router();
 
 router.delete('/', [
-  validateJWT,
   query('key')
     .optional()
     .notEmpty()

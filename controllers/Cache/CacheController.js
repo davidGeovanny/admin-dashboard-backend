@@ -1,5 +1,5 @@
 const { response, request } = require('express');
-const { CLEAR_CACHE } = require('../../helpers/Cache');
+const { CLEAR_CACHE }       = require('../../helpers/Cache');
 
 const clearCache = async ( req = request, res = response ) => {
   try {
@@ -8,7 +8,7 @@ const clearCache = async ( req = request, res = response ) => {
     CLEAR_CACHE( key );
 
     return res.json({
-      ok: true,
+      ok:   true,
       msg: 'Cache deleted',
     });
   } catch ( err ) {

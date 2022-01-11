@@ -1,5 +1,5 @@
 // @ts-check
-/** @typedef { import('../types/api-section-types').ApiSection } ApiSection */
+/** @typedef { import('../types/ApiSectionType').ApiSection } ApiSection */
 
 class EmployeeAttr {
   /** @type { ApiSection } */

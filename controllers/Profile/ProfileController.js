@@ -8,28 +8,12 @@ const ProfileAttr = require('../../utils/classes/ProfileAttr');
 const { formatSequelizeError } = require('../../helpers/FormatSequelizeError');
 const { pagination }           = require('../../helpers/Pagination');
 const { filterResultQueries }  = require('../../helpers/Filter');
-const { GET_CACHE, SET_CACHE, CLEAR_CACHE } = require('../../helpers/Cache');
-
-const getAllRowsData = async () => {
-  try {
-    let rows = JSON.parse( GET_CACHE( `${ ProfileAttr.SECTION }(all)` ) );
-  
-    if( !rows ) {
-      rows = await Profile.findAll();
-      SET_CACHE( `${ ProfileAttr.SECTION }(all)`, JSON.stringify( rows ), 60000 );
-    }
-  
-    return rows;
-  } catch ( err ) {
-    return [];
-  }
-}
 
 const getProfiles = async ( req = request, res = response ) => {
   try {
     const queries = req.query;
     
-    let rows = await getAllRowsData();
+    let rows = await Profile.findAll();
 
     rows = filterResultQueries( rows, queries, ProfileAttr.filterable );
     rows = pagination( rows, queries, ProfileAttr.filterable );
@@ -52,7 +36,6 @@ const createProfile = async ( req = request, res = response ) => {
 
   try {
     const profile = await Profile.create({ ...profileBody, status: ProfileAttr.STATUS[0] });
-    CLEAR_CACHE( `${ ProfileAttr.SECTION }(all)` );
     
     if( profile ) {
       return res.status(201).json({
@@ -115,8 +98,6 @@ const updateProfile = async ( req = request, res = response ) => {
     }
 
     await profile.update( profileBody );
-    CLEAR_CACHE( `${ ProfileAttr.SECTION }(all)` );
-    CLEAR_CACHE( `${ ProfileAttr.SECTION }(${ id })` );
 
     return res.json({
       ok:   true,
@@ -154,8 +135,6 @@ const deleteProfile = async ( req = request, res = response ) => {
     }
 
     await profile.destroy();
-    CLEAR_CACHE( `${ ProfileAttr.SECTION }(all)` );
-    CLEAR_CACHE( `${ ProfileAttr.SECTION }(${ id })` );
 
     return res.json({
       ok:   true,

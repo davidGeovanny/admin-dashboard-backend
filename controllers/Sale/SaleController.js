@@ -1,8 +1,8 @@
 /**
- * @typedef { import('../../utils/types/sales-type').RespSalesType } RespSalesType
- * @typedef { import('../../utils/interfaces/sales-interface').Sale } Sale
- * @typedef { import('../../utils/interfaces/sales-interface').TopSale } TopSale
- * @typedef { import('../../utils/interfaces/sales-interface').RespTopSale } RespTopSale
+ * @typedef { import('../../utils/types/SaleType').RespSalesType } RespSalesType
+ * @typedef { import('../../utils/interfaces/SaleInterface').Sale } Sale
+ * @typedef { import('../../utils/interfaces/SaleInterface').TopSale } TopSale
+ * @typedef { import('../../utils/interfaces/SaleInterface').RespTopSale } RespTopSale
  */
 const { request, response } = require('express');
 const _ = require('underscore');
@@ -20,7 +20,7 @@ const getSales = async ( req = request, res = response ) => {
   try {
     const queries = req.query;
     const { initDate, finalDate } = queries;
-    const key = `__sales__between__${ initDate }_${ finalDate }`;
+    const key = `${ SaleAttr.SECTION }(${ initDate })(${ finalDate })`;
     
     let rows = JSON.parse( GET_CACHE( key ) );
 

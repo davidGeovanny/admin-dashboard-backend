@@ -1,34 +1,25 @@
 const { response, request } = require('express');
 const { Op } = require('sequelize');
 
-const { User, Profile, ProfileUser, Employee } = require('../../models');
-const UserAttr = require('../../utils/classes/UserAttr');
-const ProfileAttr = require('../../utils/classes/ProfileAttr');
+const { User, Profile, ProfileUser } = require('../../models');
 
-const { GET_CACHE, SET_CACHE } = require('../../helpers/Cache');
 const { formatSequelizeError } = require('../../helpers/FormatSequelizeError');
 
 const getUserProfiles = async ( req = request, res = response ) => {
   try {
     const { id } = req.params;
-    const key    = `${ UserAttr.SECTION }(${id}).${ ProfileAttr.SECTION }`;
 
-    let row = JSON.parse( GET_CACHE( key ) );
-
-    if( !row ) {
-      row = await User.findByPk( id, {
-        include: [
-          {
-            model: Profile.scope( 'activeProfileScope' ),
-            as: 'profiles',
-            through: {
-              attributes: []
-            }
+    const row = await User.findByPk( id, {
+      include: [
+        {
+          model: Profile.scope( 'activeProfileScope' ),
+          as: 'profiles',
+          through: {
+            attributes: []
           }
-        ],
-      });
-      SET_CACHE( key, JSON.stringify( row ), 60000 );
-    }
+        }
+      ],
+    });
 
     if( !row ) {
       return res.status(404).json({
@@ -98,7 +89,6 @@ const userAddProfile = async ( req = request, res = response ) => {
     }
 
     await user.addProfile( id_profile );
-    CLEAR_CACHE(`${ UserAttr.SECTION }(${ id })`);
 
     return res.json({
       ok:   true,
@@ -150,7 +140,6 @@ const userRemoveProfile = async ( req = request, res = response ) => {
     }
 
     await profile_user.destroy();
-    CLEAR_CACHE(`${ UserAttr.SECTION }(${ id })`);
 
     return res.json({
       ok:   true,

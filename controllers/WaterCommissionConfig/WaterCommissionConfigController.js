@@ -3,38 +3,17 @@ const { Op } = require('sequelize');
 const _      = require('underscore');
 
 const { WaterCommissionConfig } = require('../../models');
-
-const { formatSequelizeError } = require('../../helpers/FormatSequelizeError');
-const { pagination }           = require('../../helpers/Pagination');
-const { filterResultQueries }  = require('../../helpers/Filter');
-const { 
-  GET_CACHE, 
-  SET_CACHE, 
-  CLEAR_CACHE, 
-  CLEAR_SECTION_CACHE 
-} = require('../../helpers/Cache');
 const WaterCommissionConfigAttr = require('../../utils/classes/WaterCommissionConfigAttr');
 
-const getAllRowsData = async () => {
-  try {
-    let rows = JSON.parse( GET_CACHE( `${ WaterCommissionConfigAttr.SECTION }(all)` ) );
-  
-    if( !rows ) {
-      rows = await WaterCommissionConfig.findAll();
-      SET_CACHE( `${ WaterCommissionConfigAttr.SECTION }(all)`, JSON.stringify( rows ), 60000 );
-    }
-  
-    return rows;
-  } catch ( err ) {
-    return [];
-  }
-}
+const { filterResultQueries }  = require('../../helpers/Filter');
+const { pagination }           = require('../../helpers/Pagination');
+const { formatSequelizeError } = require('../../helpers/FormatSequelizeError');
 
 const getWaterCommissionConfig = async ( req = request, res = response ) => {
   try {
     const queries = req.query;
     
-    let rows = await getAllRowsData();
+    let rows = await WaterCommissionConfig.findAll();
 
     rows = filterResultQueries( rows, queries, WaterCommissionConfigAttr.filterable );
     rows = pagination( rows, queries, WaterCommissionConfigAttr.filterable );
@@ -70,7 +49,6 @@ const createWaterCommissionConfig = async ( req = request, res = response ) => {
     });
 
     const waterCommissionConfig = await WaterCommissionConfig.create( configBody );
-    CLEAR_CACHE( `${ WaterCommissionConfigAttr.SECTION }(all)` );
 
     return res.status(201).json({
       ok:   true,
@@ -100,7 +78,6 @@ const deleteWaterCommissionConfig = async ( req = request, res = response ) => {
     }
 
     await waterCommissionConfig.destroy();
-    CLEAR_SECTION_CACHE('water_commission_configs');
 
     return res.json({
       ok: true,

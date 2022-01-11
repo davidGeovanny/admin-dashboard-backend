@@ -8,28 +8,12 @@ const EmployeeAttr       = require('../../utils/classes/EmployeeAttr');
 const { formatSequelizeError } = require('../../helpers/FormatSequelizeError');
 const { pagination }           = require('../../helpers/Pagination');
 const { filterResultQueries }  = require('../../helpers/Filter');
-const { GET_CACHE, SET_CACHE, CLEAR_CACHE } = require('../../helpers/Cache');
-
-const getAllRowsData = async () => {
-  try {
-    let rows = JSON.parse( GET_CACHE( `${ EmployeeAttr.SECTION }(all)` ) );
-  
-    if( !rows ) {
-      rows = await Employee.findAll();
-      SET_CACHE( `${ EmployeeAttr.SECTION }(all)`, JSON.stringify( rows ), 60000 );
-    }
-  
-    return rows;
-  } catch ( err ) {
-    return [];
-  }
-}
 
 const getEmployees = async ( req = request, res = response ) => {
   try {
     const queries = req.query;
     
-    let rows = await getAllRowsData();
+    let rows = await Employee.findAll();
 
     rows = filterResultQueries( rows, queries, EmployeeAttr.filterable );
     rows = pagination( rows, queries, EmployeeAttr.filterable );
@@ -58,7 +42,6 @@ const createEmployee = async ( req = request, res = response ) => {
 
   try {
     const employee = await Employee.create( employeeBody );
-    CLEAR_CACHE( `${ EmployeeAttr.SECTION }(all)` );
   
     return res.status(201).json({
       ok:   true,
@@ -95,8 +78,6 @@ const updateEmployee = async ( req = request, res = response ) => {
     }
 
     await employee.update( employeeBody );
-    CLEAR_CACHE( `${ EmployeeAttr.SECTION }(all)` );
-    CLEAR_CACHE( `${ EmployeeAttr.SECTION }(${ id })` );
 
     return res.json({
       ok:   true,
@@ -134,9 +115,6 @@ const deleteEmployee = async ( req = request, res = response ) => {
         }
       }
     });
-
-    CLEAR_CACHE( `${ EmployeeAttr.SECTION }(all)` );
-    CLEAR_CACHE( `${ EmployeeAttr.SECTION }(${ id })` );
 
     return res.json({
       ok: true,

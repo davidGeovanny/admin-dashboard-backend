@@ -1,4 +1,4 @@
-import { SalesType } from '../interfaces/sales-interface';
+import { SalesType } from '../interfaces/SaleInterface';
 
 export type RespSalesType = {
   data: | { ok: false, msg: string }
