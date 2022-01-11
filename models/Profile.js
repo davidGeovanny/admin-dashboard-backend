@@ -1,7 +1,7 @@
 const db = require('../db/Connection');
 const { DataTypes } = require('sequelize');
 
-const { profileStatus } = require('../data/static-data');
+const ProfileAttr = require('../utils/classes/ProfileAttr');
 
 const Profile = db.define('Profile', {
   profile: {
@@ -23,10 +23,10 @@ const Profile = db.define('Profile', {
     defaultValue: 0,
   },
   status: {
-    type    : DataTypes.ENUM( profileStatus ),
+    type    : DataTypes.ENUM( ProfileAttr.STATUS ),
     validate: {
       isIn: {
-        args: [ profileStatus ],
+        args: [ ProfileAttr.STATUS ],
         msg : 'Estatus no es válido'
       },
     }
@@ -51,7 +51,7 @@ Profile.addScope('activeProfileScope', {
     exclude: ['default', 'deleted_at'],
   },
   where: {
-    status: profileStatus[0]
+    status: ProfileAttr.STATUS[0]
   }
 });
 

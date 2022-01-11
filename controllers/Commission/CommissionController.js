@@ -6,7 +6,7 @@ const CommissionIcebar  = require('../../utils/commission-icebar');
 const CommissionIcecube = require('../../utils/commission-icecube');
 
 const hieleraApi = require('../../helpers/HieleraApi');
-const { formatSequelizeError } = require('../../helpers/format-sequelize-error');
+const { formatSequelizeError } = require('../../helpers/FormatSequelizeError');
 
 const getCommissions = async ( req = request, res = response ) => {
   try {

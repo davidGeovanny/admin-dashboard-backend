@@ -4,26 +4,24 @@ const _      = require('underscore');
 
 const { WaterCommissionConfig } = require('../../models');
 
-const { attrWaterCommissionConfig } = require('../../data/AttrWaterCommissionConfig');
-const { formatSequelizeError }      = require('../../helpers/format-sequelize-error');
-const { pagination }                = require('../../helpers/Pagination');
-const { filterResultQueries }       = require('../../helpers/Filter');
+const { formatSequelizeError } = require('../../helpers/FormatSequelizeError');
+const { pagination }           = require('../../helpers/Pagination');
+const { filterResultQueries }  = require('../../helpers/Filter');
 const { 
   GET_CACHE, 
   SET_CACHE, 
   CLEAR_CACHE, 
   CLEAR_SECTION_CACHE 
 } = require('../../helpers/Cache');
+const WaterCommissionConfigAttr = require('../../utils/classes/WaterCommissionConfigAttr');
 
 const getAllRowsData = async () => {
   try {
-    const { keys } = attrWaterCommissionConfig;
-    
-    let rows = JSON.parse( GET_CACHE( keys.all ) );
+    let rows = JSON.parse( GET_CACHE( `${ WaterCommissionConfigAttr.SECTION }(all)` ) );
   
     if( !rows ) {
       rows = await WaterCommissionConfig.findAll();
-      SET_CACHE( keys.all, JSON.stringify( rows ), 60000 );
+      SET_CACHE( `${ WaterCommissionConfigAttr.SECTION }(all)`, JSON.stringify( rows ), 60000 );
     }
   
     return rows;
@@ -34,13 +32,12 @@ const getAllRowsData = async () => {
 
 const getWaterCommissionConfig = async ( req = request, res = response ) => {
   try {
-    const { keys, list } = attrWaterCommissionConfig;
     const queries = req.query;
     
     let rows = await getAllRowsData();
 
-    rows = filterResultQueries( rows, queries, list );
-    rows = pagination( rows, queries, list );
+    rows = filterResultQueries( rows, queries, WaterCommissionConfigAttr.filterable );
+    rows = pagination( rows, queries, WaterCommissionConfigAttr.filterable );
   
     return res.json({
       ok: true,
@@ -73,7 +70,7 @@ const createWaterCommissionConfig = async ( req = request, res = response ) => {
     });
 
     const waterCommissionConfig = await WaterCommissionConfig.create( configBody );
-    CLEAR_CACHE( attrWaterCommissionConfig.keys.all );
+    CLEAR_CACHE( `${ WaterCommissionConfigAttr.SECTION }(all)` );
 
     return res.status(201).json({
       ok:   true,

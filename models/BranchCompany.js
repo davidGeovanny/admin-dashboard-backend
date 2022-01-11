@@ -1,7 +1,8 @@
 const db = require('../db/Connection');
 const { DataTypes, Op } = require('sequelize');
 
-const { branchCompanyStatus } = require('../data/static-data');
+const BranchCompanyAttr = require('../utils/classes/BranchCompanyAttr');
+const { toUpperCaseWords } = require('../helpers/Capitalize');
 
 const BranchCompany = db.define('BranchCompany', {
   branch: {
@@ -19,10 +20,10 @@ const BranchCompany = db.define('BranchCompany', {
     }
   },
   status: {
-    type: DataTypes.ENUM( branchCompanyStatus ),
+    type: DataTypes.ENUM( BranchCompanyAttr.STATUS ),
     validate: {
       isIn: {
-        args: [ branchCompanyStatus ],
+        args: [ BranchCompanyAttr.STATUS ],
         msg : 'Estatus no válido'
       },
     }
@@ -49,8 +50,18 @@ BranchCompany.addScope('activeBranchesScope', {
   },
   where: {
     status: {
-      [ Op.eq ] : branchCompanyStatus[0]
+      [ Op.eq ] : BranchCompanyAttr.STATUS[0]
     }
+  }
+});
+
+BranchCompany.beforeCreate( ( branchCompany ) => {
+  branchCompany.branch = toUpperCaseWords( branchCompany.branch );
+});
+
+BranchCompany.beforeUpdate( ( branchCompany ) => {
+  if( !!branchCompany.branch ) {
+    branchCompany.branch = toUpperCaseWords( branchCompany.branch );
   }
 });
 

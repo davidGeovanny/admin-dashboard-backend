@@ -7,17 +7,17 @@
 const { request, response } = require('express');
 const _ = require('underscore');
 
-const { attrSales } = require('../../data/AttrSale');
-const { formatSequelizeError } = require('../../helpers/format-sequelize-error');
-const { pagination }           = require('../../helpers/Pagination');
+const SaleAttr = require('../../utils/classes/SaleAttr');
+
 const { GET_CACHE, SET_CACHE } = require('../../helpers/Cache');
+const { formatSequelizeError } = require('../../helpers/FormatSequelizeError');
+const { pagination }           = require('../../helpers/Pagination');
 const { filterResultQueries }  = require('../../helpers/Filter');
-const { toTitleCase } = require('../../helpers/Capitalize');
+const { toUpperCaseWords }     = require('../../helpers/Capitalize');
 const hieleraApi = require('../../helpers/HieleraApi');
 
 const getSales = async ( req = request, res = response ) => {
   try {
-    const { list } = attrSales;
     const queries = req.query;
     const { initDate, finalDate } = queries;
     const key = `__sales__between__${ initDate }_${ finalDate }`;
@@ -39,8 +39,8 @@ const getSales = async ( req = request, res = response ) => {
       rows = resp.data.sales;
     }
 
-    rows = filterResultQueries( rows, queries, list );
-    rows = pagination( rows, queries, list );
+    rows = filterResultQueries( rows, queries, SaleAttr.filterable );
+    rows = pagination( rows, queries, SaleAttr.filterable );
   
     return res.json({
       ok: true,
@@ -89,7 +89,7 @@ const getTopFromSales = ( sales, key, fromQuantity, extraKeys = [] ) => {
         };
 
         extraKeys.forEach( k => {
-          data[ k ] = ( typeof sale[ k ] === 'string' ) ? toTitleCase( sale[ k ] ) : sale[ k ]
+          data[ k ] = ( typeof sale[ k ] === 'string' ) ? toUpperCaseWords( sale[ k ] ) : sale[ k ]
         });
 
         map.set( minusKey, data );
@@ -99,7 +99,7 @@ const getTopFromSales = ( sales, key, fromQuantity, extraKeys = [] ) => {
     
     const array = Array.from( map, ([ k, value ]) => ({
       ...value,
-      [ key ]:   ( typeof k === 'string' ) ? toTitleCase( k ) : k,
+      [ key ]:   ( typeof k === 'string' ) ? toUpperCaseWords( k ) : k,
       frequency: parseFloat( value.frequency.toFixed( 3 ) ),
       money:     parseFloat( value.money.toFixed( 3 ) ),
     }));

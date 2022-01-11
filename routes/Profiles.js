@@ -9,8 +9,8 @@ const {
   getProfiles, 
   updateProfile, 
   deleteProfile, 
-  getSpecificProfile
 } = require('../controllers/Profile/ProfileController');
+const { getProfileUsers } = require('../controllers/Profile/ProfileUserController');
 
 const router = Router();
 
@@ -18,9 +18,9 @@ router.get('/', [
   validateJWT
 ], getProfiles);
 
-router.get('/:id', [
+router.get('/:id/users', [
   validateJWT
-], getSpecificProfile);
+], getProfileUsers);
 
 router.post('/', [
   validateJWT,

@@ -9,8 +9,8 @@ const {
   createEmployee, 
   updateEmployee, 
   deleteEmployee,
-  getSpecificEmployee
 } = require('../controllers/Employee/EmployeeController');
+const { getEmployeeUsers } = require('../controllers/Employee/EmployeeUserController');
 
 const router = Router();
 
@@ -18,9 +18,9 @@ router.get('/', [
   validateJWT
 ], getEmployees);
 
-router.get('/:id', [
+router.get('/:id/users', [
   validateJWT
-], getSpecificEmployee);
+], getEmployeeUsers);
 
 router.post('/', [
   validateJWT,

@@ -3,27 +3,20 @@ const { Op, Sequelize }     = require('sequelize');
 const _ = require('underscore');
 
 const { IcebarCommissionConfig } = require('../../models');
+const IcebarCommissionConfigAttr = require('../../utils/classes/IcebarCommissionConfigAttr');
 
-const { attrIcebarCommissionConfig } = require('../../data/AttrIcebarCommissionConfig');
-const { formatSequelizeError } = require('../../helpers/format-sequelize-error');
+const { formatSequelizeError } = require('../../helpers/FormatSequelizeError');
 const { pagination }           = require('../../helpers/Pagination');
 const { filterResultQueries }  = require('../../helpers/Filter');
-const { 
-  GET_CACHE, 
-  SET_CACHE, 
-  CLEAR_CACHE, 
-  CLEAR_SECTION_CACHE 
-} = require('../../helpers/Cache');
+const { GET_CACHE, SET_CACHE, CLEAR_CACHE } = require('../../helpers/Cache');
 
 const getAllRowsData = async () => {
   try {
-    const { keys } = attrIcebarCommissionConfig;
-    
-    let rows = JSON.parse( GET_CACHE( keys.all ) );
+    let rows = JSON.parse( GET_CACHE( `${ IcebarCommissionConfigAttr.SECTION }(all)` ) );
   
     if( !rows ) {
       rows = await IcebarCommissionConfig.findAll();
-      SET_CACHE( keys.all, JSON.stringify( rows ), 60000 );
+      SET_CACHE( `${ IcebarCommissionConfigAttr.SECTION }(all)`, JSON.stringify( rows ), 60000 );
     }
   
     return rows;
@@ -34,13 +27,12 @@ const getAllRowsData = async () => {
 
 const getIcebarCommissionConfig = async ( req = request, res = response ) => {
   try {
-    const { list } = attrIcebarCommissionConfig;
     const queries = req.query;
     
     let rows = await getAllRowsData();
 
-    rows = filterResultQueries( rows, queries, list );
-    rows = pagination( rows, queries, list );
+    rows = filterResultQueries( rows, queries, IcebarCommissionConfigAttr.filterable );
+    rows = pagination( rows, queries, IcebarCommissionConfigAttr.filterable );
   
     return res.json({
       ok: true,
@@ -82,7 +74,7 @@ const createIcebarCommissionConfig = async ( req = request, res = response ) => 
     }
 
     const icebarCommissionConfig = await IcebarCommissionConfig.create( configBody );
-    CLEAR_CACHE( attrIcebarCommissionConfig.keys.all );
+    CLEAR_CACHE( `${ IcebarCommissionConfigAttr.SECTION }(all)` );
 
     return res.json({
       ok: true,
@@ -137,7 +129,7 @@ const updateIcebarCommissionConfig = async ( req = request, res = response ) => 
     }
 
     await icebarCommissionConfig.update( configBody );
-    CLEAR_SECTION_CACHE('icebar_commission_configs');
+    CLEAR_CACHE( `${ IcebarCommissionConfigAttr.SECTION }(all)` );
 
     return res.json({
       ok: true,
@@ -167,7 +159,7 @@ const deleteIcebarCommissionConfig = async ( req = request, res = response ) => 
     }
 
     await icebarCommissionConfig.destroy();
-    CLEAR_SECTION_CACHE('icebar_commission_configs');
+    CLEAR_CACHE( `${ IcebarCommissionConfigAttr.SECTION }(all)` );
 
     return res.json({
       ok: true,

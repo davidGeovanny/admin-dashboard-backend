@@ -1,7 +1,8 @@
 const db = require('../db/Connection');
 const { DataTypes } = require('sequelize');
 
-const { userGenders } = require('../data/static-data');
+const { toUpperCaseWords } = require('../helpers/Capitalize');
+const EmployeeAttr = require('../utils/classes/EmployeeAttr');
 
 const Employee = db.define('Employee', {
   name: {
@@ -47,12 +48,12 @@ const Employee = db.define('Employee', {
     }
   },
   gender: {
-    type      : DataTypes.ENUM( userGenders ),
+    type      : DataTypes.ENUM( EmployeeAttr.GENDERS ),
     allowNull : false,
     validate  : {
       isIn: {
-        args:[ userGenders ],
-        msg : 'Género no válido. Géneros disponibles: ' + userGenders.join(' | ')
+        args:[ EmployeeAttr.GENDERS ],
+        msg : 'Género no válido. Géneros disponibles: ' + EmployeeAttr.GENDERS.join(' | ')
       },
     }
   },
@@ -80,6 +81,31 @@ const Employee = db.define('Employee', {
 Employee.addScope('defaultScope', {
   attributes: {
     exclude: ['deleted_at']
+  }
+});
+
+Employee.beforeCreate( ( employee ) => {
+  employee.name            = toUpperCaseWords( employee.name );
+  employee.first_lastname  = toUpperCaseWords( employee.first_lastname );
+  employee.second_lastname = toUpperCaseWords( employee.second_lastname );
+  employee.email           = employee.email.toLowerCase();
+});
+
+Employee.beforeUpdate( ( employee ) => {
+  if( !!employee.name ) {
+    employee.name = toUpperCaseWords( employee.name );
+  }
+
+  if( !!employee.first_lastname ) {
+    employee.first_lastname = toUpperCaseWords( employee.first_lastname );
+  }
+
+  if( !!employee.second_lastname ) {
+    employee.second_lastname = toUpperCaseWords( employee.second_lastname );
+  }
+
+  if( !!employee.email ) {
+    employee.email = employee.email.toLowerCase();
   }
 });
 

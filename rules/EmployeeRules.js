@@ -1,6 +1,6 @@
 const { check, param }        = require('express-validator');
 const { checkEmailAvailable } = require('../middlewares');
-const { userGenders } = require('../data/static-data');
+const EmployeeAttr = require('../utils/classes/EmployeeAttr');
 
 const employeePostRules = [
   /** Fields */
@@ -20,8 +20,8 @@ const employeePostRules = [
     .isString()
     .withMessage('El apellido materno proporcionado no es válido'),
   check('gender')
-    .isIn( userGenders )
-    .withMessage('Género no válido. Géneros disponibles: ' + userGenders.join(', ')),
+    .isIn( EmployeeAttr.GENDERS )
+    .withMessage('Género no válido. Géneros disponibles: ' + EmployeeAttr.GENDERS.join(', ')),
   check('email')
     .notEmpty()
     .withMessage('Necesita proporcionar un correo electrónico')
@@ -54,8 +54,8 @@ const employeePutRules = [
     .withMessage('El apellido materno proporcionado no es válido'),
   check('gender')
     .optional()
-    .isIn( userGenders )
-    .withMessage('Género no válido. Géneros disponibles: ' + userGenders.join(', ')),
+    .isIn( EmployeeAttr.GENDERS )
+    .withMessage('Género no válido. Géneros disponibles: ' + EmployeeAttr.GENDERS.join(', ')),
   check('email')
     .optional()
     .isEmail()

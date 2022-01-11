@@ -1,6 +1,6 @@
 const { check, param }          = require('express-validator');
 const { checkProfileAvailable } = require('../middlewares');
-const { profileStatus } = require('../data/static-data');
+const ProfileAttr = require('../utils/classes/ProfileAttr');
 
 /** Post Request */
 const profilePostRules = [
@@ -34,7 +34,7 @@ const profilePutRules = [
     .toBoolean(),
   check('status')
     .optional()
-    .isIn( profileStatus )
+    .isIn( ProfileAttr.STATUS )
     .withMessage('Error cambiando el estatus del perfil')
 ];
 

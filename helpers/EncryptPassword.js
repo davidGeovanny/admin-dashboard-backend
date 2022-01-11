@@ -1,5 +1,10 @@
 const bcrypt = require('bcryptjs');
 
+/**
+ * Encrypt the password.
+ * @param { string } password Password to encrypt.
+ * @returns Returns the password encrypted.
+ */
 const encryptPassword = ( password = '' ) => {
   try {
     const salt     = bcrypt.genSaltSync();

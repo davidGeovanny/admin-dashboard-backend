@@ -1,6 +1,6 @@
 const { check, param } = require('express-validator');
 const { checkBranchCompanyAvailable } = require('../middlewares');
-const { branchCompanyStatus } = require('../data/static-data');
+const BranchCompanyAttr = require('../utils/classes/BranchCompanyAttr');
 
 const branchPostRules = [
   check('branch')
@@ -24,7 +24,7 @@ const branchPutRules = [
     .custom( checkBranchCompanyAvailable ),
   check('status')
     .optional()
-    .isIn( branchCompanyStatus )
+    .isIn( BranchCompanyAttr.STATUS )
     .withMessage('Estatus no válido'),
 ];
 

@@ -11,7 +11,7 @@ const {
   IcebarCommissionConfig,
 } = require('../models');
 
-const { toTitleCase } = require('../helpers/Capitalize');
+const { toUpperCaseWords } = require('../helpers/Capitalize');
 
 class CommissionIcebar {
   constructor() {
@@ -174,8 +174,8 @@ class CommissionIcebar {
   getCommissionsToArray = () => {
     const array = Array.from( this._commissions, ( [ key, value ] ) => {
       return {
-        employee  : toTitleCase( key ),
-        branch    : toTitleCase( value.branch ),
+        employee  : toUpperCaseWords( key ),
+        branch    : toUpperCaseWords( value.branch ),
         commission: parseFloat( value.commission.toFixed( 2 ) ),
       };
     });

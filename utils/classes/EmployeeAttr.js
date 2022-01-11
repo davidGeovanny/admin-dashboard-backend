@@ -1,9 +1,13 @@
-/** List of public attributes for searches and queries and key for cache */
-const attrEmployees = {
-  keys: {
-    all: '__employees__all__',
-  },
-  list: [
+// @ts-check
+/** @typedef { import('../types/api-section-types').ApiSection } ApiSection */
+
+class EmployeeAttr {
+  /** @type { ApiSection } */
+  static SECTION = 'employees';
+  static GENDERS = ['male', 'female', 'undefined'];
+
+  /** @type { { attr: string; type: string; }[] } */
+  static filterable = [
     {
       attr: 'id',
       type: 'number'
@@ -28,9 +32,7 @@ const attrEmployees = {
       attr: 'email',
       type: 'string'
     },
-  ],
+  ];
 };
 
-module.exports = {
-  attrEmployees,
-};
+module.exports = EmployeeAttr;

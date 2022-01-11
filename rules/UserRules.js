@@ -4,7 +4,7 @@ const {
   checkPasswordsMatch, 
   checkEmployeeExists 
 } = require('../middlewares');
-const { userStatus } = require('../data/static-data');
+const UserAttr = require('../utils/classes/UserAttr');
 
 const userPostRules = [
   /** Fields */
@@ -34,10 +34,10 @@ const userPutRules = [
   /** Fields */
   check('status')
     .optional()
-    .isIn( userStatus )
+    .isIn( UserAttr.STATUS )
     .withMessage('Error changing user status')
     .not()
-    .isIn( [ userStatus[2] ] )
+    .isIn( [ UserAttr.STATUS[2] ] )
     .withMessage('Error changing user status - not available'),
   check('username')
     .optional()
@@ -81,7 +81,7 @@ const userAddRemoveProfileRules = [
   /** Fields */
   body('id_profile')
     .notEmpty()
-    .withMessage('El perfil no existe')
+    .withMessage('Es obligatorio enviar el perfil')
     .isNumeric()
     .withMessage('El perfil no existe')
 ];

@@ -15,10 +15,13 @@ const {
   updateUser, 
   updateUserPassword, 
   deleteUser,
-  userAddProfile,
-  userRemoveProfile,
-  getSpecificUser,
 } = require('../controllers/User/UserController');
+const { 
+  userAddProfile, 
+  userRemoveProfile, 
+  getUserProfiles 
+} = require('../controllers/User/UserProfileController');
+const { getUserEmployee } = require('../controllers/User/UserEmployeeController');
 
 const router = Router();
 
@@ -26,9 +29,13 @@ router.get('/', [
   validateJWT
 ], getUsers);
 
-router.get('/:id', [
+router.get('/:id/profiles', [
   validateJWT
-], getSpecificUser);
+], getUserProfiles);
+
+router.get('/:id/employee', [
+  validateJWT
+], getUserEmployee);
 
 router.post('/',[
   validateJWT,

@@ -1,9 +1,12 @@
-/** List of public attributes for searches and queries and key for cache */
-const attrIcecubeCommissionConfig = {
-  keys: {
-    all: '__icecube_commission_config__all__',
-  },
-  list: [
+// @ts-check
+/** @typedef { import('../types/api-section-types').ApiSection } ApiSection */
+
+class IcecubeCommissionConfigAttr {
+  /** @type { ApiSection } */
+  static SECTION = 'icecube_commission_configs';
+
+  /** @type { { attr: string; type: string; }[] } */
+  static filterable = [
     {
       attr: 'id',
       type: 'number'
@@ -24,9 +27,7 @@ const attrIcecubeCommissionConfig = {
       attr: 'percent_operator_assistant',
       type: 'number'
     },
-  ],
+  ];
 };
 
-module.exports = {
-  attrIcecubeCommissionConfig,
-};
+module.exports = IcecubeCommissionConfigAttr;

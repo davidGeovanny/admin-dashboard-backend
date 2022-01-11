@@ -1,9 +1,12 @@
-/** List of public attributes for searches and queries and key for cache */
-const attrIcebarCommissionConfig = {
-  keys: {
-    all: '__icebar_commission_config__all__',
-  },
-  list: [
+// @ts-check
+/** @typedef { import('../types/api-section-types').ApiSection } ApiSection */
+
+class IcebarCommissionConfigAttr {
+  /** @type { ApiSection } */
+  static SECTION = 'icebar_commission_configs';
+
+  /** @type { { attr: string; type: string; }[] } */
+  static filterable = [
     {
       attr: 'id',
       type: 'number'
@@ -28,9 +31,7 @@ const attrIcebarCommissionConfig = {
       attr: 'cost_bar_operator_assistant',
       type: 'number'
     },
-  ],
+  ];
 };
 
-module.exports = {
-  attrIcebarCommissionConfig,
-};
+module.exports = IcebarCommissionConfigAttr;

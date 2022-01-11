@@ -1,8 +1,14 @@
-/** List of public attributes for searches and queries and key for cache */
-const attrSales = {
-  keys: {
-  },
-  list: [
+// @ts-check
+/** @typedef { import('../types/api-section-types').ApiSection } ApiSection */
+
+class SaleAttr {
+  /** @type { ApiSection } */
+  static SECTION = 'sales';
+  static SALE_PAYMENTH_METHOD   = ['cash payment', 'credit payment'];
+  static SALE_TYPE_MODIFICATION = ['discount', 'over price', 'without changes'];
+
+  /** @type { { attr: string; type: string; }[] } */
+  static filterable = [
     {
       attr: 'id',
       type: 'number'
@@ -87,9 +93,7 @@ const attrSales = {
       attr: 'bonification',
       type: 'boolean'
     },
-  ],
+  ];
 };
 
-module.exports = {
-  attrSales,
-};
+module.exports = SaleAttr;

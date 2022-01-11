@@ -2,9 +2,9 @@ const db = require('../db/Connection');
 const { DataTypes } = require('sequelize');
 
 const Employee = require('./Employee');
+const UserAttr = require('../utils/classes/UserAttr');
 
 const { encryptPassword } = require('../helpers/EncryptPassword');
-const { userStatus } = require('../data/static-data');
 
 const User = db.define('User', {
   username: {
@@ -36,10 +36,10 @@ const User = db.define('User', {
     }
   },
   status: {
-    type: DataTypes.ENUM( userStatus ),
+    type: DataTypes.ENUM( UserAttr.STATUS ),
     validate: {
       isIn: {
-        args: [ userStatus ],
+        args: [ UserAttr.STATUS ],
         msg : 'El estatus del usuario no es válido'
       }
     }
@@ -83,7 +83,7 @@ User.addScope('activeUsersScope', {
     exclude: ['status', 'password', 'deleted_at']
   },
   where: {
-    status: userStatus[0]
+    status: UserAttr.STATUS[0]
   }
 })
 
@@ -92,7 +92,7 @@ User.addScope('loginScope', {
     exclude: ['id_employee', 'status', 'created_at', 'updated_at', 'deleted_at']
   },
   where: {
-    status: userStatus[0]
+    status: UserAttr.STATUS[0]
   }
 });
 
@@ -101,7 +101,7 @@ User.addScope('tokenScope', {
     exclude: ['id_employee', 'password', 'status', 'created_at', 'updated_at', 'deleted_at'],
   },
   where: {
-    status: userStatus[0]
+    status: UserAttr.STATUS[0]
   }
 });
 

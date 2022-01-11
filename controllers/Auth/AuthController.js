@@ -6,7 +6,7 @@ const _       = require('underscore');
 const { Employee, User } = require('../../models');
 
 const { generateJWT } = require('../../helpers/GenerateJWT');
-const { formatSequelizeError } = require('../../helpers/format-sequelize-error');
+const { formatSequelizeError } = require('../../helpers/FormatSequelizeError');
 
 const register = async ( req = request, res = response ) => {
   const { 

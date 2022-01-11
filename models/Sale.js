@@ -1,6 +1,6 @@
 const db = require('../db/Connection');
 const { DataTypes } = require('sequelize');
-const { salePaymentMethod, saleTypeModification } = require('../data/static-data');
+const SaleAttr = require('../utils/classes/SaleAttr');
 
 const Sale = db.define('Sale', {
   branch_company: {
@@ -138,10 +138,10 @@ const Sale = db.define('Sale', {
     }
   },
   payment_method: {
-    type: DataTypes.ENUM( salePaymentMethod ),
+    type: DataTypes.ENUM( SaleAttr.SALE_PAYMENTH_METHOD ),
     validate: {
       isIn: {
-        args: [ salePaymentMethod ],
+        args: [ SaleAttr.SALE_PAYMENTH_METHOD ],
         msg : 'Payment method is not valid'
       }
     }
@@ -231,10 +231,10 @@ const Sale = db.define('Sale', {
     }
   },
   type_modification: {
-    type: DataTypes.ENUM( saleTypeModification ),
+    type: DataTypes.ENUM( SaleAttr.SALE_TYPE_MODIFICATION ),
     validate: {
       isIn: {
-        args: [ saleTypeModification ],
+        args: [ SaleAttr.SALE_TYPE_MODIFICATION ],
         msg : 'price modification type is invalid'
       }
     }

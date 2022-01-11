@@ -3,14 +3,9 @@ const _ = require('underscore');
 
 const { 
   BranchCompany, 
-  IcebarCommissionConfig, 
-  IcecubeCommissionConfig, 
-  WaterCommissionConfig 
 } = require('../../models');
 
-const { attrBranchesCompany }  = require('../../data/AttrBranchCompany');
-const { branchCompanyStatus }  = require('../../data/static-data');
-const { formatSequelizeError } = require('../../helpers/format-sequelize-error');
+const { formatSequelizeError } = require('../../helpers/FormatSequelizeError');
 const { pagination }           = require('../../helpers/Pagination');
 const { filterResultQueries }  = require('../../helpers/Filter');
 const { createExcelFile }      = require('../../helpers/Excel');
@@ -21,16 +16,15 @@ const {
   CLEAR_CACHE, 
   CLEAR_SECTION_CACHE 
 } = require('../../helpers/Cache');
+const BranchCompanyAttr = require('../../utils/classes/BranchCompanyAttr');
 
 const getAllRowsData = async () => {
   try {
-    const { keys } = attrBranchesCompany;
-    
-    let rows = JSON.parse( GET_CACHE( keys.all ) );
+    let rows = JSON.parse( GET_CACHE( `${ BranchCompanyAttr.SECTION }(all)` ) );
     
     if( !rows ) {
       rows = await BranchCompany.findAll();
-      SET_CACHE( keys.all, JSON.stringify( rows ), 60000 );
+      SET_CACHE( `${ BranchCompanyAttr.SECTION }(all)`, JSON.stringify( rows ), 60000 );
     }
     
     return rows;
@@ -41,13 +35,12 @@ const getAllRowsData = async () => {
 
 const getBranchesCompany = async ( req = request, res = response ) => {
   try {
-    const { list } = attrBranchesCompany;
     const queries  = req.query;
     
     let rows = await getAllRowsData();
 
-    rows = filterResultQueries( rows, queries, list );
-    rows = pagination( rows, queries, list );
+    rows = filterResultQueries( rows, queries, BranchCompanyAttr.filterable );
+    rows = pagination( rows, queries, BranchCompanyAttr.filterable );
     
     return res.json({
       ok: true,
@@ -62,62 +55,13 @@ const getBranchesCompany = async ( req = request, res = response ) => {
   }
 }
 
-const getSpecificBranchCompany = async ( req = request, res = response ) => {
-  try {
-    const key    = req.originalUrl;
-    const { id } = req.params;
-
-    let row = JSON.parse( GET_CACHE( key ) );
-    
-    if( !row ) {
-      row = await BranchCompany.findByPk( id, {
-        include: [
-          {
-            model: IcebarCommissionConfig,
-            as: 'icebar_commission_configs',
-          },
-          {
-            model: IcecubeCommissionConfig,
-            as: 'icecube_commission_configs',
-          },
-          {
-            model: WaterCommissionConfig,
-            as: 'water_commission_configs',
-          },
-        ]
-      });
-      SET_CACHE( key, JSON.stringify( row ), 60000 );
-    }
-
-    if( !row ) {
-      return res.status(404).json({
-        ok:     false,
-        msg:    'La sucursal no existe',
-        errors: []
-      });
-    }
-    
-    return res.json({
-      ok:   true,
-      data: row,
-    });
-  } catch ( err ) {
-    console.log( err );
-    return res.status(400).json({
-      ok:     false,
-      msg:    'Ha ocurrido un error',
-      errors: formatSequelizeError( err )
-    });
-  }
-}
-
 const createBranchCompany = async ( req = request, res = response ) => {
   try {
     const branchBody  = _.pick( req.body, ['branch'] );
-    branchBody.status = branchCompanyStatus[0];
+    branchBody.status = BranchCompanyAttr.STATUS[0];
 
     const branchCompany = await BranchCompany.create( branchBody );
-    CLEAR_CACHE( attrBranchesCompany.keys.all );
+    CLEAR_CACHE( `${ BranchCompanyAttr.SECTION }(all)` );
 
     return res.status(201).json({
       ok:   true,
@@ -148,7 +92,7 @@ const updateBranchCompany = async ( req = request, res = response ) => {
     }
 
     await branchCompany.update( branchBody );
-    CLEAR_SECTION_CACHE('branches_company');
+    CLEAR_CACHE( `${ BranchCompanyAttr.SECTION }(all)` );
 
     return res.json({
       ok:   true,
@@ -178,7 +122,7 @@ const deleteBranchCompany = async ( req = request, res = response ) => {
     }
 
     await branchCompany.destroy();
-    CLEAR_SECTION_CACHE('branches_company');
+    CLEAR_CACHE( `${ BranchCompanyAttr.SECTION }(all)` );
 
     return res.json({
       ok:   true,
@@ -195,12 +139,11 @@ const deleteBranchCompany = async ( req = request, res = response ) => {
 
 const getExportData = async ( req = request, res = response ) => {
   try {
-    const { list } = attrBranchesCompany;
     const queries  = req.query;
 
     let rows = await BranchCompany.findAll({ raw: true });
 
-    rows = filterResultQueries( rows, queries, list );
+    rows = filterResultQueries( rows, queries, BranchCompanyAttr.filterable );
 
     const fileName = createExcelFile( rows.map( row => ({
       Sucursal: row.branch,
@@ -234,7 +177,6 @@ const getExportData = async ( req = request, res = response ) => {
 
 module.exports = {
   getBranchesCompany,
-  getSpecificBranchCompany,
   createBranchCompany,
   updateBranchCompany,
   deleteBranchCompany,

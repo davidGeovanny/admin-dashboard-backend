@@ -3,27 +3,20 @@ const { Op } = require('sequelize');
 const _      = require('underscore');
 
 const { Employee, User } = require('../../models');
+const EmployeeAttr       = require('../../utils/classes/EmployeeAttr');
 
-const { attrEmployees }        = require('../../data/AttrEmployee');
-const { formatSequelizeError } = require('../../helpers/format-sequelize-error');
+const { formatSequelizeError } = require('../../helpers/FormatSequelizeError');
 const { pagination }           = require('../../helpers/Pagination');
 const { filterResultQueries }  = require('../../helpers/Filter');
-const { 
-  GET_CACHE, 
-  SET_CACHE, 
-  CLEAR_CACHE, 
-  CLEAR_SECTION_CACHE 
-} = require('../../helpers/Cache');
+const { GET_CACHE, SET_CACHE, CLEAR_CACHE } = require('../../helpers/Cache');
 
 const getAllRowsData = async () => {
   try {
-    const { keys } = attrEmployees;
-    
-    let rows = JSON.parse( GET_CACHE( keys.all ) );
+    let rows = JSON.parse( GET_CACHE( `${ EmployeeAttr.SECTION }(all)` ) );
   
     if( !rows ) {
       rows = await Employee.findAll();
-      SET_CACHE( keys.all, JSON.stringify( rows ), 60000 );
+      SET_CACHE( `${ EmployeeAttr.SECTION }(all)`, JSON.stringify( rows ), 60000 );
     }
   
     return rows;
@@ -34,57 +27,16 @@ const getAllRowsData = async () => {
 
 const getEmployees = async ( req = request, res = response ) => {
   try {
-    const { list } = attrEmployees;
     const queries = req.query;
     
     let rows = await getAllRowsData();
 
-    rows = filterResultQueries( rows, queries, list );
-    rows = pagination( rows, queries, list );
+    rows = filterResultQueries( rows, queries, EmployeeAttr.filterable );
+    rows = pagination( rows, queries, EmployeeAttr.filterable );
   
     return res.json({
       ok: true,
       ...rows
-    });
-  } catch ( err ) {
-    return res.status(400).json({
-      ok:     false,
-      msg:    'Ha ocurrido un error',
-      errors: formatSequelizeError( err )
-    });
-  }
-}
-
-const getSpecificEmployee = async ( req = request, res = response ) => {
-  try {
-    const key    = req.originalUrl;
-    const { id } = req.params;
-
-    let row = JSON.parse( GET_CACHE( key ) );
-
-    if( !row ) {
-      row = await Employee.findByPk( id, {
-        include: [
-          {
-            model: User.scope( 'activeUsersScope' ),
-            as: 'users',
-          },
-        ]
-      });
-      SET_CACHE( key, JSON.stringify( row ), 60000 );
-    }
-
-    if( !row ) {
-      return res.status(404).json({
-        ok:     false,
-        msg:    'El empleado no existe',
-        errors: []
-      });
-    }
-  
-    return res.json({
-      ok: true,
-      data: row
     });
   } catch ( err ) {
     return res.status(400).json({
@@ -106,7 +58,7 @@ const createEmployee = async ( req = request, res = response ) => {
 
   try {
     const employee = await Employee.create( employeeBody );
-    CLEAR_CACHE( attrEmployees.keys.all );
+    CLEAR_CACHE( `${ EmployeeAttr.SECTION }(all)` );
   
     return res.status(201).json({
       ok:   true,
@@ -143,7 +95,8 @@ const updateEmployee = async ( req = request, res = response ) => {
     }
 
     await employee.update( employeeBody );
-    CLEAR_SECTION_CACHE('employees');
+    CLEAR_CACHE( `${ EmployeeAttr.SECTION }(all)` );
+    CLEAR_CACHE( `${ EmployeeAttr.SECTION }(${ id })` );
 
     return res.json({
       ok:   true,
@@ -182,7 +135,8 @@ const deleteEmployee = async ( req = request, res = response ) => {
       }
     });
 
-    CLEAR_SECTION_CACHE('employees');
+    CLEAR_CACHE( `${ EmployeeAttr.SECTION }(all)` );
+    CLEAR_CACHE( `${ EmployeeAttr.SECTION }(${ id })` );
 
     return res.json({
       ok: true,
@@ -199,7 +153,6 @@ const deleteEmployee = async ( req = request, res = response ) => {
 
 module.exports = {
   getEmployees,
-  getSpecificEmployee,
   createEmployee,
   updateEmployee,
   deleteEmployee,
