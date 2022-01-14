@@ -119,7 +119,7 @@ const updateUserPassword = async ( req = request, res = response ) => {
 
     return res.json({
       ok:   true,
-      data: user,
+      data: { id: user.id, username: user.username, updated_at: user.updated_at },
     });
   } catch ( err ) {
     return res.status(400).json({
