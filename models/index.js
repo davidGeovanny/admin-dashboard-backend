@@ -7,6 +7,7 @@ const BranchCompany = require('./BranchCompany');
 const WaterCommissionConfig   = require('./WaterCommissionConfig');
 const IcebarCommissionConfig  = require('./IcebarCommissionConfig');
 const IcecubeCommissionConfig = require('./IcecubeCommissionConfig');
+const DeliveryPointCommissionConfig = require('./DeliveryPointCommissionConfig');
 
 module.exports = {
   Employee,
@@ -18,4 +19,5 @@ module.exports = {
   WaterCommissionConfig,
   IcebarCommissionConfig,
   IcecubeCommissionConfig,
+  DeliveryPointCommissionConfig,
 };

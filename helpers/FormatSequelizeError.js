@@ -26,6 +26,14 @@ const formatSequelizeError = ( err ) => {
     }];
   }
 
+  // if (errors.length === 0 && err?.message) {
+  //   errors = [{
+  //     attr : '',
+  //     value: '',
+  //     msg  : err.message
+  //   }];
+  // }
+
   return errors;
 }
 

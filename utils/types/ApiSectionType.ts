@@ -4,6 +4,7 @@ export type ApiSection =
   | 'icebar_commission_configs'
   | 'icecube_commission_configs'
   | 'water_commission_configs'
+  | 'delivery_point_commission_configs'
   | 'profiles'
   | 'sales'
   | 'users'

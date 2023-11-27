@@ -63,6 +63,29 @@ export type IcecubeCommissionConfigType = {
   percent_operator_assistant: number;
 };
 
+/** Delivery Point */
+export type DeliveryPointCommissionType = {
+  branch:             string;
+  total_accumulated:  number;
+  commission:         number;
+};
+
+export type DeliveryPointSaleEmployeeType = {
+  branch:   string,
+  name:     string,
+  price:    number,
+}
+
+export type DeliveryPointCommissionConfigType = {
+  delivery_point_commission_configs: DeliveryPointConfigType[];
+}
+
+export type DeliveryPointConfigType = {
+  min_range:  number;
+  max_range:  number;
+  percent:    number;
+}
+
 /** General */
 export type CommissionType = {
   branch:     string;

@@ -23,6 +23,7 @@ class Server {
       water_commission_config  : '/api/water-commission-config',
       icebar_commission_config : '/api/icebar-commission-config',
       icecube_commission_config: '/api/icecube-commission-config',
+      delivery_point_commission_config: '/api/delivery-point-commission-config',
     };
 
     this.apiLimiter = rateLimit( {
@@ -73,9 +74,10 @@ class Server {
     this.app.use( this.paths.employee,       require('../routes/Employees') );
     this.app.use( this.paths.sale,           require('../routes/Sales') );
     this.app.use( this.paths.branch_company, require('../routes/BranchesCompany') );
-    this.app.use( this.paths.water_commission_config,   require('../routes/WaterCommissionConfigs') );
-    this.app.use( this.paths.icebar_commission_config,  require('../routes/IcebarCommissionConfigs') );
-    this.app.use( this.paths.icecube_commission_config, require('../routes/IcecubeCommissionConfigs') );
+    this.app.use( this.paths.water_commission_config,           require('../routes/WaterCommissionConfigs') );
+    this.app.use( this.paths.icebar_commission_config,          require('../routes/IcebarCommissionConfigs') );
+    this.app.use( this.paths.icecube_commission_config,         require('../routes/IcecubeCommissionConfigs') );
+    this.app.use( this.paths.delivery_point_commission_config,  require('../routes/DeliveryPointCommissionConfigs') );
   }
 
   listen() {
