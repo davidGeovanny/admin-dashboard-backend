@@ -79,7 +79,8 @@ BranchCompany.hasMany( DeliveryPointCommissionConfig, {
 /** Scopes */
 DeliveryPointCommissionConfig.addScope('defaultScope', {
   attributes: {
-    exclude: ['id_branch_company', 'deleted_at']
+    // exclude: ['id_branch_company', 'deleted_at']
+    exclude: ['deleted_at']
   }
 });
 

@@ -2,7 +2,7 @@ const { response, request } = require('express');
 const { Op, Sequelize }     = require('sequelize');
 const _ = require('underscore');
 
-const { DeliveryPointCommissionConfig } = require('../../models');
+const { DeliveryPointCommissionConfig, BranchCompany } = require('../../models');
 const DeliveryPointCommissionConfigAttr = require('../../utils/classes/DeliveryPointCommissionConfigAttr');
 
 const { formatSequelizeError } = require('../../helpers/FormatSequelizeError');
@@ -12,8 +12,27 @@ const { filterResultQueries }  = require('../../helpers/Filter');
 const getDeliveryPointCommissionConfig = async ( req = request, res = response ) => {
   try {
     const queries = req.query;
-    
-    let rows = await DeliveryPointCommissionConfig.findAll();
+
+    let rows = await DeliveryPointCommissionConfig.findAll(
+      {
+        raw: true,
+        nest: true,
+        include: [
+          {
+            model: BranchCompany,
+            as: 'branch',
+            attributes: ['branch'],
+          }
+        ],
+        attributes: [
+          'min_range',
+          'max_range',
+          'percent',
+          'id_branch_company',
+          'branch.branch'
+        ]
+      }
+    );
 
     rows = filterResultQueries( rows, queries, DeliveryPointCommissionConfigAttr.filterable );
     rows = pagination( rows, queries, DeliveryPointCommissionConfigAttr.filterable );
