@@ -25,6 +25,7 @@ const getDeliveryPointCommissionConfig = async ( req = request, res = response )
           }
         ],
         attributes: [
+          'id',
           'min_range',
           'max_range',
           'percent',
