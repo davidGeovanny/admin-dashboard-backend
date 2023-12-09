@@ -8,6 +8,7 @@ const DeliveryPointCommissionConfigAttr = require('../../utils/classes/DeliveryP
 const { formatSequelizeError } = require('../../helpers/FormatSequelizeError');
 const { pagination }           = require('../../helpers/Pagination');
 const { filterResultQueries }  = require('../../helpers/Filter');
+const ProductType = require('../../models/ProductType');
 
 const getDeliveryPointCommissionConfig = async ( req = request, res = response ) => {
   try {
@@ -22,6 +23,11 @@ const getDeliveryPointCommissionConfig = async ( req = request, res = response )
             model: BranchCompany,
             as: 'branch',
             attributes: ['branch'],
+          },
+          {
+            model: ProductType,
+            as: 'product_type',
+            attributes: ['type_product'],
           }
         ],
         attributes: [
@@ -30,7 +36,8 @@ const getDeliveryPointCommissionConfig = async ( req = request, res = response )
           'max_range',
           'percent',
           'id_branch_company',
-          'branch.branch'
+          'branch.branch',
+          'product_type.type_product',
         ]
       }
     );
@@ -53,18 +60,39 @@ const getDeliveryPointCommissionConfig = async ( req = request, res = response )
 
 const createDeliveryPointCommissionConfig = async ( req = request, res = response ) => {
   try {
-    const configBody = _.pick( req.body, [
+    let configBody = _.pick( req.body, [
       'min_range',
       'max_range',
       'percent',
-      'id_branch_company'
+      'id_branch_company',
+      'type_product',
     ]);
+
+    //-> Buscar tipo producto donde type_product sea igual a configBody.type_product
+    const productType = await ProductType.findOne({
+      where: {
+        type_product: {
+          [ Op.eq ] : configBody.type_product
+        }
+      }
+    });
+
+    if( !productType ) {
+      return res.status(400).json({
+        ok: false,
+        msg: 'El tipo de producto no existe',
+        errors: []
+      });
+    }
+
+    configBody.id_type_product = productType.id;
 
     /** Avoid min and max ranges from being between other rows */
     const available = await checkRangesAreAvailabe(
       configBody.id_branch_company,
       configBody.min_range,
       configBody.max_range,
+      productType.id,
     );
 
     if( !available ) {
@@ -98,7 +126,8 @@ const updateDeliveryPointCommissionConfig = async ( req = request, res = respons
       'min_range',
       'max_range',
       'percent',
-      'id_branch_company'
+      'id_branch_company',
+      'type_product',
     ]);
 
     const deliveryPointCommissionConfig = await DeliveryPointCommissionConfig.findByPk( id );
@@ -111,13 +140,25 @@ const updateDeliveryPointCommissionConfig = async ( req = request, res = respons
       });
     }
 
+    //-> Buscar tipo producto donde type_product sea igual a configBody.type_product
+    const productType = await ProductType.findOne({
+      where: {
+        type_product: {
+          [ Op.eq ] : configBody.type_product
+        }
+      }
+    });
+
     /** Avoid min and max ranges from being between other rows */
     const available = await checkRangesAreAvailabe(
       configBody.id_branch_company,
       configBody.min_range,
       configBody.max_range,
-      id
+      productType.id,
+      id,
     );
+
+    configBody.id_type_product = productType.id;
 
     if( !available ) {
       return res.status(400).json({
@@ -171,12 +212,15 @@ const deleteDeliveryPointCommissionConfig = async ( req = request, res = respons
   }
 }
 
-const checkRangesAreAvailabe = async ( id_branch_company, min_range, max_range, id = 0 ) => {
+const checkRangesAreAvailabe = async ( id_branch_company, min_range, max_range, id_type_product, id = 0 ) => {
   try {
     const configs = await DeliveryPointCommissionConfig.findOne({
       where: {
         id_branch_company: {
           [ Op.eq ] : id_branch_company
+        },
+        id_type_product: {
+          [ Op.eq ] : id_type_product
         },
         [ Op.or ] : [
           Sequelize.literal(`

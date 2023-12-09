@@ -56,6 +56,13 @@ const DeliveryPointCommissionConfig = db.define('DeliveryPointCommissionConfig',
       model: BranchCompany,
       key  : 'id_branch_company'
     }
+  },
+  id_type_product: {
+    type: DataTypes.INTEGER.UNSIGNED,
+    references: {
+      model: ProductType,
+      key  : 'id_type_product'
+    }
   }
 }, {
   tableName:  'delivery_point_commission_config',
