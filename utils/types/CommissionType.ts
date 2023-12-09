@@ -65,15 +65,20 @@ export type IcecubeCommissionConfigType = {
 
 /** Delivery Point */
 export type DeliveryPointCommissionType = {
-  branch:             string;
-  total_accumulated:  number;
-  commission:         number;
+  branch:                     string;
+  total_accumulated_water:    number;
+  total_accumulated_icebar:   number;
+  total_accumulated_icecube:  number;
+  commission_water:           number;
+  commission_icebar:          number;
+  commission_icecube:         number;
 };
 
 export type DeliveryPointSaleEmployeeType = {
-  branch:   string,
-  name:     string,
-  price:    number,
+  branch:       string,
+  name:         string,
+  price:        number,
+  type_product: string,
 }
 
 export type DeliveryPointCommissionConfigType = {
@@ -81,9 +86,11 @@ export type DeliveryPointCommissionConfigType = {
 }
 
 export type DeliveryPointConfigType = {
-  min_range:  number;
-  max_range:  number;
-  percent:    number;
+  min_range:        number;
+  max_range:        number;
+  percent:          number;
+  id_product_type:  number;
+  type_product:     string;
 }
 
 /** General */

@@ -2,6 +2,7 @@ const db = require('../db/Connection');
 const { DataTypes } = require('sequelize');
 
 const BranchCompany = require('./BranchCompany');
+const ProductType = require('./ProductType');
 
 const DeliveryPointCommissionConfig = db.define('DeliveryPointCommissionConfig', {
   min_range: {
@@ -71,9 +72,19 @@ DeliveryPointCommissionConfig.belongsTo( BranchCompany, {
   foreignKey: 'id_branch_company'
 });
 
+DeliveryPointCommissionConfig.belongsTo( ProductType, {
+  as:         'product_type',
+  foreignKey: 'id_type_product'
+});
+
 BranchCompany.hasMany( DeliveryPointCommissionConfig, {
   as:         'delivery_point_commission_configs', 
   foreignKey: 'id_branch_company'
+});
+
+ProductType.hasMany( DeliveryPointCommissionConfig, {
+  as:         'delivery_point_commission_configs', 
+  foreignKey: 'id_type_product'
 });
 
 /** Scopes */

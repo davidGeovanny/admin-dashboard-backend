@@ -42,7 +42,8 @@ const getCommissions = async ( req = request, res = response ) => {
     const salesDeliveryPoints = sales.filter( sale => respDeliveryPoints.data.deliveryPointEmployees.some( deliveryPoint => deliveryPoint.delivery_point_key === sale.delivery_point_key ) );
     const deliveryPointCommissions = await getDeliveryPointCommissions( salesDeliveryPoints, respDeliveryPoints.data.deliveryPointEmployees );
 
-    console.log('Cantidad de ventas: ', sales.length);
+
+    // console.log('Cantidad de ventas: ', salesDeliveryPoints.length);
 
     return res.json({
       ok: true,
@@ -182,9 +183,10 @@ const getDeliveryPointCommissions = async ( sales = [], deliveryPointEmployees =
 
       salesForDeliveryPoint.forEach( sale => {
         commissionDeliveryPoint.addSale({
-          branch  : sale.branch_company,
-          name    : deliveryPointEmployee.employee_name,
-          price   : sale.final_price,
+          branch      : sale.branch_company,
+          name        : deliveryPointEmployee.employee_name,
+          price       : sale.final_price,
+          type_product: sale.type_product,
         });
       });
     });

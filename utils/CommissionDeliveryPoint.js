@@ -12,6 +12,7 @@ const {
   } = require('../models');
   
   const { toUpperCaseWords } = require('../helpers/Capitalize');
+const ProductType = require('../models/ProductType');
   
   class CommissionDeliveryPoint {
     constructor() {
@@ -30,7 +31,7 @@ const {
      * Add sale to employee.
      * @param { DeliveryPointSaleEmployeeType } sale Sale information.
      */
-    addSale = ({ branch, name, price }) => {
+    addSale = ({ branch, name, price, type_product }) => {
       branch = branch.toLowerCase();
       
       if( !this._commissions.has( name ) ) {
@@ -38,10 +39,18 @@ const {
       }
   
       const currentCommission = this._commissions.get( name );
-  
+
+      let property = 'total_accumulated_water';
+
+      if( type_product.toLowerCase() === 'barra' ) {
+        property = 'total_accumulated_icebar';
+      } else if( type_product.toLowerCase() === 'cubo' ) {
+        property = 'total_accumulated_icecube';
+      }
+
       this._commissions.set( name, {
         ...currentCommission,
-        total_accumulated: currentCommission.total_accumulated + price,
+        [property]: currentCommission[property] + price
       });
     }
   
@@ -53,18 +62,33 @@ const {
     setEmployee = ( name, branch ) => {
       const value = {
         branch,
-        total_accumulated:  0.0,
-        commission:         0.0,
+        total_accumulated_water:    0.0,
+        total_accumulated_icebar:   0.0,
+        total_accumulated_icecube:  0.0,
+        commission_water:           0.0,
+        commission_icebar:          0.0,
+        commission_icecube:         0.0,
       };
       this._commissions.set( name, value );
     }
   
     calculateCommissions = () => {
       this._commissions.forEach( ( value, key ) => {
-        const { total_accumulated, branch } = value;
-        const percent  = this.getCommissionPercent( branch, total_accumulated );
+        const { total_accumulated_water, branch, } = value;
+        let percent  = this.getCommissionPercent( branch, total_accumulated_water, 'AGUA EMBOTELLADA' );
+        this.setCommissionEmployee( key, percent, value, 'water' );
+      });
 
-        this.setCommissionEmployee( key, percent, value );
+      this._commissions.forEach( ( value, key ) => {
+        const { total_accumulated_icebar, branch, } = value;
+        let percent = this.getCommissionPercent( branch, total_accumulated_icebar, 'BARRA' );
+        this.setCommissionEmployee( key, percent, value, 'icebar' );
+      });
+
+      this._commissions.forEach( ( value, key ) => {
+        const { total_accumulated_icecube, branch, } = value;
+        let percent  = this.getCommissionPercent( branch, total_accumulated_icecube, 'CUBO' );
+        this.setCommissionEmployee( key, percent, value, 'icecube' );
       });
     }
   
@@ -74,17 +98,29 @@ const {
      * @param { DeliveryPointConfigType }			percent Commission percent.
      * @param { DeliveryPointCommissionType }	value   Employee commissions based on their position.
      */
-    setCommissionEmployee = ( name, percent, value ) => {
+    setCommissionEmployee = ( name, percent, value, type ) => {
       if( !value ) {
         value = this._commissions.get( name );
       }
   
-      const { total_accumulated } = value;
-      const commission = total_accumulated * percent.percent;
+      const { total_accumulated_water, total_accumulated_icebar, total_accumulated_icecube } = value;
+
+      let commission = 0;
+      let property = 'commission_water';
+
+      if ( type === 'water' ) {
+        commission = total_accumulated_water * percent.percent;
+      } else if ( type === 'icebar' ) {
+        commission = total_accumulated_icebar * percent.percent;
+        property = 'commission_icebar';
+      } else if ( type === 'icecube' ) {
+        commission = total_accumulated_icecube * percent.percent;
+        property = 'commission_icecube';
+      }
 
       this._commissions.set( name, {
         ...value,
-        commission
+        [property]: commission
       });
     }
   
@@ -96,7 +132,14 @@ const {
               model:      DeliveryPointCommissionConfig,
               as:         'delivery_point_commission_configs',
               attributes: ['min_range', 'max_range', 'percent'],
-              order:      [ ['min_range', 'ASC'] ]
+              order:      [ ['min_range', 'ASC'] ],
+              include: [
+                {
+                  model: ProductType,
+                  as: 'product_type',
+                  attributes: ['type_product']
+                }
+              ]
             }
           ],
           attributes: ['branch']
@@ -122,18 +165,19 @@ const {
      * Get the commission percentage according to the products sold per delivery pouint.
      * @param   { string } branch							Branch to which the employee belongs.
      * @param   { number } total_accumulated	Total price of sold products.
+     * @param   { string } type_product				Type of product sold.
      * @returns { DeliveryPointConfigType }
      */
-    getCommissionPercent = ( branch, total_accumulated ) => {
+    getCommissionPercent = ( branch, total_accumulated, type_product ) => {
       /** @type { DeliveryPointConfigType } */
-      const emptyCommission = { percent: 0.0, min_range: 0,  max_range: 0 };
+      const emptyCommission = { percent: 0.0, min_range: 0,  max_range: 0, id_product_type: 0, type_product: '' };
   
       if( !this._commissionConfig.has( branch.toLowerCase() ) ) return emptyCommission;
   
       const { delivery_point_commission_configs } = this._commissionConfig.get( branch.toLowerCase() );
   
       const percent = delivery_point_commission_configs.find( ( commission, index ) => {
-        if( total_accumulated >= commission.min_range && total_accumulated <= commission.max_range ) {
+        if( total_accumulated >= commission.min_range && total_accumulated <= commission.max_range && commission.product_type.type_product.toLowerCase() === type_product.toLowerCase() ) {
           return commission;
         }
   
@@ -157,7 +201,9 @@ const {
         return {
           employee  : toUpperCaseWords( key ),
           branch    : toUpperCaseWords( value.branch ),
-          commission: parseFloat( value.commission.toFixed( 2 ) ),
+          commission: parseFloat(
+            (value.commission_water + value.commission_icebar + value.commission_icecube).toFixed( 2 )
+          ),
         };
       });
   

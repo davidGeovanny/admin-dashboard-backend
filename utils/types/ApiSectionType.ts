@@ -8,3 +8,4 @@ export type ApiSection =
   | 'profiles'
   | 'sales'
   | 'users'
+  | 'product_types'
